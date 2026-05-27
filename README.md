@@ -4,7 +4,7 @@ WordPress plugin powering the **Community Request Board** at [zymarg.com/communi
 Logged-in shoppers post what they want to buy, vendors across Bangladesh respond. SEO-optimized,
 bilingual (English + Bengali), Astra / Elementor Pro / WooCommerce / Dokan compatible.
 
-> **Latest:** v1.3.0 — Privacy & Data Retention (auto-delete after 30/60/90 days) + visible privacy notice on the submission form.
+> **Latest:** v1.4.0 — Material 3 inspired redesign + per-element font-size controls (desktop + mobile) for every text element.
 
 ## Highlights
 
@@ -55,7 +55,8 @@ Everything you'd want to change lives at **Community Board → Settings**:
 | **General** | Requests per page (1–200), message char limit (50–2000), default language, submissions/user/hour |
 | **Form & Image Upload** | Required toggles for Phone / Email / Image, image upload on/off, max size (MB), allowed MIME types |
 | **Page Content (overrides)** | H1, subtitle, meta description per language (EN + BN). Blank = use built-in strings |
-| **Branding & Colors** | Primary purple, hover, light tints, 3 gradient orbs, body / muted / background colors (WP color picker) |
+| **Branding & Colors** | 12 color pickers: primary, hover, light tints, privacy-notice background, 3 gradient orbs, text, muted, page bg, surface bg |
+| **Typography** | Heading font family (Sora, Inter, Poppins, …), body font family, Google Fonts auto-load toggle, **per-element font sizes for 15 different elements × Desktop + Mobile breakpoint = 30 separate sliders** |
 | **Notifications** | Moderation recipient email, subject template |
 | **Privacy & Data Retention** | Auto-delete requests after 30 / 60 / 90 days (or never). The chosen period is also shown to visitors on the submission form. Manual "Run cleanup now" button. |
 | **GitHub Auto-Updates** | Owner, repo, branch, optional PAT for private repos, "Check for updates" button |

@@ -2,10 +2,10 @@
 /**
  * ZYMARG Community Request Board - frontend script.
  *
- * Only the submission form is enhanced with JS (AJAX submit + character
- * counter + image validation). Pagination is fully server-rendered, so no
- * JavaScript is required to navigate between pages — every page link is a
- * real, crawlable URL such as /community/page/2/.
+ * Pagination is fully server-rendered (every page link is a real /community/page/N/ URL),
+ * so this script only handles:
+ *  - The submission form: AJAX submit + character counter + image validation
+ *  - The drag-drop style upload area: filename preview when a file is chosen
  */
 (function () {
     'use strict';
@@ -28,8 +28,13 @@
         var submitBtn = form.querySelector('[data-zcrb-submit]');
         var feedback = form.querySelector('[data-zcrb-feedback]');
         var fileInput = form.querySelector('input[name="zcrb_image"]');
+        var fileLabel = form.querySelector('[data-zcrb-filename]');
 
         var limit = parseInt(cfg.messageLimit, 10) || 200;
+        var maxMb = parseInt(cfg.imageMaxMb, 10) || 2;
+        var allowedTypes = Array.isArray(cfg.imageTypes) && cfg.imageTypes.length
+            ? cfg.imageTypes
+            : ['image/jpeg', 'image/png', 'image/webp'];
 
         if (textarea && counter) {
             var updateCounter = function () {
@@ -46,25 +51,31 @@
 
         if (fileInput) {
             fileInput.addEventListener('change', function () {
-                if (!fileInput.files || !fileInput.files[0]) return;
-                var file = fileInput.files[0];
-                if (file.size > 2 * 1024 * 1024) {
-                    showFeedback(feedback, i18n.fileTooLarge || 'Image is too large.', 'error');
-                    fileInput.value = '';
+                if (!fileInput.files || !fileInput.files[0]) {
+                    if (fileLabel) fileLabel.textContent = '';
                     return;
                 }
-                var ok = ['image/jpeg', 'image/png', 'image/webp'].indexOf(file.type) !== -1;
-                if (!ok) {
+                var file = fileInput.files[0];
+                if (file.size > maxMb * 1024 * 1024) {
+                    showFeedback(feedback, i18n.fileTooLarge || 'Image is too large.', 'error');
+                    fileInput.value = '';
+                    if (fileLabel) fileLabel.textContent = '';
+                    return;
+                }
+                if (allowedTypes.indexOf(file.type) === -1) {
                     showFeedback(feedback, i18n.invalidImage || 'Invalid image format.', 'error');
                     fileInput.value = '';
+                    if (fileLabel) fileLabel.textContent = '';
+                    return;
                 }
+                if (fileLabel) fileLabel.textContent = file.name;
+                showFeedback(feedback, '', '');
             });
         }
 
         form.addEventListener('submit', function (event) {
-            // Allow non-JS fallback if AJAX requirements aren't met.
             if (!cfg.ajaxUrl || !cfg.nonce || !window.FormData || !window.fetch) {
-                return;
+                return; // graceful fallback to classic POST
             }
             event.preventDefault();
 
@@ -99,6 +110,7 @@
                         form.reset();
                         var counterEl = form.querySelector('[data-zcrb-counter]');
                         if (counterEl) counterEl.textContent = String(parseInt(cfg.messageLimit, 10) || 200);
+                        if (fileLabel) fileLabel.textContent = '';
                     } else {
                         var msg = (json && json.data && json.data.message) || i18n.submitError || 'Error.';
                         showFeedback(feedback, msg, 'error');

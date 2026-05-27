@@ -2,6 +2,10 @@
 /**
  * Template helpers + theme-compatible single/archive overrides.
  *
+ * v1.4.0 — redesigned to match the Material 3 inspired ZYMARG mockup:
+ * sticky glass form on the left, card grid on the right, hero with
+ * decorative orbs, footer pagination with "Showing X-Y of Z" meta.
+ *
  * @package ZymargCommunityBoard
  */
 
@@ -84,6 +88,13 @@ class ZCRB_Template {
     }
 
     /**
+     * Build a public-safe reference number for a request, e.g. "RQ0123".
+     */
+    public static function ref_number( int $post_id ): string {
+        return 'RQ' . str_pad( (string) $post_id, 4, '0', STR_PAD_LEFT );
+    }
+
+    /**
      * Render a single card. Public-safe: only Name, Message, Date, Image.
      */
     public function render_card( WP_Post $post ): void {
@@ -97,6 +108,7 @@ class ZCRB_Template {
         $date       = get_the_date( '', $post );
         $iso_date   = get_the_date( 'c', $post );
         $permalink  = get_permalink( $post );
+        $ref        = self::ref_number( (int) $post->ID );
         $thumb_html = '';
         if ( has_post_thumbnail( $post ) ) {
             $thumb_html = get_the_post_thumbnail( $post, 'medium_large', array(
@@ -114,17 +126,21 @@ class ZCRB_Template {
             <?php endif; ?>
             <div class="zcrb-card__body">
                 <header class="zcrb-card__header">
-                    <span class="zcrb-card__name" itemprop="author" itemscope itemtype="https://schema.org/Person">
+                    <h3 class="zcrb-card__name" itemprop="author" itemscope itemtype="https://schema.org/Person">
                         <span itemprop="name"><?php echo esc_html( $full_name ); ?></span>
-                    </span>
-                    <time class="zcrb-card__date" datetime="<?php echo esc_attr( $iso_date ); ?>" itemprop="dateCreated">
-                        <?php echo esc_html( ZCRB_I18n::t( 'posted_on' ) ); ?> <?php echo esc_html( $date ); ?>
+                    </h3>
+                    <time class="zcrb-card__date-badge" datetime="<?php echo esc_attr( $iso_date ); ?>" itemprop="dateCreated">
+                        <?php echo esc_html( $date ); ?>
                     </time>
                 </header>
                 <p class="zcrb-card__message" itemprop="name"><?php echo esc_html( $message ); ?></p>
-                <a class="zcrb-card__link" href="<?php echo esc_url( $permalink ); ?>">
-                    <?php echo esc_html( ZCRB_I18n::t( 'view_request' ) ); ?> <span aria-hidden="true">→</span>
-                </a>
+                <footer class="zcrb-card__footer">
+                    <span class="zcrb-card__ref"><?php echo esc_html( ZCRB_I18n::t( 'ref_label' ) ); ?> #<?php echo esc_html( $ref ); ?></span>
+                    <a class="zcrb-card__link" href="<?php echo esc_url( $permalink ); ?>">
+                        <?php echo esc_html( ZCRB_I18n::t( 'view_details' ) ); ?>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                    </a>
+                </footer>
             </div>
         </article>
         <?php
@@ -162,6 +178,10 @@ class ZCRB_Template {
         $archive_url  = get_post_type_archive_link( ZCRB_POST_TYPE );
         $max_pages    = (int) $query->max_num_pages;
 
+        // Title splits on " — " for the two-line hero look.
+        $title       = ZCRB_I18n::t( 'page_title' );
+        $title_parts = explode( ' — ', $title, 2 );
+
         ob_start();
         ?>
         <div class="zcrb-wrap zcrb-lang-<?php echo esc_attr( $current_lang ); ?>"
@@ -179,94 +199,131 @@ class ZCRB_Template {
             <?php if ( $args['show_header'] ) : ?>
                 <header class="zcrb-hero">
                     <div class="zcrb-hero__row">
-                        <h1 class="zcrb-hero__title"><?php echo esc_html( ZCRB_I18n::t( 'page_title' ) ); ?></h1>
-                        <a class="zcrb-lang-switch" href="<?php echo ZCRB_I18n::switch_url(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo esc_html( ZCRB_I18n::t( 'language_switch' ) ); ?></a>
+                        <h1 class="zcrb-hero__title">
+                            <?php echo esc_html( $title_parts[0] ); ?>
+                            <?php if ( isset( $title_parts[1] ) ) : ?>
+                                <span class="zcrb-hero__title-line2"><?php echo esc_html( $title_parts[1] ); ?></span>
+                            <?php endif; ?>
+                        </h1>
                     </div>
                     <p class="zcrb-hero__sub"><?php echo esc_html( ZCRB_I18n::t( 'page_subtitle' ) ); ?></p>
+                    <p style="margin-top:16px;">
+                        <a class="zcrb-lang-switch" href="<?php echo ZCRB_I18n::switch_url(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo esc_html( ZCRB_I18n::t( 'language_switch' ) ); ?></a>
+                    </p>
                 </header>
             <?php endif; ?>
 
-            <?php if ( $args['show_form'] ) : ?>
-                <?php $this->render_form(); ?>
-            <?php endif; ?>
-
-            <section class="zcrb-feed" aria-label="<?php echo esc_attr( ZCRB_I18n::t( 'page_title' ) ); ?>">
-                <?php if ( $total > 0 ) : ?>
-                    <p class="zcrb-feed__meta">
-                        <?php
-                        printf(
-                            /* translators: 1: current page, 2: total pages, 3: total requests */
-                            esc_html( ZCRB_I18n::t( 'page_meta' ) ),
-                            (int) $paged,
-                            max( 1, $max_pages ),
-                            $total
-                        );
-                        ?>
-                    </p>
+            <div class="zcrb-layout">
+                <?php if ( $args['show_form'] ) : ?>
+                    <aside class="zcrb-sidebar">
+                        <?php $this->render_form(); ?>
+                        <?php $this->render_privacy_notice(); ?>
+                    </aside>
                 <?php endif; ?>
 
-                <div class="zcrb-grid" data-zcrb-grid>
-                    <?php
-                    if ( $query->have_posts() ) {
-                        while ( $query->have_posts() ) {
-                            $query->the_post();
-                            $this->render_card( get_post() );
-                        }
-                        wp_reset_postdata();
-                    } else {
-                        echo '<p class="zcrb-empty">' . esc_html( ZCRB_I18n::t( 'no_requests' ) ) . '</p>';
-                    }
-                    ?>
-                </div>
+                <section class="zcrb-feed" aria-label="<?php echo esc_attr( ZCRB_I18n::t( 'page_title' ) ); ?>">
+                    <header class="zcrb-feed__header">
+                        <h2 class="zcrb-feed__title"><?php echo esc_html( ZCRB_I18n::t( 'recent_requests' ) ); ?></h2>
+                        <span class="zcrb-feed__badge"><?php echo esc_html( ZCRB_I18n::t( 'all_requests' ) ); ?></span>
+                    </header>
 
-                <?php $this->render_pagination( $paged, $max_pages ); ?>
-            </section>
+                    <div class="zcrb-grid" data-zcrb-grid>
+                        <?php
+                        if ( $query->have_posts() ) {
+                            while ( $query->have_posts() ) {
+                                $query->the_post();
+                                $this->render_card( get_post() );
+                            }
+                            wp_reset_postdata();
+                        } else {
+                            echo '<p class="zcrb-empty">' . esc_html( ZCRB_I18n::t( 'no_requests' ) ) . '</p>';
+                        }
+                        ?>
+                    </div>
+
+                    <?php $this->render_pagination( $paged, $max_pages, $total, $per_page, $query->post_count ); ?>
+                </section>
+            </div>
         </div>
         <?php
         return (string) ob_get_clean();
     }
 
     /**
-     * Render numbered pagination. Each link is a real, crawlable URL
-     * (e.g. /community/page/2/). Uses paginate_links() so the markup is
-     * compatible with theme styles that already target .page-numbers.
+     * Render numbered pagination + "Showing X-Y of Z" meta line.
      */
-    public function render_pagination( int $current, int $max_pages ): void {
-        if ( $max_pages <= 1 ) {
+    public function render_pagination( int $current, int $max_pages, int $total, int $per_page, int $shown ): void {
+        if ( $max_pages <= 1 && $total === 0 ) {
             return;
         }
 
-        $base = get_pagenum_link( 1 );
-        $base = remove_query_arg( 'paged', $base );
-        if ( false === strpos( $base, '%_%' ) ) {
-            $base = trailingslashit( $base ) . '%_%';
-        }
-
-        $format = get_option( 'permalink_structure' ) ? 'page/%#%/' : '?paged=%#%';
-
-        $links = paginate_links( array(
-            'base'      => $base,
-            'format'    => $format,
-            'total'     => $max_pages,
-            'current'   => $current,
-            'mid_size'  => 2,
-            'end_size'  => 1,
-            'prev_text' => '&laquo; ' . ZCRB_I18n::t( 'prev_page' ),
-            'next_text' => ZCRB_I18n::t( 'next_page' ) . ' &raquo;',
-            'type'      => 'array',
-        ) );
-
-        if ( empty( $links ) || ! is_array( $links ) ) {
-            return;
-        }
+        $first = ( ( $current - 1 ) * $per_page ) + 1;
+        $last  = $first + max( 0, $shown - 1 );
         ?>
         <nav class="zcrb-pagination" aria-label="<?php echo esc_attr( ZCRB_I18n::t( 'pagination_label' ) ); ?>">
-            <ul class="zcrb-pagination__list">
-                <?php foreach ( $links as $link ) : ?>
-                    <li class="zcrb-pagination__item"><?php echo $link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></li>
-                <?php endforeach; ?>
-            </ul>
+            <?php if ( $max_pages > 1 ) :
+                $base = get_pagenum_link( 1 );
+                $base = remove_query_arg( 'paged', $base );
+                if ( false === strpos( $base, '%_%' ) ) {
+                    $base = trailingslashit( $base ) . '%_%';
+                }
+                $format = get_option( 'permalink_structure' ) ? 'page/%#%/' : '?paged=%#%';
+
+                $links = paginate_links( array(
+                    'base'      => $base,
+                    'format'    => $format,
+                    'total'     => $max_pages,
+                    'current'   => $current,
+                    'mid_size'  => 1,
+                    'end_size'  => 1,
+                    'prev_text' => '&lsaquo; ' . ZCRB_I18n::t( 'prev_page' ),
+                    'next_text' => ZCRB_I18n::t( 'next_page' ) . ' &rsaquo;',
+                    'type'      => 'array',
+                ) );
+
+                if ( ! empty( $links ) && is_array( $links ) ) : ?>
+                    <ul class="zcrb-pagination__list">
+                        <?php foreach ( $links as $link ) : ?>
+                            <li class="zcrb-pagination__item"><?php echo $link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            <?php endif; ?>
+            <?php if ( $total > 0 ) : ?>
+                <p class="zcrb-pagination__meta">
+                    <?php
+                    printf(
+                        /* translators: 1: first item, 2: last item, 3: total items */
+                        esc_html( ZCRB_I18n::t( 'showing_results' ) ),
+                        (int) $first,
+                        (int) $last,
+                        (int) $total
+                    );
+                    ?>
+                </p>
+            <?php endif; ?>
         </nav>
+        <?php
+    }
+
+    /**
+     * Render the privacy / data-retention notice block (sits below the form).
+     */
+    public function render_privacy_notice(): void {
+        $retention_days = class_exists( 'ZCRB_Retention' ) ? ZCRB_Retention::configured_days() : 0;
+        ?>
+        <p class="zcrb-privacy-notice" role="note">
+            <span class="zcrb-privacy-notice__icon" aria-hidden="true">🔒</span>
+            <span class="zcrb-privacy-notice__text">
+                <?php
+                if ( $retention_days > 0 ) {
+                    echo esc_html( sprintf( ZCRB_I18n::t( 'privacy_notice' ), (int) $retention_days ) );
+                } else {
+                    echo esc_html( ZCRB_I18n::t( 'privacy_no_delete' ) );
+                }
+                ?>
+            </span>
+        </p>
         <?php
     }
 
@@ -283,30 +340,17 @@ class ZCRB_Template {
         $image_required = (bool) self::setting( 'image_required', 0 );
         $image_enabled  = (bool) self::setting( 'image_enabled', 1 );
         $image_types    = (string) self::setting( 'image_allowed_types', 'image/jpeg,image/png,image/webp' );
-        $retention_days = class_exists( 'ZCRB_Retention' ) ? ZCRB_Retention::configured_days() : 0;
+        $image_max_mb   = (int) self::setting( 'image_max_mb', 2 );
         ?>
-        <section class="zcrb-form-wrap" aria-labelledby="zcrb-form-title">
+        <section class="zcrb-form-wrap zcrb-glass" aria-labelledby="zcrb-form-title">
             <h2 id="zcrb-form-title" class="zcrb-form__title"><?php echo esc_html( ZCRB_I18n::t( 'submit_request' ) ); ?></h2>
-
-            <p class="zcrb-privacy-notice" role="note">
-                <span class="zcrb-privacy-notice__icon" aria-hidden="true">🔒</span>
-                <span class="zcrb-privacy-notice__text">
-                    <?php
-                    if ( $retention_days > 0 ) {
-                        echo esc_html( sprintf( ZCRB_I18n::t( 'privacy_notice' ), (int) $retention_days ) );
-                    } else {
-                        echo esc_html( ZCRB_I18n::t( 'privacy_no_delete' ) );
-                    }
-                    ?>
-                </span>
-            </p>
 
             <?php if ( ! $is_logged_in ) : ?>
                 <div class="zcrb-form__login">
                     <p><?php echo esc_html( ZCRB_I18n::t( 'must_login' ) ); ?></p>
                     <p>
                         <a class="zcrb-btn zcrb-btn--primary" href="<?php echo esc_url( $login_url ); ?>"><?php echo esc_html( ZCRB_I18n::t( 'login_now' ) ); ?></a>
-                        <a class="zcrb-btn zcrb-btn--ghost" href="<?php echo esc_url( $register_url ); ?>"><?php echo esc_html( ZCRB_I18n::t( 'register' ) ); ?></a>
+                        <a class="zcrb-btn zcrb-btn--ghost" href="<?php echo esc_url( $register_url ); ?>" style="margin-top:8px;"><?php echo esc_html( ZCRB_I18n::t( 'register' ) ); ?></a>
                     </p>
                 </div>
             <?php else : ?>
@@ -322,31 +366,28 @@ class ZCRB_Template {
 
                     <div class="zcrb-field">
                         <label for="zcrb-full-name"><?php echo esc_html( ZCRB_I18n::t( 'full_name' ) ); ?> <span class="zcrb-req">*</span></label>
-                        <input id="zcrb-full-name" type="text" name="zcrb_full_name" required maxlength="100" value="<?php echo esc_attr( $full_name ); ?>" autocomplete="name" />
-                    </div>
-
-                    <div class="zcrb-field-row">
-                        <div class="zcrb-field">
-                            <label for="zcrb-phone">
-                                <?php echo esc_html( ZCRB_I18n::t( 'phone_number' ) ); ?>
-                                <?php if ( $phone_required ) : ?><span class="zcrb-req">*</span><?php endif; ?>
-                            </label>
-                            <input id="zcrb-phone" type="tel" name="zcrb_phone" <?php echo $phone_required ? 'required' : ''; ?> maxlength="32" autocomplete="tel" inputmode="tel" />
-                            <small class="zcrb-help"><?php echo esc_html( ZCRB_I18n::t( 'phone_help' ) ); ?></small>
-                        </div>
-                        <div class="zcrb-field">
-                            <label for="zcrb-email">
-                                <?php echo esc_html( ZCRB_I18n::t( 'email_address' ) ); ?>
-                                <?php if ( $email_required ) : ?><span class="zcrb-req">*</span><?php endif; ?>
-                            </label>
-                            <input id="zcrb-email" type="email" name="zcrb_email" <?php echo $email_required ? 'required' : ''; ?> value="<?php echo esc_attr( $email ); ?>" autocomplete="email" />
-                            <small class="zcrb-help"><?php echo esc_html( ZCRB_I18n::t( 'email_help' ) ); ?></small>
-                        </div>
+                        <input id="zcrb-full-name" type="text" name="zcrb_full_name" required maxlength="100" value="<?php echo esc_attr( $full_name ); ?>" autocomplete="name" placeholder="<?php echo esc_attr( ZCRB_I18n::t( 'placeholder_name' ) ); ?>" />
                     </div>
 
                     <div class="zcrb-field">
-                        <label for="zcrb-message"><?php echo esc_html( ZCRB_I18n::t( 'request_message' ) ); ?> <span class="zcrb-req">*</span></label>
-                        <textarea id="zcrb-message" name="zcrb_message" required rows="4" maxlength="<?php echo (int) $message_limit; ?>" data-zcrb-message></textarea>
+                        <label for="zcrb-phone">
+                            <?php echo esc_html( ZCRB_I18n::t( 'phone_number' ) ); ?>
+                            <?php if ( $phone_required ) : ?><span class="zcrb-req">*</span><?php endif; ?>
+                        </label>
+                        <input id="zcrb-phone" type="tel" name="zcrb_phone" <?php echo $phone_required ? 'required' : ''; ?> maxlength="32" autocomplete="tel" inputmode="tel" placeholder="<?php echo esc_attr( ZCRB_I18n::t( 'placeholder_phone' ) ); ?>" />
+                    </div>
+
+                    <div class="zcrb-field">
+                        <label for="zcrb-email">
+                            <?php echo esc_html( ZCRB_I18n::t( 'email_address' ) ); ?>
+                            <?php if ( $email_required ) : ?><span class="zcrb-req">*</span><?php endif; ?>
+                        </label>
+                        <input id="zcrb-email" type="email" name="zcrb_email" <?php echo $email_required ? 'required' : ''; ?> value="<?php echo esc_attr( $email ); ?>" autocomplete="email" placeholder="<?php echo esc_attr( ZCRB_I18n::t( 'placeholder_email' ) ); ?>" />
+                    </div>
+
+                    <div class="zcrb-field">
+                        <label for="zcrb-message"><?php echo esc_html( sprintf( ZCRB_I18n::t( 'request_message_with_limit' ), (int) $message_limit ) ); ?> <span class="zcrb-req">*</span></label>
+                        <textarea id="zcrb-message" name="zcrb_message" required rows="4" maxlength="<?php echo (int) $message_limit; ?>" data-zcrb-message placeholder="<?php echo esc_attr( ZCRB_I18n::t( 'placeholder_message' ) ); ?>"></textarea>
                         <small class="zcrb-help">
                             <span data-zcrb-counter><?php echo (int) $message_limit; ?></span>
                             <?php echo esc_html( ZCRB_I18n::t( 'chars_remaining' ) ); ?>
@@ -359,7 +400,16 @@ class ZCRB_Template {
                                 <?php echo esc_html( $image_required ? ZCRB_I18n::t( 'image_required' ) : ZCRB_I18n::t( 'image_optional' ) ); ?>
                                 <?php if ( $image_required ) : ?><span class="zcrb-req">*</span><?php endif; ?>
                             </label>
-                            <input id="zcrb-image" type="file" name="zcrb_image" <?php echo $image_required ? 'required' : ''; ?> accept="<?php echo esc_attr( $image_types ); ?>" />
+                            <label class="zcrb-upload" for="zcrb-image">
+                                <svg class="zcrb-upload__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M16 16l-4-4-4 4M12 12v9"/>
+                                    <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
+                                    <path d="M16 16l-4-4-4 4"/>
+                                </svg>
+                                <p class="zcrb-upload__text"><?php echo esc_html( sprintf( ZCRB_I18n::t( 'upload_hint' ), $image_max_mb ) ); ?></p>
+                                <span class="zcrb-upload__filename" data-zcrb-filename></span>
+                                <input id="zcrb-image" type="file" name="zcrb_image" <?php echo $image_required ? 'required' : ''; ?> accept="<?php echo esc_attr( $image_types ); ?>" />
+                            </label>
                         </div>
                     <?php endif; ?>
 
@@ -387,6 +437,7 @@ class ZCRB_Template {
         $message  = wp_strip_all_tags( $post->post_content );
         $date     = get_the_date( '', $post );
         $iso_date = get_the_date( 'c', $post );
+        $ref      = self::ref_number( (int) $post->ID );
         ?>
         <div class="zcrb-wrap zcrb-single">
             <div class="zcrb-orbs" aria-hidden="true">
@@ -401,8 +452,8 @@ class ZCRB_Template {
                             <span itemprop="name"><?php echo esc_html( $full_name ); ?></span>
                         </span>
                     </p>
-                    <time class="zcrb-single__date" datetime="<?php echo esc_attr( $iso_date ); ?>" itemprop="dateCreated">
-                        <?php echo esc_html( ZCRB_I18n::t( 'posted_on' ) ); ?> <?php echo esc_html( $date ); ?>
+                    <time class="zcrb-card__date-badge" datetime="<?php echo esc_attr( $iso_date ); ?>" itemprop="dateCreated">
+                        <?php echo esc_html( $date ); ?>
                     </time>
                 </header>
 
@@ -413,6 +464,10 @@ class ZCRB_Template {
                         <?php echo get_the_post_thumbnail( $post, 'large', array( 'loading' => 'lazy' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                     </figure>
                 <?php endif; ?>
+
+                <p>
+                    <span class="zcrb-card__ref"><?php echo esc_html( ZCRB_I18n::t( 'ref_label' ) ); ?> #<?php echo esc_html( $ref ); ?></span>
+                </p>
 
                 <p class="zcrb-single__back">
                     <a class="zcrb-btn zcrb-btn--ghost" href="<?php echo esc_url( (string) get_post_type_archive_link( ZCRB_POST_TYPE ) ); ?>">

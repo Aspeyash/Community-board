@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       ZYMARG Community Request Board
  * Plugin URI:        https://zymarg.com/community/
- * Description:       SEO-optimized Community Request Board for ZYMARG. Logged-in users submit requests (Name, Phone, Email, Message, Image). Admin approves/rejects from the WP dashboard. Public feed shows only Name, Message, Date, and Image. Bilingual (English/Bengali), schema-marked, mobile responsive, with a numbered-pagination crawlable feed and configurable data retention. Fully customizable via the Settings page. Updates ship via GitHub Releases. Compatible with Astra, Elementor Pro, WooCommerce, and Dokan.
- * Version:           1.3.0
+ * Description:       SEO-optimized Community Request Board for ZYMARG. Logged-in users submit requests (Name, Phone, Email, Message, Image). Admin approves/rejects from the WP dashboard. Public feed shows only Name, Message, Date, and Image. Bilingual (English/Bengali), schema-marked, mobile responsive, with a Material 3 inspired glass-card design, fully customizable typography (per-element font sizes for desktop + mobile), numbered-pagination crawlable feed, and configurable data retention. Updates ship via GitHub Releases. Compatible with Astra, Elementor Pro, WooCommerce, and Dokan.
+ * Version:           1.4.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            ZYMARG
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
-define( 'ZCRB_VERSION', '1.3.0' );
+define( 'ZCRB_VERSION', '1.4.0' );
 define( 'ZCRB_PLUGIN_FILE', __FILE__ );
 define( 'ZCRB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ZCRB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -34,7 +34,7 @@ define( 'ZCRB_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 define( 'ZCRB_POST_TYPE', 'zcrb_request' );
 define( 'ZCRB_ARCHIVE_SLUG', 'community' );
-// These are runtime fallbacks. The Settings page is the source of truth.
+// Runtime fallbacks. The Settings page is the source of truth.
 define( 'ZCRB_PER_PAGE', 30 );
 define( 'ZCRB_MESSAGE_LIMIT', 200 );
 
@@ -85,7 +85,6 @@ add_action( 'plugins_loaded', static function () {
     ZCRB_Template::instance();
     ZCRB_Retention::instance();
 
-    // GitHub Releases auto-updater — admin only.
     if ( is_admin() && zcrb_get_setting( 'enable_auto_updates', 1 ) ) {
         new ZCRB_Updater( array(
             'owner'       => (string) zcrb_get_setting( 'github_owner', 'Aspeyash' ),
@@ -97,9 +96,6 @@ add_action( 'plugins_loaded', static function () {
     }
 } );
 
-// Force the front query to use the configured per-page count on the public
-// archive so /community/page/N/ URLs are produced by core (and therefore
-// crawlable) without any custom rewrite rules.
 add_action( 'pre_get_posts', static function ( $query ) {
     if ( is_admin() || ! $query->is_main_query() ) {
         return;
@@ -149,6 +145,12 @@ add_action( 'wp_enqueue_scripts', static function () {
         return;
     }
 
+    // Optionally enqueue Google Fonts (Sora + Inter by default).
+    $gfonts_url = ZCRB_Settings::instance()->google_fonts_url();
+    if ( $gfonts_url ) {
+        wp_enqueue_style( 'zcrb-fonts', $gfonts_url, array(), null );
+    }
+
     wp_enqueue_style(
         'zcrb-frontend',
         ZCRB_PLUGIN_URL . 'assets/css/zcrb.css',
@@ -156,7 +158,7 @@ add_action( 'wp_enqueue_scripts', static function () {
         ZCRB_VERSION
     );
 
-    // Inject the Settings-driven brand colors as CSS variables.
+    // Inject the Settings-driven brand colors + font sizes as CSS variables.
     $inline = ZCRB_Settings::instance()->render_dynamic_css();
     if ( $inline ) {
         wp_add_inline_style( 'zcrb-frontend', $inline );
@@ -193,7 +195,7 @@ add_action( 'wp_enqueue_scripts', static function () {
 }, 20 );
 
 // -----------------------------------------------------------------------------
-// Admin notice for "updates checked" action
+// Admin notices
 // -----------------------------------------------------------------------------
 add_action( 'admin_notices', static function () {
     if ( ! current_user_can( 'manage_options' ) ) {

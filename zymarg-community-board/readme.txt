@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,15 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 1.4.0 =
+* New **Material 3 inspired design** matching the ZYMARG mockup: deep purple primary (`#4f00d0`), glass cards with backdrop-blur, decorative gradient orbs, sticky sidebar form, and a 12-column responsive layout.
+* Brand-new **Typography settings** — every text element on the public page now has its own Desktop AND Mobile font-size knob (15 elements × 2 breakpoints = 30 sliders). Also configurable: heading font family, body font family, and a "Load Google Fonts" toggle that auto-fetches Sora + Inter (or any Google Font you choose) from the CDN.
+* Cards redesigned: 16:9 image header with hover zoom, author name in primary purple, uppercase date badge, 3-line clamped message, ref-number footer (`Ref: #RQ0123`), and "View Details →" link with SVG arrow.
+* Pagination redesigned to match the mockup: rounded-rectangle page numbers, primary-filled active page, "Showing X-Y of Z requests" meta line below.
+* Privacy notice moved into its own purple-tinted card below the submission form (matching the mockup) and re-worded to match the new copy. Bilingual.
+* New i18n strings: Recent Requests, All Requests, View Details, Ref:, Showing X-Y of Z, plus form placeholders and an upload hint with file size — all bilingual (English + Bengali).
+* `data-default-color` for every color picker so admins can reset to factory defaults with one click.
 
 = 1.3.0 =
 * New **Privacy & Data Retention** setting — admin picks 30 / 60 / 90 days (or "Disabled"). A daily WP-Cron sweep deletes any request older than that, including the post meta (Name, Phone, Email) and the uploaded image.
