@@ -1,0 +1,482 @@
+/*!
+ * ZYMARG Community Request Board
+ * White base + soft purple radial gradient orbs.
+ * Mobile-first, isolated styles (no theme overrides).
+ */
+
+:root {
+    --zcrb-purple: #6b3fa0;
+    --zcrb-purple-600: #5a2f8e;
+    --zcrb-purple-100: #efe7fb;
+    --zcrb-purple-50: #f7f2ff;
+    --zcrb-bg: #ffffff;
+    --zcrb-text: #1f1b2d;
+    --zcrb-muted: #6b6577;
+    --zcrb-border: #e8e3f1;
+    --zcrb-shadow: 0 8px 28px rgba(107, 63, 160, 0.08);
+    --zcrb-radius: 14px;
+    --zcrb-radius-sm: 10px;
+    --zcrb-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hind Siliguri", "Noto Sans Bengali", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.zcrb-wrap {
+    position: relative;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+    background: var(--zcrb-bg);
+    color: var(--zcrb-text);
+    font-family: var(--zcrb-font);
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.zcrb-wrap *,
+.zcrb-wrap *::before,
+.zcrb-wrap *::after {
+    box-sizing: border-box;
+}
+
+.zcrb-lang-bn {
+    font-family: "Hind Siliguri", "Noto Sans Bengali", "SolaimanLipi", var(--zcrb-font);
+}
+
+/* ---------- Purple radial gradient orbs ---------- */
+.zcrb-orbs {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.zcrb-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.55;
+}
+
+.zcrb-orb--1 {
+    width: 420px;
+    height: 420px;
+    top: -120px;
+    left: -100px;
+    background: radial-gradient(circle, rgba(141, 92, 217, 0.55) 0%, rgba(141, 92, 217, 0) 70%);
+}
+
+.zcrb-orb--2 {
+    width: 380px;
+    height: 380px;
+    top: 200px;
+    right: -120px;
+    background: radial-gradient(circle, rgba(186, 152, 240, 0.55) 0%, rgba(186, 152, 240, 0) 70%);
+}
+
+.zcrb-orb--3 {
+    width: 320px;
+    height: 320px;
+    bottom: -80px;
+    left: 30%;
+    background: radial-gradient(circle, rgba(216, 196, 247, 0.5) 0%, rgba(216, 196, 247, 0) 70%);
+}
+
+.zcrb-wrap > *:not(.zcrb-orbs) {
+    position: relative;
+    z-index: 1;
+}
+
+/* ---------- Hero ---------- */
+.zcrb-hero {
+    margin-bottom: 28px;
+}
+
+.zcrb-hero__row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.zcrb-hero__title {
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+    line-height: 1.2;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--zcrb-text);
+    max-width: 880px;
+}
+
+.zcrb-hero__sub {
+    margin: 12px 0 0;
+    color: var(--zcrb-muted);
+    font-size: 1.0625rem;
+    max-width: 720px;
+    line-height: 1.55;
+}
+
+.zcrb-lang-switch {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--zcrb-border);
+    border-radius: 999px;
+    color: var(--zcrb-purple);
+    background: #fff;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.zcrb-lang-switch:hover,
+.zcrb-lang-switch:focus {
+    background: var(--zcrb-purple-50);
+    color: var(--zcrb-purple-600);
+    border-color: var(--zcrb-purple-100);
+}
+
+/* ---------- Form ---------- */
+.zcrb-form-wrap {
+    background: #fff;
+    border: 1px solid var(--zcrb-border);
+    border-radius: var(--zcrb-radius);
+    box-shadow: var(--zcrb-shadow);
+    padding: 24px;
+    margin-bottom: 36px;
+}
+
+.zcrb-form__title {
+    margin: 0 0 16px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--zcrb-text);
+}
+
+.zcrb-form__login {
+    background: var(--zcrb-purple-50);
+    border: 1px dashed var(--zcrb-purple-100);
+    border-radius: var(--zcrb-radius-sm);
+    padding: 16px;
+}
+
+.zcrb-form__login p {
+    margin: 0 0 8px;
+}
+
+.zcrb-form {
+    display: grid;
+    gap: 16px;
+}
+
+.zcrb-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.zcrb-field-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+@media (min-width: 640px) {
+    .zcrb-field-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.zcrb-field label {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.zcrb-req {
+    color: var(--zcrb-purple);
+    margin-left: 2px;
+}
+
+.zcrb-field input[type="text"],
+.zcrb-field input[type="email"],
+.zcrb-field input[type="tel"],
+.zcrb-field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--zcrb-border);
+    border-radius: var(--zcrb-radius-sm);
+    font: inherit;
+    color: inherit;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.zcrb-field input:focus,
+.zcrb-field textarea:focus {
+    outline: none;
+    border-color: var(--zcrb-purple);
+    box-shadow: 0 0 0 3px rgba(107, 63, 160, 0.15);
+}
+
+.zcrb-field textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.zcrb-field input[type="file"] {
+    padding: 8px;
+    background: #fff;
+    border: 1px dashed var(--zcrb-border);
+    border-radius: var(--zcrb-radius-sm);
+}
+
+.zcrb-help {
+    color: var(--zcrb-muted);
+    font-size: 0.8125rem;
+}
+
+.zcrb-form__actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.zcrb-form__feedback {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--zcrb-muted);
+}
+
+.zcrb-form__feedback.is-success { color: #1a7f3c; }
+.zcrb-form__feedback.is-error { color: #b3261e; }
+
+/* ---------- Buttons ---------- */
+.zcrb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.05s ease, background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    line-height: 1.2;
+}
+
+.zcrb-btn--primary {
+    background: var(--zcrb-purple);
+    color: #fff;
+    border-color: var(--zcrb-purple);
+    box-shadow: 0 4px 14px rgba(107, 63, 160, 0.25);
+}
+
+.zcrb-btn--primary:hover,
+.zcrb-btn--primary:focus {
+    background: var(--zcrb-purple-600);
+    color: #fff;
+}
+
+.zcrb-btn--primary:active {
+    transform: translateY(1px);
+}
+
+.zcrb-btn--ghost {
+    background: #fff;
+    color: var(--zcrb-purple);
+    border-color: var(--zcrb-purple-100);
+}
+
+.zcrb-btn--ghost:hover,
+.zcrb-btn--ghost:focus {
+    background: var(--zcrb-purple-50);
+    color: var(--zcrb-purple-600);
+}
+
+.zcrb-btn[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* ---------- Feed grid ---------- */
+.zcrb-feed {
+    margin-top: 8px;
+}
+
+.zcrb-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+@media (min-width: 640px) {
+    .zcrb-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+    .zcrb-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.zcrb-card {
+    background: #fff;
+    border: 1px solid var(--zcrb-border);
+    border-radius: var(--zcrb-radius);
+    box-shadow: var(--zcrb-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.zcrb-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(107, 63, 160, 0.12);
+    border-color: var(--zcrb-purple-100);
+}
+
+.zcrb-card__media {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--zcrb-purple-50);
+}
+
+.zcrb-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.zcrb-card__body {
+    padding: 18px 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.zcrb-card__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.zcrb-card__name {
+    font-weight: 700;
+    color: var(--zcrb-text);
+}
+
+.zcrb-card__date {
+    font-size: 0.8125rem;
+    color: var(--zcrb-muted);
+}
+
+.zcrb-card__message {
+    margin: 0;
+    color: var(--zcrb-text);
+    line-height: 1.5;
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+}
+
+.zcrb-card__link {
+    margin-top: auto;
+    color: var(--zcrb-purple);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.9375rem;
+}
+
+.zcrb-card__link:hover { color: var(--zcrb-purple-600); }
+
+/* ---------- Pagination / load more ---------- */
+.zcrb-pagination {
+    margin-top: 28px;
+    text-align: center;
+}
+
+.zcrb-pagination a,
+.zcrb-pagination .page-numbers {
+    display: inline-block;
+    margin: 0 4px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--zcrb-border);
+    color: var(--zcrb-purple);
+    background: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.zcrb-pagination .page-numbers.current {
+    background: var(--zcrb-purple);
+    color: #fff;
+    border-color: var(--zcrb-purple);
+}
+
+.zcrb-pagination__status {
+    margin: 12px 0 0;
+    color: var(--zcrb-muted);
+    font-size: 0.9rem;
+}
+
+.zcrb-pagination__noscript {
+    margin-top: 12px;
+}
+
+/* ---------- Empty / single ---------- */
+.zcrb-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--zcrb-muted);
+    padding: 40px 16px;
+    border: 1px dashed var(--zcrb-border);
+    border-radius: var(--zcrb-radius);
+    background: #fff;
+}
+
+.zcrb-single__article {
+    background: #fff;
+    border: 1px solid var(--zcrb-border);
+    border-radius: var(--zcrb-radius);
+    box-shadow: var(--zcrb-shadow);
+    padding: 28px;
+}
+
+.zcrb-single__header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: var(--zcrb-muted);
+    font-size: 0.9rem;
+}
+
+.zcrb-single__author { margin: 0; font-weight: 700; color: var(--zcrb-text); }
+.zcrb-single__title { margin: 14px 0 18px; font-size: clamp(1.4rem, 1rem + 1.5vw, 1.9rem); line-height: 1.35; }
+.zcrb-single__media { margin: 0 0 20px; }
+.zcrb-single__media img { width: 100%; height: auto; border-radius: var(--zcrb-radius-sm); display: block; }
+.zcrb-single__back { margin-top: 20px; }
+
+/* ---------- a11y ---------- */
+.zcrb-wrap a:focus-visible,
+.zcrb-wrap button:focus-visible,
+.zcrb-wrap input:focus-visible,
+.zcrb-wrap textarea:focus-visible {
+    outline: 2px solid var(--zcrb-purple);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .zcrb-card { transition: none; }
+}

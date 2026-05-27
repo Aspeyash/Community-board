@@ -1,0 +1,88 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ZYMARG Community Request Board 1.0.0\n"
+"Report-Msgid-Bugs-To: https://zymarg.com\n"
+"POT-Creation-Date: 2026-05-27 00:00+0600\n"
+"PO-Revision-Date: 2026-05-27 00:00+0600\n"
+"Last-Translator: ZYMARG <hello@zymarg.com>\n"
+"Language-Team: Bengali (Bangladesh)\n"
+"Language: bn_BD\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Community Requests"
+msgstr "কমিউনিটি রিকোয়েস্ট"
+
+msgid "Community Request"
+msgstr "কমিউনিটি রিকোয়েস্ট"
+
+msgid "Community Board"
+msgstr "কমিউনিটি বোর্ড"
+
+msgid "Add New Request"
+msgstr "নতুন রিকোয়েস্ট"
+
+msgid "Edit Request"
+msgstr "রিকোয়েস্ট সম্পাদনা"
+
+msgid "All Requests"
+msgstr "সব রিকোয়েস্ট"
+
+msgid "Search Requests"
+msgstr "রিকোয়েস্ট খুঁজুন"
+
+msgid "No requests found."
+msgstr "কোনো রিকোয়েস্ট পাওয়া যায়নি।"
+
+msgid "Submitter Details (Private — never shown publicly)"
+msgstr "জমাদানকারীর তথ্য (গোপনীয় — কখনই প্রকাশ্যে দেখানো হবে না)"
+
+msgid "Full Name"
+msgstr "পূর্ণ নাম"
+
+msgid "Phone"
+msgstr "ফোন"
+
+msgid "Email"
+msgstr "ইমেইল"
+
+msgid "Language"
+msgstr "ভাষা"
+
+msgid "Approval"
+msgstr "অনুমোদন"
+
+msgid "Approve"
+msgstr "অনুমোদন দিন"
+
+msgid "Reject"
+msgstr "বাতিল করুন"
+
+msgid "Request approved and published."
+msgstr "রিকোয়েস্ট অনুমোদিত ও প্রকাশিত হয়েছে।"
+
+msgid "Request rejected and moved to Trash."
+msgstr "রিকোয়েস্ট বাতিল করে ট্র্যাশে পাঠানো হয়েছে।"
+
+msgid "Please enter your full name."
+msgstr "অনুগ্রহ করে পূর্ণ নাম লিখুন।"
+
+msgid "Please enter a valid phone number."
+msgstr "অনুগ্রহ করে বৈধ ফোন নম্বর লিখুন।"
+
+msgid "Please enter a valid email address."
+msgstr "অনুগ্রহ করে বৈধ ইমেইল ঠিকানা লিখুন।"
+
+msgid "Please write your request message."
+msgstr "অনুগ্রহ করে আপনার রিকোয়েস্ট মেসেজ লিখুন।"
+
+msgid "Too many submissions. Please try again later."
+msgstr "অনেকবার জমা দিয়েছেন। কিছুক্ষণ পর আবার চেষ্টা করুন।"
+
+msgid "Community Member"
+msgstr "কমিউনিটি সদস্য"
+
+msgid "Invalid security token."
+msgstr "অবৈধ সিকিউরিটি টোকেন।"
