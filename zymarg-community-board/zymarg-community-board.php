@@ -3,7 +3,7 @@
  * Plugin Name:       ZYMARG Community Request Board
  * Plugin URI:        https://zymarg.com/community/
  * Description:       SEO-optimized Community Request Board for ZYMARG. Logged-in users submit requests (Name, Phone, Email, Message, Image). Admin approves/rejects from the WP dashboard. Public feed shows only Name, Message, Date, and Image. Bilingual (English/Bengali), schema-marked, mobile responsive, with a Material 3 inspired glass-card design, fully customizable typography (per-element font sizes for desktop + mobile), numbered-pagination crawlable feed, and configurable data retention. Updates ship via GitHub Releases. Compatible with Astra, Elementor Pro, WooCommerce, and Dokan.
- * Version:           1.4.0
+ * Version:           1.4.1
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            ZYMARG
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
-define( 'ZCRB_VERSION', '1.4.0' );
+define( 'ZCRB_VERSION', '1.4.1' );
 define( 'ZCRB_PLUGIN_FILE', __FILE__ );
 define( 'ZCRB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ZCRB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

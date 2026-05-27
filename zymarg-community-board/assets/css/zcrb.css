@@ -423,17 +423,6 @@
     color: var(--zcrb-text);
     margin: 0;
 }
-.zcrb-feed__badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 12px;
-    background: var(--zcrb-surface-low);
-    border-radius: var(--zcrb-radius-full);
-    font-family: var(--zcrb-font-body);
-    font-size: var(--zcrb-fs-card-ref);
-    font-weight: 600;
-    color: var(--zcrb-text);
-}
 
 .zcrb-grid {
     display: grid;

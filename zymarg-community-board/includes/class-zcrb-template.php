@@ -224,7 +224,6 @@ class ZCRB_Template {
                 <section class="zcrb-feed" aria-label="<?php echo esc_attr( ZCRB_I18n::t( 'page_title' ) ); ?>">
                     <header class="zcrb-feed__header">
                         <h2 class="zcrb-feed__title"><?php echo esc_html( ZCRB_I18n::t( 'recent_requests' ) ); ?></h2>
-                        <span class="zcrb-feed__badge"><?php echo esc_html( ZCRB_I18n::t( 'all_requests' ) ); ?></span>
                     </header>
 
                     <div class="zcrb-grid" data-zcrb-grid>

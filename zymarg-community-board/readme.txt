@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 1.4.1 =
+* Removed the decorative "All Requests" / "সব রিকোয়েস্ট" badge from the feed header — it was non-functional dead text. Cleaned up the related CSS class and bilingual strings.
 
 = 1.4.0 =
 * New **Material 3 inspired design** matching the ZYMARG mockup: deep purple primary (`#4f00d0`), glass cards with backdrop-blur, decorative gradient orbs, sticky sidebar form, and a 12-column responsive layout.
