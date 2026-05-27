@@ -1,0 +1,94 @@
+name: Build & attach plugin ZIP to release
+
+# Runs whenever a tag like v1.2.0 is pushed, or whenever a GitHub Release is
+# created/edited via the UI. Builds zymarg-community-board.zip and uploads it
+# as a release asset so the in-WP auto-updater can install it directly.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [created, edited, published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to build a ZIP for (e.g. v1.2.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build and upload ZIP
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve version tag
+        id: version
+        shell: bash
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+          elif [ "${GITHUB_EVENT_NAME}" = "release" ]; then
+            TAG="${{ github.event.release.tag_name }}"
+          else
+            TAG="${{ github.event.inputs.tag }}"
+          fi
+          VERSION="${TAG#v}"
+          echo "tag=$TAG"        >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Sanity check plugin directory
+        run: |
+          test -f zymarg-community-board/zymarg-community-board.php
+          test -d zymarg-community-board/includes
+          test -d zymarg-community-board/assets
+          test -d zymarg-community-board/templates
+
+      - name: Sync plugin "Version" header with tag
+        shell: bash
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [ -n "$VERSION" ]; then
+            sed -i -E "s/^([[:space:]]*\*[[:space:]]+Version:[[:space:]]+).*$/\1${VERSION}/" \
+              zymarg-community-board/zymarg-community-board.php
+            sed -i -E "s/define\([[:space:]]*'ZCRB_VERSION'[[:space:]]*,[[:space:]]*'[^']*'[[:space:]]*\);/define( 'ZCRB_VERSION', '${VERSION}' );/" \
+              zymarg-community-board/zymarg-community-board.php
+            sed -i -E "s/^Stable tag:.*$/Stable tag: ${VERSION}/" \
+              zymarg-community-board/readme.txt || true
+          fi
+
+      - name: Build plugin ZIP
+        shell: bash
+        run: |
+          mkdir -p dist
+          # Exclude dev/CI artifacts so the ZIP only ships runtime files.
+          zip -r "dist/zymarg-community-board.zip" zymarg-community-board \
+            -x "*.DS_Store" \
+            -x "*/.git/*" \
+            -x "*/node_modules/*" \
+            -x "*/tests/*"
+          ls -lh dist/
+
+      - name: Upload as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zymarg-community-board-${{ steps.version.outputs.version }}
+          path: dist/zymarg-community-board.zip
+          if-no-files-found: error
+
+      - name: Attach to GitHub Release
+        if: github.event_name == 'release' || github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: ${{ github.event_name == 'push' }}
+          files: dist/zymarg-community-board.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

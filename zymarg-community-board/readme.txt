@@ -4,30 +4,53 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-SEO-optimized Community Request Board for ZYMARG (zymarg.com). Logged-in shoppers post what they want to buy; vendors respond. 30 requests per page with numbered pagination. Bengali + English. Compatible with Astra, Elementor Pro, WooCommerce, and Dokan.
+SEO-optimized Community Request Board for ZYMARG (zymarg.com). Logged-in shoppers post what they want to buy; vendors respond. 30 requests per page with crawlable numbered pagination. Bilingual (English/Bengali). Fully customizable via the Settings page. Auto-updates from GitHub Releases. Compatible with Astra, Elementor Pro, WooCommerce, and Dokan.
 
 == Features ==
 
 * Public archive at `/community/` with single posts at `/community/{slug}` (readable URL slugs).
-* Server-side rendered cards — fully crawlable by Google. **30 requests per page** with classic numbered pagination. Every page (`/community/page/2/`, `/community/page/3/`, …) has its own unique title, `rel="canonical"`, `og:url`, plus `rel="prev"` / `rel="next"`.
-* Submission form for logged-in users only. Required fields: Full Name, Phone Number, Email Address, Request Message (200-character cap), and an optional Image upload (JPG/PNG/WEBP, 2 MB max).
-* Admin approval workflow. Submissions land as `pending`. Approve/Reject from the WP dashboard.
+* Server-side rendered cards — fully crawlable by Google. Numbered pagination with one URL per page (`/community/page/2/`, `/community/page/3/`, …) and unique title, `rel="canonical"`, `og:url`, `rel="prev"`, `rel="next"` per page.
+* Submission form for logged-in users only. Default required fields: Full Name, Phone Number, Email Address, Request Message (200-character cap). Optional Image upload (JPG/PNG/WEBP, 2 MB max by default).
+* Admin approval workflow. Submissions arrive as `pending`. Approve/Reject from the WP dashboard.
 * **Privacy:** Phone and Email are stored as private post meta (`auth_callback` blocks REST). Public feed shows only Name, Message, Date, and Image.
 * SEO ready: H1, meta description, Open Graph, Twitter Card, JSON-LD `FAQPage`, `ItemList`, `CollectionPage` (archive) and `Question` (single).
-* Bilingual interface: English + Bengali. Switch via `?lang=bn` / `?lang=en` (persisted via cookie). Honours WP locale `bn_BD` automatically.
-* White base + soft purple radial gradient orbs, ZYMARG primary purple (`#6b3fa0`) action buttons.
-* Mobile responsive, accessible, no theme overrides — works inside Astra and Elementor Pro out of the box. Coexists with WooCommerce and Dokan.
+* Bilingual interface: English + Bengali. Switch via `?lang=bn` / `?lang=en` (cookie persisted). Honours WP locale `bn_BD` automatically.
+* White base + soft purple radial gradient orbs; ZYMARG primary purple action buttons. Mobile responsive, accessible, no theme overrides — works inside Astra and Elementor Pro out of the box. Coexists with WooCommerce and Dokan.
+* **Fully customizable Settings page** — colors, per-page, message limit, image rules, required-field toggles, content overrides, notifications.
+* **GitHub Releases auto-updater** — publish a release on GitHub and WordPress shows an "Update Now" link.
 
 == Installation ==
 
-1. Upload the `zymarg-community-board` folder to `/wp-content/plugins/`.
+1. Upload the `zymarg-community-board` folder to `/wp-content/plugins/` *or* upload `zymarg-community-board.zip` via Plugins → Add New → Upload Plugin.
 2. Activate **ZYMARG Community Request Board** from the Plugins screen.
 3. Go to **Settings → Permalinks** and click **Save** once to flush rewrite rules. The board will be available at `https://zymarg.com/community/`.
-4. Optional: place the board inside an Elementor Pro / Astra page using the shortcode `[zymarg_community_board]`. Use `[zymarg_community_board show_form="0"]` for a feed-only block, or `[zymarg_community_form]` for just the submission form.
+4. Go to **Community Board → Settings** to customize colors, per-page count, form requirements, and the GitHub repository for auto-updates.
+
+== Settings ==
+
+The settings live under **Community Board → Settings** in the WordPress admin and cover:
+
+* **General** — requests per page, message character limit, default language, submissions per user per hour.
+* **Form & Image Upload** — required-field toggles for Phone, Email, Image; max image size; allowed MIME types; whether to allow uploads at all.
+* **Page Content (overrides)** — H1, subtitle, and meta description per language. Leave blank to fall back to the built-in strings.
+* **Branding & Colors** — primary purple, hover purple, light purple, gradient orb colors, body/muted/background colors. WordPress color picker.
+* **Notifications** — moderation email recipient and subject template.
+* **GitHub Auto-Updates** — owner / repo / branch and an optional personal access token for private repositories. A "Check for updates" button forces an immediate re-query.
+
+== Updates from GitHub ==
+
+The bundled `.github/workflows/release.yml` builds a `zymarg-community-board.zip` for every published release and attaches it as a release asset. WordPress then sees a new release as a regular plugin update.
+
+To ship a new version:
+
+1. Bump the `Version:` header in `zymarg-community-board/zymarg-community-board.php` and `Stable tag:` in `readme.txt`.
+2. Commit and push.
+3. Create a GitHub Release with tag `v1.x.y`. The workflow attaches the ZIP automatically.
+4. Existing installs will see the update on the Plugins screen within hours (or instantly via **Community Board → Settings → Check for updates**).
 
 == Shortcodes ==
 
@@ -47,10 +70,17 @@ Phone numbers and email addresses are stored as private post meta. They are visi
 
 == Changelog ==
 
+= 1.2.0 =
+* New **Settings page** under Community Board → Settings with color pickers, per-page count, message limit, image rules, required-field toggles, content overrides (per language), notification config, and GitHub repo settings.
+* New **GitHub Releases auto-updater** — WP shows new versions on the Plugins screen exactly like a wordpress.org plugin. Smart folder renaming handles both release-asset ZIPs and zipballs.
+* New **GitHub Actions workflow** that builds and attaches `zymarg-community-board.zip` to every published release.
+* Brand colors are now driven entirely by CSS variables generated from settings — change colors without touching CSS.
+* `zcrb_get_setting()` helper for theme/site-builder code that wants to read plugin config.
+
 = 1.1.0 =
-* Switched the public feed from infinite scroll to **30 requests per page with classic numbered pagination**.
-* Each paginated archive URL now ships its own unique `<title>`, `rel="canonical"`, `og:url`, plus `rel="prev"` / `rel="next"`, so Google indexes every page distinctly.
-* Removed the load-more AJAX endpoint — pagination is fully server-rendered.
+* Switched from infinite scroll to **30 requests per page with classic numbered pagination**.
+* Each paginated archive URL ships its own unique `<title>`, `rel="canonical"`, `og:url`, `rel="prev"` / `rel="next"`.
+* Removed the load-more AJAX endpoint; pagination is fully server-rendered.
 
 = 1.0.0 =
 * Initial release.

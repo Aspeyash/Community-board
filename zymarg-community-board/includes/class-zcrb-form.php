@@ -3,6 +3,9 @@
  * Submission form handler. Logged-in users only. Creates a `pending`
  * zcrb_request post that requires admin approval before publishing.
  *
+ * Reads runtime limits and required-field flags from ZCRB_Settings so an
+ * admin can change them from the UI without editing code.
+ *
  * @package ZymargCommunityBoard
  */
 
@@ -27,6 +30,10 @@ class ZCRB_Form {
         add_action( 'admin_post_zcrb_submit_request', array( $this, 'handle_classic_post' ) );
     }
 
+    private function setting( string $key, $default = null ) {
+        return function_exists( 'zcrb_get_setting' ) ? zcrb_get_setting( $key, $default ) : $default;
+    }
+
     /**
      * Validate and persist a submission. Returns post ID on success or WP_Error.
      *
@@ -42,6 +49,13 @@ class ZCRB_Form {
 
         $user_id = get_current_user_id();
 
+        $message_limit  = (int) $this->setting( 'message_limit', ZCRB_MESSAGE_LIMIT );
+        $phone_required = (bool) $this->setting( 'phone_required', 1 );
+        $email_required = (bool) $this->setting( 'email_required', 1 );
+        $image_required = (bool) $this->setting( 'image_required', 0 );
+        $image_enabled  = (bool) $this->setting( 'image_enabled', 1 );
+        $rate_limit     = (int) $this->setting( 'rate_limit_per_hour', 5 );
+
         $full_name = isset( $input['zcrb_full_name'] ) ? sanitize_text_field( $input['zcrb_full_name'] ) : '';
         $phone     = isset( $input['zcrb_phone'] ) ? sanitize_text_field( $input['zcrb_phone'] ) : '';
         $email     = isset( $input['zcrb_email'] ) ? sanitize_email( $input['zcrb_email'] ) : '';
@@ -52,23 +66,32 @@ class ZCRB_Form {
         if ( '' === $full_name ) {
             return new WP_Error( 'zcrb_missing_name', __( 'Please enter your full name.', 'zymarg-community-board' ) );
         }
-        if ( '' === $phone || ! preg_match( '/[0-9]{6,}/', $phone ) ) {
+        if ( $phone_required && ( '' === $phone || ! preg_match( '/[0-9]{6,}/', $phone ) ) ) {
             return new WP_Error( 'zcrb_missing_phone', __( 'Please enter a valid phone number.', 'zymarg-community-board' ) );
         }
-        if ( '' === $email || ! is_email( $email ) ) {
+        if ( $email_required && ( '' === $email || ! is_email( $email ) ) ) {
             return new WP_Error( 'zcrb_missing_email', __( 'Please enter a valid email address.', 'zymarg-community-board' ) );
+        }
+        // If email is provided but invalid, reject (even when not required).
+        if ( '' !== $email && ! is_email( $email ) ) {
+            return new WP_Error( 'zcrb_invalid_email', __( 'Please enter a valid email address.', 'zymarg-community-board' ) );
         }
         if ( '' === $message ) {
             return new WP_Error( 'zcrb_missing_message', __( 'Please write your request message.', 'zymarg-community-board' ) );
         }
-        // Enforce 200-character cap (count multibyte safely).
-        if ( function_exists( 'mb_strlen' ) && mb_strlen( $message, 'UTF-8' ) > ZCRB_MESSAGE_LIMIT ) {
-            $message = mb_substr( $message, 0, ZCRB_MESSAGE_LIMIT, 'UTF-8' );
-        } elseif ( strlen( $message ) > ZCRB_MESSAGE_LIMIT ) {
-            $message = substr( $message, 0, ZCRB_MESSAGE_LIMIT );
+        // Enforce character cap.
+        if ( function_exists( 'mb_strlen' ) && mb_strlen( $message, 'UTF-8' ) > $message_limit ) {
+            $message = mb_substr( $message, 0, $message_limit, 'UTF-8' );
+        } elseif ( strlen( $message ) > $message_limit ) {
+            $message = substr( $message, 0, $message_limit );
         }
 
-        // Throttle: max 5 submissions per user per hour.
+        // Image required check (only when uploads are also enabled).
+        if ( $image_enabled && $image_required && empty( $files['zcrb_image']['name'] ) ) {
+            return new WP_Error( 'zcrb_missing_image', __( 'Please attach an image.', 'zymarg-community-board' ) );
+        }
+
+        // Throttle: max N submissions per user per hour.
         $recent = get_posts( array(
             'post_type'      => ZCRB_POST_TYPE,
             'post_status'    => array( 'pending', 'publish', 'draft' ),
@@ -79,11 +102,11 @@ class ZCRB_Form {
                     'inclusive' => true,
                 ),
             ),
-            'posts_per_page' => 6,
+            'posts_per_page' => $rate_limit + 1,
             'fields'         => 'ids',
             'no_found_rows'  => true,
         ) );
-        if ( count( $recent ) >= 5 ) {
+        if ( count( $recent ) >= $rate_limit ) {
             return new WP_Error( 'zcrb_rate_limited', __( 'Too many submissions. Please try again later.', 'zymarg-community-board' ) );
         }
 
@@ -95,7 +118,7 @@ class ZCRB_Form {
 
         $post_id = wp_insert_post( array(
             'post_type'    => ZCRB_POST_TYPE,
-            'post_status'  => 'pending', // Admin must approve before publish.
+            'post_status'  => 'pending',
             'post_title'   => $title_seed,
             'post_content' => $message,
             'post_author'  => $user_id,
@@ -113,12 +136,15 @@ class ZCRB_Form {
             return $post_id;
         }
 
-        // Optional image upload.
-        if ( ! empty( $files['zcrb_image']['name'] ) ) {
+        // Optional / required image upload.
+        if ( $image_enabled && ! empty( $files['zcrb_image']['name'] ) ) {
             $upload = $this->handle_image_upload( $files['zcrb_image'], (int) $post_id );
             if ( is_wp_error( $upload ) ) {
-                // Don't fail the whole submission — just record a warning meta and continue.
                 update_post_meta( $post_id, '_zcrb_image_error', $upload->get_error_message() );
+                if ( $image_required ) {
+                    wp_delete_post( (int) $post_id, true );
+                    return $upload;
+                }
             } else {
                 set_post_thumbnail( $post_id, $upload );
             }
@@ -138,7 +164,6 @@ class ZCRB_Form {
             'lang'      => $lang,
         ) );
 
-        // Notify admin.
         $this->notify_admin( (int) $post_id, $full_name );
 
         return (int) $post_id;
@@ -147,7 +172,6 @@ class ZCRB_Form {
     private function build_slug( string $message, string $lang ): string {
         $base = $message;
         if ( 'bn' === $lang ) {
-            // Bengali: keep it short, sanitize_title will handle UTF-8.
             $base = function_exists( 'mb_substr' ) ? mb_substr( $base, 0, 60, 'UTF-8' ) : substr( $base, 0, 60 );
         } else {
             $base = function_exists( 'mb_substr' ) ? mb_substr( $base, 0, 80, 'UTF-8' ) : substr( $base, 0, 80 );
@@ -171,12 +195,15 @@ class ZCRB_Form {
      * @param int   $post_id
      */
     private function handle_image_upload( array $file, int $post_id ) {
-        $allowed = array( 'image/jpeg', 'image/png', 'image/webp' );
-        $type    = isset( $file['type'] ) ? strtolower( (string) $file['type'] ) : '';
+        $allowed_csv = (string) $this->setting( 'image_allowed_types', 'image/jpeg,image/png,image/webp' );
+        $allowed     = array_filter( array_map( 'trim', explode( ',', $allowed_csv ) ) );
+        $type        = isset( $file['type'] ) ? strtolower( (string) $file['type'] ) : '';
         if ( ! in_array( $type, $allowed, true ) ) {
             return new WP_Error( 'zcrb_bad_image_type', ZCRB_I18n::t( 'invalid_image' ) );
         }
-        if ( ! empty( $file['size'] ) && (int) $file['size'] > 2 * 1024 * 1024 ) {
+
+        $max_mb = (int) $this->setting( 'image_max_mb', 2 );
+        if ( ! empty( $file['size'] ) && (int) $file['size'] > $max_mb * 1024 * 1024 ) {
             return new WP_Error( 'zcrb_image_too_large', ZCRB_I18n::t( 'file_too_large' ) );
         }
 
@@ -184,11 +211,29 @@ class ZCRB_Form {
         require_once ABSPATH . 'wp-admin/includes/media.php';
         require_once ABSPATH . 'wp-admin/includes/image.php';
 
-        // Use media_handle_upload to attach to the new post.
+        // Build a mimes whitelist from the allowed-types setting.
+        $mimes = array();
+        foreach ( $allowed as $m ) {
+            switch ( $m ) {
+                case 'image/jpeg':
+                    $mimes['jpg|jpeg'] = 'image/jpeg';
+                    break;
+                case 'image/png':
+                    $mimes['png'] = 'image/png';
+                    break;
+                case 'image/webp':
+                    $mimes['webp'] = 'image/webp';
+                    break;
+                case 'image/gif':
+                    $mimes['gif'] = 'image/gif';
+                    break;
+            }
+        }
+
         $_FILES['zcrb_image'] = $file;
         $attachment_id        = media_handle_upload( 'zcrb_image', $post_id, array(), array(
             'test_form' => false,
-            'mimes'     => array(
+            'mimes'     => $mimes ?: array(
                 'jpg|jpeg' => 'image/jpeg',
                 'png'      => 'image/png',
                 'webp'     => 'image/webp',
@@ -202,16 +247,21 @@ class ZCRB_Form {
     }
 
     private function notify_admin( int $post_id, string $full_name ): void {
-        $admin_email = get_option( 'admin_email' );
+        $configured_email = (string) $this->setting( 'notify_email', '' );
+        $admin_email      = $configured_email !== '' ? $configured_email : get_option( 'admin_email' );
         if ( ! $admin_email ) {
             return;
         }
+
         $edit_link = admin_url( 'post.php?post=' . $post_id . '&action=edit' );
-        $subject   = sprintf(
+
+        $configured_subject = (string) $this->setting( 'notify_subject', '' );
+        $subject            = $configured_subject !== '' ? $configured_subject : sprintf(
             /* translators: %s: site name */
             __( '[%s] New community request awaiting approval', 'zymarg-community-board' ),
             wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES )
         );
+
         $body = sprintf(
             "%s\n\n%s\n%s",
             sprintf( __( 'A new community request was submitted by %s and is awaiting moderation.', 'zymarg-community-board' ), $full_name ),

@@ -21,15 +21,14 @@ class ZCRB_Template {
         return self::$instance;
     }
 
+    public static function setting( string $key, $default = null ) {
+        return function_exists( 'zcrb_get_setting' ) ? zcrb_get_setting( $key, $default ) : $default;
+    }
+
     private function __construct() {
-        // Use plugin templates only when the theme does not provide its own.
         add_filter( 'archive_template', array( $this, 'maybe_archive_template' ) );
         add_filter( 'single_template', array( $this, 'maybe_single_template' ) );
-
-        // Inject schema + content wrappers into the_content for compatibility with Astra/Elementor.
         add_filter( 'the_content', array( $this, 'filter_single_content' ), 9 );
-
-        // Tell crawlers about prev/next pages on the archive.
         add_action( 'wp_head', array( $this, 'rel_next_prev' ), 5 );
     }
 
@@ -59,12 +58,10 @@ class ZCRB_Template {
         if ( ! is_singular( ZCRB_POST_TYPE ) || ! in_the_loop() || ! is_main_query() ) {
             return $content;
         }
-
         $post = get_post();
         if ( ! $post ) {
             return $content;
         }
-
         ob_start();
         $this->render_single( $post );
         return (string) ob_get_clean();
@@ -108,7 +105,6 @@ class ZCRB_Template {
                 'alt'     => esc_attr( wp_trim_words( $message, 12, '' ) ),
             ) );
         }
-
         ?>
         <article class="zcrb-card" itemscope itemtype="https://schema.org/Question">
             <?php if ( $thumb_html ) : ?>
@@ -145,6 +141,8 @@ class ZCRB_Template {
             'show_header' => true,
         ) );
 
+        $per_page = (int) self::setting( 'per_page', ZCRB_PER_PAGE );
+
         $paged = max( 1, (int) get_query_var( 'paged' ) );
         if ( 1 === $paged ) {
             $paged = max( 1, (int) get_query_var( 'page' ) );
@@ -153,7 +151,7 @@ class ZCRB_Template {
         $query = new WP_Query( array(
             'post_type'      => ZCRB_POST_TYPE,
             'post_status'    => 'publish',
-            'posts_per_page' => ZCRB_PER_PAGE,
+            'posts_per_page' => $per_page,
             'paged'          => $paged,
             'orderby'        => 'date',
             'order'          => 'DESC',
@@ -238,20 +236,13 @@ class ZCRB_Template {
             return;
         }
 
-        // Build the base URL so that pagination works equally well from the
-        // CPT archive AND from a static page that uses the [zymarg_community_board] shortcode.
         $base = get_pagenum_link( 1 );
         $base = remove_query_arg( 'paged', $base );
         if ( false === strpos( $base, '%_%' ) ) {
             $base = trailingslashit( $base ) . '%_%';
         }
 
-        $format = '';
-        if ( get_option( 'permalink_structure' ) ) {
-            $format = 'page/%#%/';
-        } else {
-            $format = '?paged=%#%';
-        }
+        $format = get_option( 'permalink_structure' ) ? 'page/%#%/' : '?paged=%#%';
 
         $links = paginate_links( array(
             'base'      => $base,
@@ -285,6 +276,13 @@ class ZCRB_Template {
         $action_url   = admin_url( 'admin-post.php' );
         $login_url    = wp_login_url( get_permalink() ?: home_url( '/' . ZCRB_ARCHIVE_SLUG . '/' ) );
         $register_url = wp_registration_url();
+
+        $message_limit  = (int) self::setting( 'message_limit', ZCRB_MESSAGE_LIMIT );
+        $phone_required = (bool) self::setting( 'phone_required', 1 );
+        $email_required = (bool) self::setting( 'email_required', 1 );
+        $image_required = (bool) self::setting( 'image_required', 0 );
+        $image_enabled  = (bool) self::setting( 'image_enabled', 1 );
+        $image_types    = (string) self::setting( 'image_allowed_types', 'image/jpeg,image/png,image/webp' );
         ?>
         <section class="zcrb-form-wrap" aria-labelledby="zcrb-form-title">
             <h2 id="zcrb-form-title" class="zcrb-form__title"><?php echo esc_html( ZCRB_I18n::t( 'submit_request' ) ); ?></h2>
@@ -315,30 +313,41 @@ class ZCRB_Template {
 
                     <div class="zcrb-field-row">
                         <div class="zcrb-field">
-                            <label for="zcrb-phone"><?php echo esc_html( ZCRB_I18n::t( 'phone_number' ) ); ?> <span class="zcrb-req">*</span></label>
-                            <input id="zcrb-phone" type="tel" name="zcrb_phone" required maxlength="32" autocomplete="tel" inputmode="tel" />
+                            <label for="zcrb-phone">
+                                <?php echo esc_html( ZCRB_I18n::t( 'phone_number' ) ); ?>
+                                <?php if ( $phone_required ) : ?><span class="zcrb-req">*</span><?php endif; ?>
+                            </label>
+                            <input id="zcrb-phone" type="tel" name="zcrb_phone" <?php echo $phone_required ? 'required' : ''; ?> maxlength="32" autocomplete="tel" inputmode="tel" />
                             <small class="zcrb-help"><?php echo esc_html( ZCRB_I18n::t( 'phone_help' ) ); ?></small>
                         </div>
                         <div class="zcrb-field">
-                            <label for="zcrb-email"><?php echo esc_html( ZCRB_I18n::t( 'email_address' ) ); ?> <span class="zcrb-req">*</span></label>
-                            <input id="zcrb-email" type="email" name="zcrb_email" required value="<?php echo esc_attr( $email ); ?>" autocomplete="email" />
+                            <label for="zcrb-email">
+                                <?php echo esc_html( ZCRB_I18n::t( 'email_address' ) ); ?>
+                                <?php if ( $email_required ) : ?><span class="zcrb-req">*</span><?php endif; ?>
+                            </label>
+                            <input id="zcrb-email" type="email" name="zcrb_email" <?php echo $email_required ? 'required' : ''; ?> value="<?php echo esc_attr( $email ); ?>" autocomplete="email" />
                             <small class="zcrb-help"><?php echo esc_html( ZCRB_I18n::t( 'email_help' ) ); ?></small>
                         </div>
                     </div>
 
                     <div class="zcrb-field">
                         <label for="zcrb-message"><?php echo esc_html( ZCRB_I18n::t( 'request_message' ) ); ?> <span class="zcrb-req">*</span></label>
-                        <textarea id="zcrb-message" name="zcrb_message" required rows="4" maxlength="<?php echo (int) ZCRB_MESSAGE_LIMIT; ?>" data-zcrb-message></textarea>
+                        <textarea id="zcrb-message" name="zcrb_message" required rows="4" maxlength="<?php echo (int) $message_limit; ?>" data-zcrb-message></textarea>
                         <small class="zcrb-help">
-                            <span data-zcrb-counter><?php echo (int) ZCRB_MESSAGE_LIMIT; ?></span>
+                            <span data-zcrb-counter><?php echo (int) $message_limit; ?></span>
                             <?php echo esc_html( ZCRB_I18n::t( 'chars_remaining' ) ); ?>
                         </small>
                     </div>
 
-                    <div class="zcrb-field">
-                        <label for="zcrb-image"><?php echo esc_html( ZCRB_I18n::t( 'image_optional' ) ); ?></label>
-                        <input id="zcrb-image" type="file" name="zcrb_image" accept="image/jpeg,image/png,image/webp" />
-                    </div>
+                    <?php if ( $image_enabled ) : ?>
+                        <div class="zcrb-field">
+                            <label for="zcrb-image">
+                                <?php echo esc_html( $image_required ? ZCRB_I18n::t( 'image_required' ) : ZCRB_I18n::t( 'image_optional' ) ); ?>
+                                <?php if ( $image_required ) : ?><span class="zcrb-req">*</span><?php endif; ?>
+                            </label>
+                            <input id="zcrb-image" type="file" name="zcrb_image" <?php echo $image_required ? 'required' : ''; ?> accept="<?php echo esc_attr( $image_types ); ?>" />
+                        </div>
+                    <?php endif; ?>
 
                     <div class="zcrb-form__actions">
                         <button type="submit" class="zcrb-btn zcrb-btn--primary" data-zcrb-submit>
