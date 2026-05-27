@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,11 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 1.3.0 =
+* New **Privacy & Data Retention** setting — admin picks 30 / 60 / 90 days (or "Disabled"). A daily WP-Cron sweep deletes any request older than that, including the post meta (Name, Phone, Email) and the uploaded image.
+* The submission form now displays a clear privacy notice telling visitors how long their data is kept (e.g. "For your privacy, every submission is automatically deleted after 30 days."). When retention is disabled, only the "Phone and email are private" reassurance is shown.
+* New **Run cleanup now** button under Settings to trigger a manual sweep without waiting for cron.
 
 = 1.2.0 =
 * New **Settings page** under Community Board → Settings with color pickers, per-page count, message limit, image rules, required-field toggles, content overrides (per language), notification config, and GitHub repo settings.

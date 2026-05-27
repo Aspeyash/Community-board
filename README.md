@@ -4,7 +4,7 @@ WordPress plugin powering the **Community Request Board** at [zymarg.com/communi
 Logged-in shoppers post what they want to buy, vendors across Bangladesh respond. SEO-optimized,
 bilingual (English + Bengali), Astra / Elementor Pro / WooCommerce / Dokan compatible.
 
-> **Latest:** v1.2.0 — fully customizable Settings page + GitHub Releases auto-updater.
+> **Latest:** v1.3.0 — Privacy & Data Retention (auto-delete after 30/60/90 days) + visible privacy notice on the submission form.
 
 ## Highlights
 
@@ -57,6 +57,7 @@ Everything you'd want to change lives at **Community Board → Settings**:
 | **Page Content (overrides)** | H1, subtitle, meta description per language (EN + BN). Blank = use built-in strings |
 | **Branding & Colors** | Primary purple, hover, light tints, 3 gradient orbs, body / muted / background colors (WP color picker) |
 | **Notifications** | Moderation recipient email, subject template |
+| **Privacy & Data Retention** | Auto-delete requests after 30 / 60 / 90 days (or never). The chosen period is also shown to visitors on the submission form. Manual "Run cleanup now" button. |
 | **GitHub Auto-Updates** | Owner, repo, branch, optional PAT for private repos, "Check for updates" button |
 
 The configured colors are emitted as CSS custom properties on the front-end, so changes apply instantly without touching the stylesheet.

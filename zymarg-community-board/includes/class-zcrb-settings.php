@@ -82,6 +82,9 @@ class ZCRB_Settings {
             'notify_email'         => '', // blank = admin_email
             'notify_subject'       => '', // blank = default
 
+            // -------- Data Retention (auto-delete) --------
+            'data_retention_days'  => 0, // 0 = disabled, 30, 60, or 90
+
             // -------- GitHub Updates --------
             'enable_auto_updates'  => 1,
             'github_owner'         => 'Aspeyash',
@@ -176,6 +179,10 @@ class ZCRB_Settings {
         $clean['notify_email']        = sanitize_email( (string) ( $input['notify_email'] ?? '' ) );
 
         // GitHub.
+        // Data retention — only accept the documented values.
+        $retention = (int) ( $input['data_retention_days'] ?? 0 );
+        $clean['data_retention_days'] = in_array( $retention, array( 0, 30, 60, 90 ), true ) ? $retention : 0;
+
         $clean['github_owner']  = sanitize_text_field( (string) ( $input['github_owner'] ?? $defaults['github_owner'] ) );
         $clean['github_repo']   = sanitize_text_field( (string) ( $input['github_repo'] ?? $defaults['github_repo'] ) );
         $clean['github_branch'] = sanitize_text_field( (string) ( $input['github_branch'] ?? $defaults['github_branch'] ) );
@@ -374,6 +381,34 @@ class ZCRB_Settings {
                         <th scope="row"><label for="zcrb_notify_subject"><?php esc_html_e( 'Notification subject', 'zymarg-community-board' ); ?></label></th>
                         <td>
                             <input id="zcrb_notify_subject" type="text" class="regular-text" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[notify_subject]" value="<?php echo esc_attr( $s['notify_subject'] ); ?>" placeholder="<?php esc_attr_e( '[Site] New community request awaiting approval', 'zymarg-community-board' ); ?>" />
+                        </td>
+                    </tr>
+                </table>
+
+                <h2><?php esc_html_e( 'Privacy & Data Retention', 'zymarg-community-board' ); ?></h2>
+                <p class="description">
+                    <?php esc_html_e( 'Automatically delete every community request once it gets older than the chosen age. Deletion removes the post, all submitter info (Name, Phone, Email), and any uploaded image. The selected period is also displayed to visitors on the submission form so they know how long their data will be kept.', 'zymarg-community-board' ); ?>
+                </p>
+                <table class="form-table" role="presentation">
+                    <tr>
+                        <th scope="row"><label for="zcrb_data_retention_days"><?php esc_html_e( 'Auto-delete requests after', 'zymarg-community-board' ); ?></label></th>
+                        <td>
+                            <select id="zcrb_data_retention_days" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[data_retention_days]">
+                                <option value="0"  <?php selected( (int) $s['data_retention_days'], 0 ); ?>><?php esc_html_e( 'Disabled (never delete)', 'zymarg-community-board' ); ?></option>
+                                <option value="30" <?php selected( (int) $s['data_retention_days'], 30 ); ?>><?php esc_html_e( '30 days', 'zymarg-community-board' ); ?></option>
+                                <option value="60" <?php selected( (int) $s['data_retention_days'], 60 ); ?>><?php esc_html_e( '60 days', 'zymarg-community-board' ); ?></option>
+                                <option value="90" <?php selected( (int) $s['data_retention_days'], 90 ); ?>><?php esc_html_e( '90 days', 'zymarg-community-board' ); ?></option>
+                            </select>
+                            <p class="description">
+                                <?php esc_html_e( 'A daily cron sweep enforces this. Set to "Disabled" to keep requests forever.', 'zymarg-community-board' ); ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Run cleanup now', 'zymarg-community-board' ); ?></th>
+                        <td>
+                            <a class="button" href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'zcrb_action', 'run_cleanup' ), 'zcrb_run_cleanup' ) ); ?>"><?php esc_html_e( 'Delete expired requests now', 'zymarg-community-board' ); ?></a>
+                            <p class="description"><?php esc_html_e( 'Manually trigger the cleanup without waiting for the daily cron.', 'zymarg-community-board' ); ?></p>
                         </td>
                     </tr>
                 </table>

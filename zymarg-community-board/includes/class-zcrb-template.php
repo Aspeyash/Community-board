@@ -283,9 +283,23 @@ class ZCRB_Template {
         $image_required = (bool) self::setting( 'image_required', 0 );
         $image_enabled  = (bool) self::setting( 'image_enabled', 1 );
         $image_types    = (string) self::setting( 'image_allowed_types', 'image/jpeg,image/png,image/webp' );
+        $retention_days = class_exists( 'ZCRB_Retention' ) ? ZCRB_Retention::configured_days() : 0;
         ?>
         <section class="zcrb-form-wrap" aria-labelledby="zcrb-form-title">
             <h2 id="zcrb-form-title" class="zcrb-form__title"><?php echo esc_html( ZCRB_I18n::t( 'submit_request' ) ); ?></h2>
+
+            <p class="zcrb-privacy-notice" role="note">
+                <span class="zcrb-privacy-notice__icon" aria-hidden="true">🔒</span>
+                <span class="zcrb-privacy-notice__text">
+                    <?php
+                    if ( $retention_days > 0 ) {
+                        echo esc_html( sprintf( ZCRB_I18n::t( 'privacy_notice' ), (int) $retention_days ) );
+                    } else {
+                        echo esc_html( ZCRB_I18n::t( 'privacy_no_delete' ) );
+                    }
+                    ?>
+                </span>
+            </p>
 
             <?php if ( ! $is_logged_in ) : ?>
                 <div class="zcrb-form__login">

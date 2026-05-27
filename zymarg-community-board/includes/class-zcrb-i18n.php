@@ -76,6 +76,9 @@ class ZCRB_I18n {
                 'next_page'         => 'Next',
                 /* translators: %d page number */
                 'page_n'            => 'Page %d',
+                /* translators: %d retention days */
+                'privacy_notice'    => 'For your privacy, every submission is automatically deleted after %d days. Phone and email are private and never shown publicly.',
+                'privacy_no_delete' => 'Phone and email are private and never shown publicly.',
             ),
             'bn' => array(
                 'page_title'        => 'কমিউনিটি রিকোয়েস্ট বোর্ড — আপনার যা প্রয়োজন আমাদের জানান',
@@ -112,6 +115,9 @@ class ZCRB_I18n {
                 'next_page'         => 'পরবর্তী',
                 /* translators: %d page number */
                 'page_n'            => 'পৃষ্ঠা %d',
+                /* translators: %d retention days */
+                'privacy_notice'    => 'আপনার গোপনীয়তার জন্য প্রতিটি রিকোয়েস্ট %d দিন পর স্বয়ংক্রিয়ভাবে মুছে ফেলা হবে। ফোন ও ইমেইল গোপনীয়, কখনোই প্রকাশ্যে দেখানো হয় না।',
+                'privacy_no_delete' => 'ফোন ও ইমেইল গোপনীয়, কখনোই প্রকাশ্যে দেখানো হয় না।',
             ),
         );
     }

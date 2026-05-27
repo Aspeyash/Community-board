@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       ZYMARG Community Request Board
  * Plugin URI:        https://zymarg.com/community/
- * Description:       SEO-optimized Community Request Board for ZYMARG. Logged-in users submit requests (Name, Phone, Email, Message, Image). Admin approves/rejects from the WP dashboard. Public feed shows only Name, Message, Date, and Image. Bilingual (English/Bengali), schema-marked, mobile responsive, with a numbered-pagination crawlable feed. Fully customizable via the Settings page. Updates ship via GitHub Releases. Compatible with Astra, Elementor Pro, WooCommerce, and Dokan.
- * Version:           1.2.0
+ * Description:       SEO-optimized Community Request Board for ZYMARG. Logged-in users submit requests (Name, Phone, Email, Message, Image). Admin approves/rejects from the WP dashboard. Public feed shows only Name, Message, Date, and Image. Bilingual (English/Bengali), schema-marked, mobile responsive, with a numbered-pagination crawlable feed and configurable data retention. Fully customizable via the Settings page. Updates ship via GitHub Releases. Compatible with Astra, Elementor Pro, WooCommerce, and Dokan.
+ * Version:           1.3.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            ZYMARG
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
-define( 'ZCRB_VERSION', '1.2.0' );
+define( 'ZCRB_VERSION', '1.3.0' );
 define( 'ZCRB_PLUGIN_FILE', __FILE__ );
 define( 'ZCRB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ZCRB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -43,6 +43,7 @@ define( 'ZCRB_MESSAGE_LIMIT', 200 );
 // -----------------------------------------------------------------------------
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-settings.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-updater.php';
+require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-retention.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-i18n.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-cpt.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-form.php';
@@ -82,6 +83,7 @@ add_action( 'plugins_loaded', static function () {
     ZCRB_Shortcode::instance();
     ZCRB_SEO::instance();
     ZCRB_Template::instance();
+    ZCRB_Retention::instance();
 
     // GitHub Releases auto-updater — admin only.
     if ( is_admin() && zcrb_get_setting( 'enable_auto_updates', 1 ) ) {
@@ -115,11 +117,15 @@ add_action( 'pre_get_posts', static function ( $query ) {
 // -----------------------------------------------------------------------------
 register_activation_hook( __FILE__, static function () {
     require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-cpt.php';
+    require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-retention.php';
     ZCRB_CPT::register_post_type();
+    ZCRB_Retention::activate();
     flush_rewrite_rules();
 } );
 
 register_deactivation_hook( __FILE__, static function () {
+    require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-retention.php';
+    ZCRB_Retention::deactivate();
     flush_rewrite_rules();
 } );
 
@@ -193,8 +199,21 @@ add_action( 'admin_notices', static function () {
     if ( ! current_user_can( 'manage_options' ) ) {
         return;
     }
-    if ( empty( $_GET['zcrb_msg'] ) || 'updates_checked' !== $_GET['zcrb_msg'] ) {
+    if ( empty( $_GET['zcrb_msg'] ) ) {
         return;
     }
-    echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Update cache cleared. Re-checking GitHub for new releases…', 'zymarg-community-board' ) . '</p></div>';
+    $msg = sanitize_key( wp_unslash( $_GET['zcrb_msg'] ) );
+
+    if ( 'updates_checked' === $msg ) {
+        echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Update cache cleared. Re-checking GitHub for new releases…', 'zymarg-community-board' ) . '</p></div>';
+    } elseif ( 'cleanup_done' === $msg ) {
+        $deleted = isset( $_GET['zcrb_deleted'] ) ? (int) $_GET['zcrb_deleted'] : 0;
+        echo '<div class="notice notice-success is-dismissible"><p>'
+            . esc_html( sprintf(
+                /* translators: %d: number of requests removed */
+                _n( 'Cleanup complete. %d expired request was deleted.', 'Cleanup complete. %d expired requests were deleted.', $deleted, 'zymarg-community-board' ),
+                $deleted
+            ) )
+            . '</p></div>';
+    }
 } );

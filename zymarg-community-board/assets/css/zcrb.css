@@ -514,3 +514,30 @@
 @media (prefers-reduced-motion: reduce) {
     .zcrb-card { transition: none; }
 }
+
+
+
+/* ---------- Privacy notice (data retention) ---------- */
+.zcrb-privacy-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    background: var(--zcrb-purple-50);
+    border: 1px solid var(--zcrb-purple-100);
+    border-radius: var(--zcrb-radius-sm);
+    color: var(--zcrb-text);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+}
+
+.zcrb-privacy-notice__icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.zcrb-privacy-notice__text {
+    flex: 1;
+}
