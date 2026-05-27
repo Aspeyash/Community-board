@@ -7,7 +7,7 @@ bilingual (English + Bengali), Astra / Elementor Pro / WooCommerce / Dokan compa
 ## Highlights
 
 - Custom post type `zcrb_request` with public archive `/community/` and readable single URLs `/community/{slug}`.
-- **Crawlable + infinite scroll**: cards are server-side rendered. Above 50 published requests the UX switches to infinite scroll, but every page is also reachable via `?paged=N` with `rel="prev"` / `rel="next"`, so Googlebot indexes them all.
+- **Crawlable + numbered pagination**: cards are server-side rendered. The feed shows **30 requests per page** with classic numbered pagination. Every page has its own URL (`/community/page/2/`, `/community/page/3/`, …) with a unique `<title>`, `rel="canonical"`, `og:url`, plus `rel="prev"` / `rel="next"`, so Google indexes every request.
 - Submission form for logged-in users only — Full Name, Phone, Email, Message (200 chars), optional Image (JPG/PNG/WEBP, 2 MB).
 - Admin approval workflow: submissions land as `pending`, approve/reject from the WordPress dashboard. Phone & Email are visible only to admins.
 - Public feed exposes only Name, Message, Date, and Image. Phone / Email never appear publicly.
@@ -44,7 +44,7 @@ zymarg-community-board/
 │   ├── class-zcrb-i18n.php         # English + Bengali strings, language switcher
 │   ├── class-zcrb-cpt.php          # CPT registration + private meta
 │   ├── class-zcrb-form.php         # submission validation + image upload
-│   ├── class-zcrb-ajax.php         # AJAX submit + load-more endpoints
+│   ├── class-zcrb-ajax.php         # AJAX submit endpoint (form only)
 │   ├── class-zcrb-admin.php        # meta box, list columns, approve/reject actions
 │   ├── class-zcrb-shortcode.php    # [zymarg_community_board] / [zymarg_community_form]
 │   ├── class-zcrb-seo.php          # meta description, OG, Twitter, JSON-LD
@@ -54,7 +54,7 @@ zymarg-community-board/
 │   └── single-zcrb.php             # default single
 ├── assets/
 │   ├── css/zcrb.css                # white base + purple orbs styling
-│   └── js/zcrb.js                  # form AJAX + infinite scroll
+│   └── js/zcrb.js                  # form AJAX (pagination is plain HTML)
 └── languages/
     └── zymarg-community-board-bn_BD.po
 ```

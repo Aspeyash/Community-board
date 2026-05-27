@@ -1,7 +1,6 @@
 <?php
 /**
  * Template helpers + theme-compatible single/archive overrides.
- * Renders the board markup so the same partials are used in SSR and AJAX.
  *
  * @package ZymargCommunityBoard
  */
@@ -30,7 +29,7 @@ class ZCRB_Template {
         // Inject schema + content wrappers into the_content for compatibility with Astra/Elementor.
         add_filter( 'the_content', array( $this, 'filter_single_content' ), 9 );
 
-        // Tell WP about the rel=next / rel=prev pagination on the archive.
+        // Tell crawlers about prev/next pages on the archive.
         add_action( 'wp_head', array( $this, 'rel_next_prev' ), 5 );
     }
 
@@ -68,9 +67,7 @@ class ZCRB_Template {
 
         ob_start();
         $this->render_single( $post );
-        $rendered = ob_get_clean();
-
-        return $rendered;
+        return (string) ob_get_clean();
     }
 
     public function rel_next_prev(): void {
@@ -82,12 +79,10 @@ class ZCRB_Template {
         $max   = (int) ( $wp_query->max_num_pages ?? 1 );
 
         if ( $paged > 1 ) {
-            $prev = get_pagenum_link( $paged - 1 );
-            echo '<link rel="prev" href="' . esc_url( $prev ) . '" />' . "\n";
+            echo '<link rel="prev" href="' . esc_url( get_pagenum_link( $paged - 1 ) ) . '" />' . "\n";
         }
         if ( $paged < $max ) {
-            $next = get_pagenum_link( $paged + 1 );
-            echo '<link rel="next" href="' . esc_url( $next ) . '" />' . "\n";
+            echo '<link rel="next" href="' . esc_url( get_pagenum_link( $paged + 1 ) ) . '" />' . "\n";
         }
     }
 
@@ -151,7 +146,7 @@ class ZCRB_Template {
         ) );
 
         $paged = max( 1, (int) get_query_var( 'paged' ) );
-        if ( ! $paged ) {
+        if ( 1 === $paged ) {
             $paged = max( 1, (int) get_query_var( 'page' ) );
         }
 
@@ -164,19 +159,17 @@ class ZCRB_Template {
             'order'          => 'DESC',
         ) );
 
-        $total          = (int) $query->found_posts;
-        $use_infinite   = $total > ZCRB_INFINITE_THRESHOLD;
-        $current_lang   = ZCRB_I18n::current_lang();
-        $archive_url    = get_post_type_archive_link( ZCRB_POST_TYPE );
+        $total        = (int) $query->found_posts;
+        $current_lang = ZCRB_I18n::current_lang();
+        $archive_url  = get_post_type_archive_link( ZCRB_POST_TYPE );
+        $max_pages    = (int) $query->max_num_pages;
 
         ob_start();
         ?>
         <div class="zcrb-wrap zcrb-lang-<?php echo esc_attr( $current_lang ); ?>"
              data-zcrb-board
              data-total="<?php echo esc_attr( (string) $total ); ?>"
-             data-max-pages="<?php echo esc_attr( (string) $query->max_num_pages ); ?>"
              data-current-page="<?php echo esc_attr( (string) $paged ); ?>"
-             data-infinite="<?php echo esc_attr( $use_infinite ? '1' : '0' ); ?>"
              data-archive-url="<?php echo esc_attr( (string) $archive_url ); ?>">
 
             <div class="zcrb-orbs" aria-hidden="true">
@@ -200,6 +193,20 @@ class ZCRB_Template {
             <?php endif; ?>
 
             <section class="zcrb-feed" aria-label="<?php echo esc_attr( ZCRB_I18n::t( 'page_title' ) ); ?>">
+                <?php if ( $total > 0 ) : ?>
+                    <p class="zcrb-feed__meta">
+                        <?php
+                        printf(
+                            /* translators: 1: current page, 2: total pages, 3: total requests */
+                            esc_html( ZCRB_I18n::t( 'page_meta' ) ),
+                            (int) $paged,
+                            max( 1, $max_pages ),
+                            $total
+                        );
+                        ?>
+                    </p>
+                <?php endif; ?>
+
                 <div class="zcrb-grid" data-zcrb-grid>
                     <?php
                     if ( $query->have_posts() ) {
@@ -214,35 +221,62 @@ class ZCRB_Template {
                     ?>
                 </div>
 
-                <?php if ( $query->max_num_pages > 1 ) : ?>
-                    <?php if ( $use_infinite ) : ?>
-                        <div class="zcrb-pagination zcrb-pagination--infinite" data-zcrb-pagination>
-                            <button type="button" class="zcrb-btn zcrb-btn--primary" data-zcrb-loadmore>
-                                <?php echo esc_html( ZCRB_I18n::t( 'load_more' ) ); ?>
-                            </button>
-                            <p class="zcrb-pagination__status" data-zcrb-status aria-live="polite"></p>
-                            <noscript>
-                                <nav class="zcrb-pagination__noscript">
-                                    <?php echo paginate_links( array(
-                                        'total'   => $query->max_num_pages,
-                                        'current' => $paged,
-                                    ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-                                </nav>
-                            </noscript>
-                        </div>
-                    <?php else : ?>
-                        <nav class="zcrb-pagination" aria-label="Pagination">
-                            <?php echo paginate_links( array(
-                                'total'   => $query->max_num_pages,
-                                'current' => $paged,
-                            ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-                        </nav>
-                    <?php endif; ?>
-                <?php endif; ?>
+                <?php $this->render_pagination( $paged, $max_pages ); ?>
             </section>
         </div>
         <?php
         return (string) ob_get_clean();
+    }
+
+    /**
+     * Render numbered pagination. Each link is a real, crawlable URL
+     * (e.g. /community/page/2/). Uses paginate_links() so the markup is
+     * compatible with theme styles that already target .page-numbers.
+     */
+    public function render_pagination( int $current, int $max_pages ): void {
+        if ( $max_pages <= 1 ) {
+            return;
+        }
+
+        // Build the base URL so that pagination works equally well from the
+        // CPT archive AND from a static page that uses the [zymarg_community_board] shortcode.
+        $base = get_pagenum_link( 1 );
+        $base = remove_query_arg( 'paged', $base );
+        if ( false === strpos( $base, '%_%' ) ) {
+            $base = trailingslashit( $base ) . '%_%';
+        }
+
+        $format = '';
+        if ( get_option( 'permalink_structure' ) ) {
+            $format = 'page/%#%/';
+        } else {
+            $format = '?paged=%#%';
+        }
+
+        $links = paginate_links( array(
+            'base'      => $base,
+            'format'    => $format,
+            'total'     => $max_pages,
+            'current'   => $current,
+            'mid_size'  => 2,
+            'end_size'  => 1,
+            'prev_text' => '&laquo; ' . ZCRB_I18n::t( 'prev_page' ),
+            'next_text' => ZCRB_I18n::t( 'next_page' ) . ' &raquo;',
+            'type'      => 'array',
+        ) );
+
+        if ( empty( $links ) || ! is_array( $links ) ) {
+            return;
+        }
+        ?>
+        <nav class="zcrb-pagination" aria-label="<?php echo esc_attr( ZCRB_I18n::t( 'pagination_label' ) ); ?>">
+            <ul class="zcrb-pagination__list">
+                <?php foreach ( $links as $link ) : ?>
+                    <li class="zcrb-pagination__item"><?php echo $link; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </nav>
+        <?php
     }
 
     public function render_form(): void {

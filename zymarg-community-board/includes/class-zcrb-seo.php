@@ -1,7 +1,11 @@
 <?php
 /**
- * SEO: meta description, Open Graph, Twitter Card, JSON-LD schema.
- * Plays nice with Yoast/RankMath: only emits tags they don't already provide.
+ * SEO: meta description, canonical, Open Graph, Twitter Card, JSON-LD schema.
+ * Each paginated archive page (`/community/page/N/`) gets its own unique
+ * title, canonical, and OG URL so Google can index every page distinctly.
+ *
+ * Plays nice with Yoast / Rank Math: only emits the meta tags they don't
+ * already provide. JSON-LD is always emitted.
  *
  * @package ZymargCommunityBoard
  */
@@ -36,9 +40,19 @@ class ZCRB_SEO {
         return defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) || class_exists( 'AIOSEO\\Plugin\\Common\\Main' );
     }
 
+    private function current_paged(): int {
+        return max( 1, (int) get_query_var( 'paged' ) );
+    }
+
     public function title_parts( array $parts ): array {
         if ( is_post_type_archive( ZCRB_POST_TYPE ) ) {
-            $parts['title'] = ZCRB_I18n::t( 'page_title' );
+            $title = ZCRB_I18n::t( 'page_title' );
+            $paged = $this->current_paged();
+            if ( $paged > 1 ) {
+                /* translators: %d: page number */
+                $title .= ' — ' . sprintf( ZCRB_I18n::t( 'page_n' ), $paged );
+            }
+            $parts['title'] = $title;
         }
         return $parts;
     }
@@ -48,29 +62,40 @@ class ZCRB_SEO {
             return;
         }
 
-        // If a dedicated SEO plugin is active, let it own the meta description / OG tags
-        // to avoid duplicates. We still output our schema below.
+        // Skip duplicate meta-description / OG output if a dedicated SEO plugin is active.
         if ( $this->seo_plugin_active() ) {
             return;
         }
 
         $description = ZCRB_I18n::t( 'meta_description' );
         $title       = ZCRB_I18n::t( 'page_title' );
-        $url         = is_singular( ZCRB_POST_TYPE ) ? get_permalink() : get_post_type_archive_link( ZCRB_POST_TYPE );
+        $url         = '';
         $image       = '';
+        $type        = 'website';
 
         if ( is_singular( ZCRB_POST_TYPE ) ) {
+            $type = 'article';
             $post = get_post();
             if ( $post ) {
                 $msg         = wp_strip_all_tags( $post->post_content );
                 $description = function_exists( 'mb_substr' ) ? mb_substr( $msg, 0, 155, 'UTF-8' ) : substr( $msg, 0, 155 );
                 $title       = function_exists( 'mb_substr' ) ? mb_substr( $msg, 0, 70, 'UTF-8' ) : substr( $msg, 0, 70 );
+                $url         = get_permalink( $post );
                 if ( has_post_thumbnail( $post ) ) {
                     $img_arr = wp_get_attachment_image_src( (int) get_post_thumbnail_id( $post ), 'large' );
                     if ( $img_arr ) {
                         $image = (string) $img_arr[0];
                     }
                 }
+            }
+        } else {
+            // Paginated archive — every page has its own canonical URL & title.
+            $paged = $this->current_paged();
+            $url   = $paged > 1 ? get_pagenum_link( $paged ) : (string) get_post_type_archive_link( ZCRB_POST_TYPE );
+            if ( $paged > 1 ) {
+                /* translators: %d: page number */
+                $title       .= ' — ' . sprintf( ZCRB_I18n::t( 'page_n' ), $paged );
+                $description .= ' ' . sprintf( ZCRB_I18n::t( 'page_n' ), $paged ) . '.';
             }
         }
 
@@ -79,7 +104,8 @@ class ZCRB_SEO {
         ?>
 <meta name="description" content="<?php echo esc_attr( $description ); ?>" />
 <meta name="robots" content="index,follow,max-image-preview:large" />
-<meta property="og:type" content="<?php echo is_singular( ZCRB_POST_TYPE ) ? 'article' : 'website'; ?>" />
+<link rel="canonical" href="<?php echo esc_url( (string) $url ); ?>" />
+<meta property="og:type" content="<?php echo esc_attr( $type ); ?>" />
 <meta property="og:title" content="<?php echo esc_attr( $title ); ?>" />
 <meta property="og:description" content="<?php echo esc_attr( $description ); ?>" />
 <meta property="og:url" content="<?php echo esc_url( (string) $url ); ?>" />
@@ -111,18 +137,21 @@ class ZCRB_SEO {
     }
 
     private function json_ld_archive(): void {
+        $paged = $this->current_paged();
+
         $query = new WP_Query( array(
             'post_type'      => ZCRB_POST_TYPE,
             'post_status'    => 'publish',
-            'posts_per_page' => 20,
+            'posts_per_page' => ZCRB_PER_PAGE,
+            'paged'          => $paged,
             'orderby'        => 'date',
             'order'          => 'DESC',
             'no_found_rows'  => true,
         ) );
 
-        $faq_items   = array();
-        $list_items  = array();
-        $position    = 0;
+        $faq_items  = array();
+        $list_items = array();
+        $position   = ( $paged - 1 ) * ZCRB_PER_PAGE;
 
         if ( $query->have_posts() ) {
             foreach ( $query->posts as $post ) {
@@ -138,19 +167,21 @@ class ZCRB_SEO {
                     $name   = $author ? $author->display_name : __( 'Community Member', 'zymarg-community-board' );
                 }
 
-                // FAQPage entries — community Q&A style.
-                $faq_items[] = array(
-                    '@type'          => 'Question',
-                    'name'           => $msg,
-                    'acceptedAnswer' => array(
-                        '@type' => 'Answer',
-                        'text'  => sprintf(
-                            /* translators: %s: poster name */
-                            __( 'Asked by %s on the ZYMARG Community Request Board. ZYMARG vendors can respond directly through the marketplace.', 'zymarg-community-board' ),
-                            $name
+                // Cap FAQ schema at 20 entries per page (Google ignores long lists).
+                if ( count( $faq_items ) < 20 ) {
+                    $faq_items[] = array(
+                        '@type'          => 'Question',
+                        'name'           => $msg,
+                        'acceptedAnswer' => array(
+                            '@type' => 'Answer',
+                            'text'  => sprintf(
+                                /* translators: %s: poster name */
+                                __( 'Asked by %s on the ZYMARG Community Request Board. ZYMARG vendors can respond directly through the marketplace.', 'zymarg-community-board' ),
+                                $name
+                            ),
                         ),
-                    ),
-                );
+                    );
+                }
 
                 $list_items[] = array(
                     '@type'    => 'ListItem',
@@ -159,6 +190,13 @@ class ZCRB_SEO {
                     'name'     => $msg,
                 );
             }
+        }
+
+        $page_url = $paged > 1 ? get_pagenum_link( $paged ) : (string) get_post_type_archive_link( ZCRB_POST_TYPE );
+        $page_title = ZCRB_I18n::t( 'page_title' );
+        if ( $paged > 1 ) {
+            /* translators: %d: page number */
+            $page_title .= ' — ' . sprintf( ZCRB_I18n::t( 'page_n' ), $paged );
         }
 
         $schemas = array();
@@ -175,18 +213,20 @@ class ZCRB_SEO {
             $schemas[] = array(
                 '@context'        => 'https://schema.org',
                 '@type'           => 'ItemList',
-                'name'            => ZCRB_I18n::t( 'page_title' ),
+                'name'            => $page_title,
+                'url'             => $page_url,
                 'itemListElement' => $list_items,
             );
         }
 
         $schemas[] = array(
-            '@context'        => 'https://schema.org',
-            '@type'           => 'CollectionPage',
-            'name'            => ZCRB_I18n::t( 'page_title' ),
-            'description'     => ZCRB_I18n::t( 'meta_description' ),
-            'inLanguage'      => ZCRB_I18n::current_lang() === 'bn' ? 'bn-BD' : 'en',
-            'isPartOf'        => array(
+            '@context'    => 'https://schema.org',
+            '@type'       => 'CollectionPage',
+            'name'        => $page_title,
+            'url'         => $page_url,
+            'description' => ZCRB_I18n::t( 'meta_description' ),
+            'inLanguage'  => ZCRB_I18n::current_lang() === 'bn' ? 'bn-BD' : 'en',
+            'isPartOf'    => array(
                 '@type' => 'WebSite',
                 'name'  => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
                 'url'   => home_url( '/' ),
@@ -220,13 +260,13 @@ class ZCRB_SEO {
         }
 
         $schema = array(
-            '@context'      => 'https://schema.org',
-            '@type'         => 'Question',
-            'name'          => $msg,
-            'text'          => $msg,
-            'dateCreated'   => get_the_date( 'c', $post ),
-            'inLanguage'    => ( get_post_meta( $post->ID, '_zcrb_lang', true ) === 'bn' ) ? 'bn-BD' : 'en',
-            'author'        => array(
+            '@context'         => 'https://schema.org',
+            '@type'            => 'Question',
+            'name'             => $msg,
+            'text'             => $msg,
+            'dateCreated'      => get_the_date( 'c', $post ),
+            'inLanguage'       => ( get_post_meta( $post->ID, '_zcrb_lang', true ) === 'bn' ) ? 'bn-BD' : 'en',
+            'author'           => array(
                 '@type' => 'Person',
                 'name'  => $name,
             ),

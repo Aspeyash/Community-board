@@ -399,39 +399,73 @@
 
 .zcrb-card__link:hover { color: var(--zcrb-purple-600); }
 
-/* ---------- Pagination / load more ---------- */
-.zcrb-pagination {
-    margin-top: 28px;
-    text-align: center;
+/* ---------- Feed meta + numbered pagination ---------- */
+.zcrb-feed__meta {
+    margin: 0 0 16px;
+    color: var(--zcrb-muted);
+    font-size: 0.9375rem;
 }
 
-.zcrb-pagination a,
+.zcrb-pagination {
+    margin-top: 32px;
+}
+
+.zcrb-pagination__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.zcrb-pagination__item { display: inline-flex; }
+
 .zcrb-pagination .page-numbers {
-    display: inline-block;
-    margin: 0 4px;
-    padding: 8px 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 14px;
     border-radius: 999px;
     border: 1px solid var(--zcrb-border);
     color: var(--zcrb-purple);
     background: #fff;
     text-decoration: none;
     font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1;
+    transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.zcrb-pagination .page-numbers:hover,
+.zcrb-pagination .page-numbers:focus {
+    background: var(--zcrb-purple-50);
+    border-color: var(--zcrb-purple-100);
+    color: var(--zcrb-purple-600);
 }
 
 .zcrb-pagination .page-numbers.current {
     background: var(--zcrb-purple);
     color: #fff;
     border-color: var(--zcrb-purple);
+    box-shadow: 0 4px 14px rgba(107, 63, 160, 0.25);
 }
 
-.zcrb-pagination__status {
-    margin: 12px 0 0;
+.zcrb-pagination .page-numbers.dots {
+    border-color: transparent;
+    background: transparent;
     color: var(--zcrb-muted);
-    font-size: 0.9rem;
+    box-shadow: none;
+    cursor: default;
 }
 
-.zcrb-pagination__noscript {
-    margin-top: 12px;
+.zcrb-pagination .page-numbers.prev,
+.zcrb-pagination .page-numbers.next {
+    padding: 0 18px;
 }
 
 /* ---------- Empty / single ---------- */
