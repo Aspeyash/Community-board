@@ -34,7 +34,7 @@
     --zcrb-radius-full: 9999px;
 
     /* ---------- Typography ---------- */
-    --zcrb-font-heading: "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI", "Hind Siliguri", "Noto Sans Bengali", Roboto, sans-serif;
+    --zcrb-font-heading: "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", "Hind Siliguri", "Noto Sans Bengali", Roboto, sans-serif;
     --zcrb-font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Hind Siliguri", "Noto Sans Bengali", Roboto, sans-serif;
 
     /* Desktop sizes (overridden by Settings page) */

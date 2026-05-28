@@ -108,9 +108,9 @@ class ZCRB_Settings {
             'color_surface'        => '#f9f9fc',
 
             // -------- Typography --------
-            'font_heading'         => 'Sora',
+            'font_heading'         => 'Cabinet Grotesk',
             'font_body'            => 'Inter',
-            'load_google_fonts'    => 1,
+            'load_google_fonts'    => 0,
 
             // -------- Notifications --------
             'notify_email'         => '',
