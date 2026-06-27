@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.4.3
+Stable tag: 1.4.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,22 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 1.4.4 =
+* **Brand-alignment follow-up** — the Settings page in `class-zcrb-settings.php` was still
+  shipping the OLD Material 3 default palette as its built-in defaults, which got injected
+  as inline `<style>` and silently overrode the brand-aligned `:root` block in `zcrb.css`
+  on fresh installs. All 11 off-brand default hex values are now updated to the official
+  ZYMARG palette: Primary `#9500A5`, Container `#BD00D1`, Accent `#FEA9FF`, soft tint
+  `#fceaff`, notice background `#f8e8fa`, three gradient orbs (`#9500A5` / `#BD00D1` /
+  `#FEA9FF`), main text `#131B2E`, muted text `#534152`, secondary surface `#fcfaff`.
+  The comment header was also corrected from "Material 3 inspired purple palette" to
+  "ZYMARG brand palette". Fresh installs now look correct out of the box.
+* **Version-constant single source of truth** — `ZCRB_VERSION` was hardcoded to `1.4.2`
+  in the bootstrap file and had been stale for v1.4.3 too. Refactored to read the
+  version straight from the `Version:` header at runtime via `get_file_data()`, so
+  bumping the plugin header is now enough — every consumer (asset cache-buster, updater,
+  etc.) stays in sync automatically.
 
 = 1.4.3 =
 * **Brand alignment** — switched the entire colour palette from the off-brand

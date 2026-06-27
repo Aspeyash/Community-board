@@ -3,7 +3,7 @@
  * Plugin Name:       ZYMARG Community Request Board
  * Plugin URI:        https://zymarg.com/community/
  * Description:       SEO-optimized Community Request Board for ZYMARG. Logged-in users submit requests (Name, Phone, Email, Message, Image). Admin approves/rejects from the WP dashboard. Public feed shows only Name, Message, Date, and Image. Bilingual (English/Bengali), schema-marked, mobile responsive, with a Material 3 inspired glass-card design, fully customizable typography (per-element font sizes for desktop + mobile), numbered-pagination crawlable feed, and configurable data retention. Updates ship via GitHub Releases. Compatible with Astra, Elementor Pro, WooCommerce, and Dokan.
- * Version:           1.4.3
+ * Version:           1.4.4
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            ZYMARG
@@ -26,7 +26,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
-define( 'ZCRB_VERSION', '1.4.2' );
+
+// Read the version straight from the "Version:" header above, so there is a
+// SINGLE source of truth. Bumping the header is enough — every consumer of
+// ZCRB_VERSION (asset cache-buster, updater, etc.) stays in sync automatically.
+if ( ! defined( 'ZCRB_VERSION' ) ) {
+    $zcrb_plugin_data = function_exists( 'get_file_data' )
+        ? get_file_data( __FILE__, array( 'Version' => 'Version' ), 'plugin' )
+        : array( 'Version' => '' );
+    define( 'ZCRB_VERSION', ! empty( $zcrb_plugin_data['Version'] ) ? $zcrb_plugin_data['Version'] : '0.0.0' );
+}
 define( 'ZCRB_PLUGIN_FILE', __FILE__ );
 define( 'ZCRB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ZCRB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

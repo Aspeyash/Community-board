@@ -4,7 +4,7 @@ WordPress plugin powering the **Community Request Board** at [zymarg.com/communi
 Logged-in shoppers post what they want to buy, vendors across Bangladesh respond. SEO-optimized,
 bilingual (English + Bengali), Astra / Elementor Pro / WooCommerce / Dokan compatible.
 
-> **Latest:** v1.4.0 — Material 3 inspired redesign + per-element font-size controls (desktop + mobile) for every text element.
+> **Latest:** v1.4.4 — Brand-alignment follow-up: Settings page defaults now ship the official ZYMARG palette (so fresh installs look correct out of the box) + `ZCRB_VERSION` is now read from the plugin header via `get_file_data()` for a single source of truth.
 
 ## Highlights
 

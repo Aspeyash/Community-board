@@ -93,19 +93,19 @@ class ZCRB_Settings {
             'page_subtitle_bn'     => '',
             'meta_description_bn'  => '',
 
-            // -------- Branding (Material 3 inspired purple palette) --------
-            'color_primary'        => '#4f00d0',
-            'color_primary_hover'  => '#6833ea',
-            'color_primary_50'     => '#f3eefe',
-            'color_primary_100'    => '#cdbdff',
-            'color_purple_fixed'   => '#e8deff',
-            'color_orb_1'          => '#6833ea',
-            'color_orb_2'          => '#6833ea',
-            'color_orb_3'          => '#6833ea',
-            'color_text'           => '#1a1c1e',
-            'color_muted'          => '#494455',
+            // -------- Branding (ZYMARG brand palette — single source of truth) --------
+            'color_primary'        => '#9500a5',
+            'color_primary_hover'  => '#bd00d1',
+            'color_primary_50'     => '#fceaff',
+            'color_primary_100'    => '#fea9ff',
+            'color_purple_fixed'   => '#f8e8fa',
+            'color_orb_1'          => '#9500a5',
+            'color_orb_2'          => '#bd00d1',
+            'color_orb_3'          => '#fea9ff',
+            'color_text'           => '#131b2e',
+            'color_muted'          => '#534152',
             'color_bg'             => '#ffffff',
-            'color_surface'        => '#f9f9fc',
+            'color_surface'        => '#fcfaff',
 
             // -------- Typography --------
             'font_heading'         => 'Cabinet Grotesk',
