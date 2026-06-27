@@ -167,7 +167,7 @@ class ZCRB_Admin {
                 ),
                 'zcrb_quick_action_' . $post->ID
             );
-            $actions['zcrb_approve'] = '<a href="' . esc_url( $url ) . '" style="color:#6b3fa0;font-weight:600;">' . esc_html__( 'Approve', 'zymarg-community-board' ) . '</a>';
+            $actions['zcrb_approve'] = '<a href="' . esc_url( $url ) . '" style="color:#9500a5;font-weight:600;">' . esc_html__( 'Approve', 'zymarg-community-board' ) . '</a>';
         }
         if ( 'publish' !== $post->post_status ) {
             $url = wp_nonce_url(

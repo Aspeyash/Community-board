@@ -7,25 +7,26 @@
  */
 
 :root {
-    /* ---------- Brand colors ---------- */
-    --zcrb-purple: #4f00d0;          /* primary action */
-    --zcrb-purple-600: #6833ea;      /* primary container / hover */
-    --zcrb-purple-100: #cdbdff;      /* light purple */
-    --zcrb-purple-50: #f3eefe;       /* very soft purple tint */
-    --zcrb-purple-fixed: #e8deff;    /* notice background */
+    /* ---------- Brand colors (aligned with ZYMARG OS — single source of brand) ---------- */
+    --zcrb-purple: #9500a5;          /* Primary (ZYMARG brand) */
+    --zcrb-purple-600: #bd00d1;      /* Primary Container / hover */
+    --zcrb-purple-100: #fea9ff;      /* Accent light pink (Primary Inverse) */
+    --zcrb-purple-50: #fceaff;       /* Very soft brand-purple tint */
+    --zcrb-purple-fixed: #f8e8fa;    /* Notice background */
+    --zcrb-purple-deep: #36003d;     /* Dark purple text accent (ZYMARG on-primary-fixed) */
 
     /* Surface */
     --zcrb-bg: #ffffff;              /* page base */
-    --zcrb-surface: #f9f9fc;         /* main background */
-    --zcrb-surface-low: #f3f3f6;     /* container low */
-    --zcrb-surface-high: #e8e8ea;    /* container high */
-    --zcrb-text: #1a1c1e;            /* on-surface */
-    --zcrb-muted: #494455;           /* on-surface-variant */
-    --zcrb-border: #cac3d8;          /* outline-variant */
-    --zcrb-border-light: #eeeef0;    /* surface container */
+    --zcrb-surface: #fcfaff;         /* warm white (brand-aligned secondary surface) */
+    --zcrb-surface-low: #eaedff;     /* surface container (brand) */
+    --zcrb-surface-high: #e8e8ea;    /* container high (neutral) */
+    --zcrb-text: #131b2e;            /* main text (brand) */
+    --zcrb-muted: #534152;           /* secondary text (brand) */
+    --zcrb-border: #d8bfd3;          /* outline-variant (brand) */
+    --zcrb-border-light: #eaedff;    /* light border (brand surface) */
 
-    --zcrb-shadow: 0 4px 14px rgba(104, 51, 234, 0.08);
-    --zcrb-shadow-md: 0 10px 30px rgba(104, 51, 234, 0.12);
+    --zcrb-shadow: 0 4px 14px rgba(149, 0, 165, 0.08);
+    --zcrb-shadow-md: 0 10px 30px rgba(149, 0, 165, 0.12);
 
     /* Radius */
     --zcrb-radius: 12px;
@@ -116,7 +117,7 @@
 .zcrb-orb {
     position: absolute;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(104, 51, 234, 0.10) 0%, rgba(255, 255, 255, 0) 70%);
+    background: radial-gradient(circle, rgba(149, 0, 165, 0.10) 0%, rgba(255, 255, 255, 0) 70%);
 }
 .zcrb-orb--1 { width: 600px; height: 600px; top: -10%; left: -10%; }
 .zcrb-orb--2 { width: 400px; height: 400px; bottom: 20%; right: -5%; }
@@ -278,7 +279,7 @@
 .zcrb-field textarea:focus {
     outline: none;
     border-color: var(--zcrb-purple);
-    box-shadow: 0 0 0 4px rgba(79, 0, 208, 0.12);
+    box-shadow: 0 0 0 4px rgba(149, 0, 165, 0.12);
 }
 .zcrb-field textarea { resize: vertical; min-height: 110px; }
 
@@ -369,7 +370,7 @@
     background: var(--zcrb-purple-600);
     color: #fff;
     border-color: var(--zcrb-purple-600);
-    box-shadow: 0 6px 20px rgba(79, 0, 208, 0.25);
+    box-shadow: 0 6px 20px rgba(149, 0, 165, 0.25);
 }
 .zcrb-btn--primary:hover,
 .zcrb-btn--primary:focus { background: var(--zcrb-purple); color: #fff; transform: scale(1.01); }
@@ -392,9 +393,9 @@
     gap: 8px;
     padding: 16px;
     background: var(--zcrb-purple-fixed);
-    border: 1px solid rgba(79, 0, 208, 0.10);
+    border: 1px solid rgba(149, 0, 165, 0.10);
     border-radius: var(--zcrb-radius);
-    color: #20005f;
+    color: var(--zcrb-purple-deep);
     font-family: var(--zcrb-font-body);
     font-size: var(--zcrb-fs-privacy);
     line-height: 1.5;
@@ -607,7 +608,7 @@
     background: var(--zcrb-purple-600);
     color: #fff;
     border-color: var(--zcrb-purple-600);
-    box-shadow: 0 4px 14px rgba(104, 51, 234, 0.20);
+    box-shadow: 0 4px 14px rgba(149, 0, 165, 0.20);
 }
 .zcrb-pagination .page-numbers.dots {
     background: transparent;

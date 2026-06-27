@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,21 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 1.4.3 =
+* **Brand alignment** — switched the entire colour palette from the off-brand
+  Material 3 default purples (`#4f00d0`, `#6833ea`, `#cdbdff`) to the official
+  ZYMARG palette (`#9500A5` Primary, `#BD00D1` Container, `#FEA9FF` Accent).
+  All `:root` tokens updated + all hardcoded inline rgba purples replaced.
+  Plus the dark-purple text accent (`#36003D`), brand border (`#D8BFD3`),
+  brand text colours (`#131B2E` / `#534152`), and a warm-white secondary
+  surface (`#fcfaff`). Result: matches the ZYMARG OS theme + Vendor
+  Dashboard + the rest of the ZYMARG product family.
+* Inline admin "Approve" link colour also fixed (was `#6b3fa0`, now `#9500A5`).
+
+= 1.4.2 =
+* Use locally-bundled Cabinet Grotesk + Inter fonts; disable Google Fonts CDN
+  load by default (privacy + performance + no third-party network cost).
 
 = 1.4.1 =
 * Removed the decorative "All Requests" / "সব রিকোয়েস্ট" badge from the feed header — it was non-functional dead text. Cleaned up the related CSS class and bilingual strings.
