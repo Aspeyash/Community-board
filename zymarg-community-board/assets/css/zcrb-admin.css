@@ -1438,6 +1438,10 @@
     /* Settings form: stack labels above inputs, full-width fields */
     .zcrb-settings .form-table {
         padding: 10px 14px;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        background: transparent;
     }
 
     .zcrb-settings .form-table th {
