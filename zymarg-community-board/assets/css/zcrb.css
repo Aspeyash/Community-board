@@ -1001,7 +1001,7 @@
     padding: 64px 24px;
     border: 1px dashed var(--zcrb-border);
     border-radius: var(--zcrb-radius);
-    background: rgba(255, 255, 255, 0.6);
+    background: #ffffff;
 }
 .zcrb-empty-state__illustration {
     margin-bottom: 24px;
@@ -1014,6 +1014,7 @@
 .zymarg-spark {
     --zds-spark-purple: #6833ea;
     --zds-spark-gold: #ffd166;
+    --zds-spark-offset: 0.70px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1029,42 +1030,51 @@
     display: block;
 }
 
+/* Gold paths are ALWAYS static */
 .zymarg-spark-item--gold {
     animation: none !important;
 }
 
+/* Purple paths get the sequential pulse */
 .zymarg-spark-item--purple {
     transform: translate(var(--zds-spark-offset), var(--zds-spark-offset));
+    opacity: 0.85;
 }
 
 .zymarg-spark-group--accent .zymarg-spark-item--purple {
-    animation: zymarg-spark-lens--accent 0.20s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    animation: zymarg-spark-lens 2.4s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    animation-delay: 0s;
     transform-origin: 9.68px 7.8px;
 }
 
 .zymarg-spark-group--companion .zymarg-spark-item--purple {
-    animation: zymarg-spark-lens--companion 0.40s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    animation: zymarg-spark-lens 2.4s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    animation-delay: 0.8s;
     transform-origin: 8.3px 15.04px;
 }
 
 .zymarg-spark-group--hero .zymarg-spark-item--purple {
-    animation: zymarg-spark-lens--hero 0.40s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    animation: zymarg-spark-lens 2.4s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    animation-delay: 1.6s;
     transform-origin: 13.16px 11.9px;
 }
 
-@keyframes zymarg-spark-lens--accent {
-    0%, 100% { opacity: 0; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(0.90); filter: drop-shadow(0 0 0 transparent); }
-    50% { opacity: 0.95; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(1.03); filter: drop-shadow(0 0 3px var(--zds-spark-purple)); }
-}
-
-@keyframes zymarg-spark-lens--companion {
-    0%, 100% { opacity: 0; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(0.90); filter: drop-shadow(0 0 0 transparent); }
-    50% { opacity: 0.95; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(1.03); filter: drop-shadow(0 0 3px var(--zds-spark-purple)); }
-}
-
-@keyframes zymarg-spark-lens--hero {
-    0%, 100% { opacity: 0; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(0.90); filter: drop-shadow(0 0 0 transparent); }
-    50% { opacity: 0.95; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(1.03); filter: drop-shadow(0 0 3px var(--zds-spark-purple)); }
+@keyframes zymarg-spark-lens {
+    0%, 100% {
+        opacity: 0.85;
+        transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(0.92);
+        filter: drop-shadow(0 0 0 transparent);
+    }
+    15% {
+        opacity: 1;
+        transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(1.05);
+        filter: drop-shadow(0 0 4px var(--zds-spark-purple));
+    }
+    30% {
+        opacity: 0.85;
+        transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(0.92);
+        filter: drop-shadow(0 0 0 transparent);
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {

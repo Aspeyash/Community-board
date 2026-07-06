@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.0.4 =
+* **Discovery Spark animation fix** - replaced broken ultra-fast flicker (0.20s/0.40s) with canonical sequential visible pulse. Shapes stay visible (opacity 0.85 baseline) and pulse brighter in sequence (accent, then companion, then hero) over a 2.4s cycle with purple glow. Gold paths remain static.
+* **Discovery Spark background** - spark panel and empty-state containers now use solid white (#ffffff) for proper contrast with purple paths.
 
 = 2.0.3 =
 * **Unified branded header** - the gradient header with Discovery Spark now appears on ALL admin pages (Dashboard, All Requests CPT list, and Settings), not just the Dashboard.

@@ -1,25 +1,25 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.0.3`
+**Latest version:** `v2.0.4`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.0.3.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.3.zip)
+[**zymarg-community-board-v2.0.4.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.4.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.0.3
+## What's new in v2.0.4
 
-- **Unified branded header** - the gradient header with Discovery Spark now appears on ALL admin pages (Dashboard, All Requests CPT list table, and Settings), not just the Dashboard page.
-- **Integrated Discovery Spark** - the spark SVG is now embedded inside the gradient header (to the left of the title text) instead of being a separate panel below it. Layout: [Spark] ZYMARG Community Board [v2.0.3 badge].
-- **Admin CSS on CPT screens** - `zcrb-admin.css` now loads on the CPT list table (`edit.php?post_type=zcrb_request`) and single post edit screens for consistent branding.
+- **Discovery Spark animation fix** - replaced broken ultra-fast flicker (0.20s/0.40s) with canonical sequential visible pulse. Shapes stay visible (opacity 0.85 baseline) and pulse brighter in sequence (accent, then companion, then hero) over a 2.4s cycle with purple glow. Gold paths remain static.
+- **Discovery Spark background** - spark panel and empty-state containers now use solid white (#ffffff) for proper contrast with purple paths.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.0.4  | 2025-07-06 | `main`    | Discovery Spark animation - sequential visible pulse matching canonical, white background |
 | v2.0.3  | 2025-07-06 | `main`    | Unified branded header across all admin sections, integrated Discovery Spark in header |
 | v2.0.2  | 2025-07-06 | `main`    | Canonical Discovery Spark, admin branding, pre_get_posts fix, vendor response permissions |
 | v2.0.1  | 2025-07-06 | `main`    | ZYMARG unified brand design alignment: 18px radius, two-layer shadow, purple hover states, Discovery Spark empty state, deep purple headings |
