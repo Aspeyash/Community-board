@@ -37,6 +37,60 @@ class ZCRB_Settings {
         add_action( 'admin_init', array( $this, 'register' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ) );
         add_action( 'wp_ajax_zcrb_save_settings', array( $this, 'ajax_save_settings' ) );
+
+        $this->maybe_migrate_colors();
+    }
+
+    /**
+     * One-time migration: detect stale off-brand color values from pre-v1.4.4
+     * installs and reset them to the correct ZYMARG brand palette.
+     */
+    private function maybe_migrate_colors(): void {
+        $stored = get_option( self::OPTION_KEY, array() );
+        if ( ! is_array( $stored ) || empty( $stored ) ) {
+            return;
+        }
+
+        // Already migrated — skip.
+        if ( ! empty( $stored['_color_migrated_v2'] ) ) {
+            return;
+        }
+
+        // Known off-brand hex codes from pre-v1.4.4 Material 3 palette.
+        $stale_colors = array(
+            '#6b3fa0', '#5a2f8e', '#f7f2ff', '#efe7fb', '#e8deff',
+            '#8d5cd9', '#ba98f0', '#d8c4f7', '#1f1b2d', '#6b6577',
+            '#f9f9fc', '#4f00d0', '#6833ea', '#cdbdff', '#6b3fa0',
+        );
+
+        $color_keys = array(
+            'color_primary', 'color_primary_hover', 'color_primary_50', 'color_primary_100',
+            'color_purple_fixed', 'color_orb_1', 'color_orb_2', 'color_orb_3',
+            'color_text', 'color_muted', 'color_bg', 'color_surface',
+        );
+
+        $needs_reset = false;
+        foreach ( $color_keys as $key ) {
+            if ( isset( $stored[ $key ] ) && in_array( strtolower( (string) $stored[ $key ] ), $stale_colors, true ) ) {
+                $needs_reset = true;
+                break;
+            }
+        }
+
+        if ( ! $needs_reset ) {
+            $stored['_color_migrated_v2'] = 1;
+            update_option( self::OPTION_KEY, $stored );
+            return;
+        }
+
+        // Reset all color keys to the correct ZYMARG brand defaults.
+        $defaults = self::defaults();
+        foreach ( $color_keys as $key ) {
+            $stored[ $key ] = $defaults[ $key ];
+        }
+        $stored['_color_migrated_v2'] = 1;
+        update_option( self::OPTION_KEY, $stored );
+        $this->cache = null;
     }
 
     /**
