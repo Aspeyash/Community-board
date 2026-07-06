@@ -714,7 +714,8 @@ class ZCRB_Admin_Hub {
 
             <!-- Status tabs + live search -->
             <div class="zcrb-requests-tabbar">
-                <nav class="zcrb-status-tabs" role="tablist" aria-label="<?php esc_attr_e( 'Filter by status', 'zymarg-community-board' ); ?>">
+                <div class="zcrb-status-tabs-wrap" data-zcrb-tabs-wrap>
+                    <nav class="zcrb-status-tabs" role="tablist" aria-label="<?php esc_attr_e( 'Filter by status', 'zymarg-community-board' ); ?>" data-zcrb-status-tabs>
                     <?php foreach ( $tabs as $tab_key => $tab_label ) :
                         $is_active = ( $tab_key === $active_tab );
                         $c = isset( $tab_counts[ $tab_key ] ) ? (int) $tab_counts[ $tab_key ] : 0;
@@ -729,7 +730,8 @@ class ZCRB_Admin_Hub {
                             <span class="zcrb-status-tab-count"><?php echo esc_html( number_format_i18n( $c ) ); ?></span>
                         </a>
                     <?php endforeach; ?>
-                </nav>
+                    </nav>
+                </div>
                 <div class="zcrb-requests-search-wrap">
                     <span class="dashicons dashicons-search zcrb-search-icon" aria-hidden="true"></span>
                     <input

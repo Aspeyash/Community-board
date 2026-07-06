@@ -206,6 +206,19 @@
             return;
         }
 
+        // Fade indicator: detect when status tabs are scrolled to end.
+        var $tabsWrap = $view.find( '[data-zcrb-tabs-wrap]' );
+        var $tabsNav  = $view.find( '[data-zcrb-status-tabs]' );
+        if ( $tabsWrap.length && $tabsNav.length ) {
+            function checkTabsScroll() {
+                var el = $tabsNav[0];
+                var atEnd = ( el.scrollLeft + el.clientWidth ) >= ( el.scrollWidth - 4 );
+                $tabsWrap.toggleClass( 'is-scrolled-end', atEnd );
+            }
+            $tabsNav.on( 'scroll', checkTabsScroll );
+            checkTabsScroll();
+        }
+
         var $search   = $view.find( '[data-zcrb-requests-search]' );
         var $tbody    = $view.find( '[data-zcrb-tbody]' );
         var $cards    = $view.find( '[data-zcrb-cards]' );

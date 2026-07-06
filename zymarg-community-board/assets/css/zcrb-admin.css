@@ -399,9 +399,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
+    gap: 16px;
+    flex-wrap: nowrap;
+    margin-bottom: 18px;
 }
 
 .zcrb-requests-title {
@@ -414,23 +414,25 @@
 
 .zcrb-add-new-btn {
     flex: 0 0 auto;
+    white-space: nowrap;
+    min-width: max-content;
 }
 
 /* ---- Status tab bar + search ---- */
 .zcrb-requests-tabbar {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     flex-wrap: wrap;
-    margin-bottom: 14px;
-    padding-bottom: 6px;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
     border-bottom: 1px solid var( --zcrb-surface-container );
 }
 
 .zcrb-status-tabs {
     display: flex;
     flex: 1 1 auto;
-    gap: 2px;
+    gap: 8px;
     overflow-x: auto;
     overflow-y: hidden;
     flex-wrap: nowrap;
@@ -453,13 +455,13 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 14px;
+    padding: 10px 16px;
     border-radius: 999px;
     text-decoration: none;
     color: var( --zcrb-text-secondary );
     background: transparent;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.2;
     white-space: nowrap;
     flex: 0 0 auto;
@@ -515,9 +517,34 @@
     min-width: 200px;
 }
 
+/* Fade indicator on the right edge of status tabs — signals "swipe for more" */
+.zcrb-status-tabs-wrap {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.zcrb-status-tabs-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 40px;
+    background: linear-gradient( to right, rgba( 255, 255, 255, 0 ), rgba( 255, 255, 255, 1 ) );
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 0 999px 999px 0;
+}
+
+.zcrb-status-tabs-wrap.is-scrolled-end::after {
+    display: none;
+}
+
 .zcrb-search-icon {
     position: absolute;
-    left: 12px;
+    left: 16px;
     top: 50%;
     transform: translateY( -50% );
     font-size: 16px;
@@ -529,10 +556,10 @@
 
 .zcrb-requests-search {
     width: 100%;
-    padding: 8px 12px 8px 36px;
+    padding: 10px 14px 10px 46px;
     border: 1px solid var( --zcrb-border );
     border-radius: 10px;
-    font-size: 13.5px;
+    font-size: 14px;
     color: var( --zcrb-text );
     background: #fff;
     box-sizing: border-box;
