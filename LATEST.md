@@ -1,43 +1,30 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.3.1`
+**Latest version:** `v2.3.2`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.3.1.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.3.1.zip)
+[**zymarg-community-board-v2.3.2.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.3.2.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.3.1
+## What's new in v2.3.2
 
-**Horizontal top-nav layout** - the vertical left sidebar has been removed and replaced with a horizontal header bar and tab navigation. Content area is now full-width.
+**Rounded form fields on Settings page** - all text inputs, selects, and textareas on the Settings page now use `border-radius: 10px` to match the ZYMARG brand rounded style instead of plain square WordPress defaults.
 
-- **Header bar** - Discovery Spark (large, on white background) + "ZYMARG Community Board" title + version badge, arranged horizontally at the top of the app shell.
-- **Horizontal tab navigation** - Dashboard / All Requests / Settings as horizontal tab buttons with an active underline indicator. Replaces the old vertical sidebar nav.
-- **Full-width content** - with no sidebar consuming 232px of space, all views (Dashboard, All Requests, Settings) now use the full available width.
-- **CPT list table redirect** - navigating to `edit.php?post_type=zcrb_request` now automatically redirects to `admin.php?page=zcrb-hub&section=requests`. The raw WordPress list table is never shown.
-- **Search field fix** - with the sidebar removed, the search field and status tabs now have enough space and no longer appear cramped.
-- **Status tabs scroll fix** - status filter tabs now use `flex-wrap: nowrap` with `overflow-x: auto` so they scroll horizontally on narrow viewports instead of getting cut off.
-
-Full-featured **All Requests** management surface — total parity with the WordPress CPT list table, built into the SPA hub. Admins never need to leave the branded view.
-
-- **Status tab strip with counts** — `All (N) | Approved (N) | Pending (N) | In Progress (N) | Fulfilled (N) | Trash (N)`. Server-side filtering keeps pagination + counts accurate. On mobile the tabs collapse into a horizontally-scrollable strip.
-- **Sortable table on desktop, card fallback on mobile** — `>= 768px` shows a proper `<table>` with columns Checkbox / Ref / Title / Submitter / Status / Upvotes / Date / Actions. Sortable columns toggle asc/desc. Row hover reveals action buttons (WP-core-like). Below 768px the same rows render as full-width cards with always-visible actions.
-- **Bulk actions** — checkbox per row + "select all" in the table header. Dropdown offers Approve / Reject / Move to Trash / Delete Permanently, plus Restore / Delete Permanently in the Trash tab. Nonce-protected POST to `admin-post.php`, redirect back with a "X requests approved." notice. Delete Permanently double-confirms.
-- **Trash tab** — full trash workflow inside the SPA. Restore uses `wp_untrash_post()`; Delete Permanently uses the retention-safe delete pipeline.
-- **"Add New" button** — prominent action next to the panel title opens the standard WP editor at `post-new.php?post_type=zcrb_request`.
-- **Per-page selector** — screen-options-style "Show [20|50|100|All] per page" dropdown; changing it reloads with `?per_page=N`. Tabs, pagination and the bulk-form all preserve the current per-page choice.
-- **Empty state per tab** — friendly copy per tab ("No approved requests.", "Trash is empty.", etc). A separate "No matching requests." line replaces rows when live keyword search filters everything out.
-- **Row-level quick actions bounce back to the SPA** — Approve / Reject / Delete / Restore links now pass `zcrb_return=hub` so the redirect lands on the hub with the previous tab preserved.
-- **Fully responsive down to 320px** — panel padding, tab strip, bulk-action bar, per-page dropdown, and card actions all reshape at `< 768px`, `<= 480px`, and `<= 360px`. Buttons wrap, tabs scroll, cards stack, action rows wrap — no horizontal overflow at any tested viewport width.
-- **"Advanced list view" escape hatch removed** — the link to `edit.php?post_type=zcrb_request` is gone; the SPA now covers every workflow.
+- **Input fields** - `input[type="text"]`, `input[type="email"]`, `input[type="password"]`, `input[type="number"]`, `input[type="url"]`, and `input[type="tel"]` all receive 10px border-radius with consistent padding, font-size, and a smooth transition on focus.
+- **Selects** - `<select>` elements get 10px radius with slightly tighter padding and native appearance preserved.
+- **Textareas** - `<textarea>` fields get 10px radius with a 60px minimum height and vertical resize.
+- **Checkboxes** - `input[type="checkbox"]` receives a subtle 4px radius.
+- **Color picker buttons** - `.wp-color-result` inside the Settings panel gets 10px radius to match.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.3.2  | 2025-07-06 | `main`    | Rounded form fields on Settings page - brand-aligned 10px radius |
 | v2.3.1  | 2025-07-06 | `main`    | Horizontal top-nav layout - remove sidebar, full-width content, redirect CPT list |
 | v2.3.0  | 2025-07-06 | `main`    | Full-featured All Requests view - status tabs with counts, bulk actions, sortable table, Trash tab, per-page selector, mobile-responsive down to 320px |
 | v2.2.1  | 2025-07-06 | `main`    | WP sidebar clicks use SPA view switching, All Requests link fixed |

@@ -1005,6 +1005,41 @@
     outline: none;
 }
 
+.zcrb-settings input[type="text"],
+.zcrb-settings input[type="email"],
+.zcrb-settings input[type="password"],
+.zcrb-settings input[type="number"],
+.zcrb-settings input[type="url"],
+.zcrb-settings input[type="tel"],
+.zcrb-settings select,
+.zcrb-settings textarea {
+    border-radius: 10px;
+    border: 1px solid var(--zcrb-border);
+    padding: 8px 14px;
+    font-size: 13.5px;
+    color: var(--zcrb-text);
+    background: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.zcrb-settings select {
+    padding: 8px 12px;
+    appearance: auto;
+}
+
+.zcrb-settings textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.zcrb-settings input[type="checkbox"] {
+    border-radius: 4px;
+}
+
+.zcrb-settings .wp-picker-container .wp-color-result {
+    border-radius: 10px;
+}
+
 /* Settings submit row (button + toast side-by-side) */
 .zcrb-submit-row {
     display: flex;

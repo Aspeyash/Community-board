@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.3.1
+Stable tag: 2.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.3.2 =
+* **Rounded form fields on Settings page** - all text inputs, selects, and textareas on the Settings page now use `border-radius: 10px` to match the ZYMARG brand rounded style instead of plain square WordPress defaults. Checkboxes get 4px radius, color picker buttons get 10px radius. Smooth transition on focus border/shadow.
 
 = 2.3.1 =
 * **Horizontal top-nav layout** - removed the vertical left sidebar and replaced it with a horizontal header bar (Discovery Spark + "ZYMARG Community Board" title + version badge) and horizontal tab navigation (Dashboard / All Requests / Settings). Content area is now full-width with no sidebar consuming space.
