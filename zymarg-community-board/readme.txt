@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.0.5
+Stable tag: 2.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.0.6 =
+* **Duplicate admin menu removed** - removed stray `menu_icon` and `menu_position` args from the CPT registration. The CPT is nested under the hub menu (`show_in_menu => 'zcrb-hub'`), so these args are unnecessary and could cause a duplicate top-level "All Requests" item on some WP configurations.
 
 = 2.0.5 =
 * **Discovery Spark CSS verbatim from canonical** - replaced the Community Board's modified Discovery Spark CSS with the exact canonical copy from Theme Builder. Three separate per-group keyframes (zymarg-spark-lens--accent, zymarg-spark-lens--companion, zymarg-spark-lens--hero), fill via CSS custom properties, vertical-align: middle on the wrapper.

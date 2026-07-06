@@ -51,8 +51,6 @@ class ZCRB_CPT {
             'show_in_menu'        => 'zcrb-hub',
             'show_in_rest'        => false, // We expose only sanitized public data ourselves.
             'has_archive'         => ZCRB_ARCHIVE_SLUG,
-            'menu_icon'           => 'dashicons-megaphone',
-            'menu_position'       => 26,
             'capability_type'     => 'post',
             'map_meta_cap'        => true,
             'hierarchical'        => false,
