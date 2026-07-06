@@ -45,6 +45,19 @@ class ZCRB_Vendor_Response {
     }
 
     /**
+     * Check if the current user can respond as a vendor.
+     *
+     * Allows users with edit_others_posts capability OR Dokan/MultiVendorX vendor roles.
+     */
+    private static function can_respond(): bool {
+        if ( current_user_can( 'edit_others_posts' ) ) {
+            return true;
+        }
+        $user = wp_get_current_user();
+        return ! empty( array_intersect( array( 'seller', 'dc_vendor', 'vendor' ), (array) $user->roles ) );
+    }
+
+    /**
      * Render the admin meta box showing existing responses and a textarea to add a new one.
      */
     public function render_meta_box( WP_Post $post ): void {
@@ -65,7 +78,7 @@ class ZCRB_Vendor_Response {
             echo '<p style="color:#666;"><em>' . esc_html__( 'No responses yet.', 'zymarg-community-board' ) . '</em></p>';
         }
 
-        if ( current_user_can( 'edit_others_posts' ) ) {
+        if ( self::can_respond() ) {
             wp_nonce_field( 'zcrb_vendor_response_meta', 'zcrb_vendor_response_nonce' );
             echo '<textarea name="zcrb_new_vendor_response" rows="3" style="width:100%;" placeholder="' . esc_attr__( 'Add a response...', 'zymarg-community-board' ) . '"></textarea>';
             echo '<p class="description">' . esc_html__( 'Type a response and update the post to save.', 'zymarg-community-board' ) . '</p>';
@@ -85,7 +98,7 @@ class ZCRB_Vendor_Response {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
             return;
         }
-        if ( ! current_user_can( 'edit_others_posts' ) ) {
+        if ( ! self::can_respond() ) {
             return;
         }
 
@@ -104,7 +117,7 @@ class ZCRB_Vendor_Response {
     public function ajax_vendor_respond(): void {
         check_ajax_referer( 'zcrb_vendor_respond_nonce', 'nonce' );
 
-        if ( ! current_user_can( 'edit_others_posts' ) ) {
+        if ( ! self::can_respond() ) {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'zymarg-community-board' ) ), 403 );
         }
 
@@ -200,7 +213,7 @@ class ZCRB_Vendor_Response {
      * Render the vendor response form for the frontend single view.
      */
     public function render_response_form( int $post_id ): void {
-        if ( ! current_user_can( 'edit_others_posts' ) ) {
+        if ( ! self::can_respond() ) {
             return;
         }
         ?>

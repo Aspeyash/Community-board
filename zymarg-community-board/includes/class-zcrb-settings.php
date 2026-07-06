@@ -33,7 +33,7 @@ class ZCRB_Settings {
     }
 
     private function __construct() {
-        add_action( 'admin_menu', array( $this, 'add_menu' ) );
+        add_action( 'admin_menu', array( $this, 'add_menu' ), 20 );
         add_action( 'admin_init', array( $this, 'register' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ) );
     }

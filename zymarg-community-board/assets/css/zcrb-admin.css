@@ -82,40 +82,68 @@
     margin-bottom: 24px;
 }
 
-/* ─── Discovery Spark Animation ─── */
-@keyframes zcrb-spark-pulse {
-    0%, 100% {
-        opacity: 1;
-        transform: scale(1);
+/* ─── Canonical ZYMARG Discovery Spark ─── */
+.zymarg-spark {
+    --zds-spark-purple: #6833ea;
+    --zds-spark-gold: #ffd166;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.zymarg-spark--sm { width: 20px; height: 20px; --zds-spark-offset: 0.55px; }
+.zymarg-spark--md { width: 24px; height: 24px; --zds-spark-offset: 0.70px; }
+.zymarg-spark--lg { width: 32px; height: 32px; --zds-spark-offset: 0.90px; }
+.zymarg-spark--xl { width: 48px; height: 48px; --zds-spark-offset: 1.20px; }
+
+.zymarg-spark__svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.zymarg-spark-item--gold {
+    animation: none !important;
+}
+
+.zymarg-spark-item--purple {
+    transform: translate(var(--zds-spark-offset), var(--zds-spark-offset));
+}
+
+.zymarg-spark-group--accent .zymarg-spark-item--purple {
+    animation: zymarg-spark-lens--accent 0.20s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    transform-origin: 9.68px 7.8px;
+}
+
+.zymarg-spark-group--companion .zymarg-spark-item--purple {
+    animation: zymarg-spark-lens--companion 0.40s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    transform-origin: 8.3px 15.04px;
+}
+
+.zymarg-spark-group--hero .zymarg-spark-item--purple {
+    animation: zymarg-spark-lens--hero 0.40s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    transform-origin: 13.16px 11.9px;
+}
+
+@keyframes zymarg-spark-lens--accent {
+    0%, 100% { opacity: 0; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(0.90); filter: drop-shadow(0 0 0 transparent); }
+    50% { opacity: 0.95; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(1.03); filter: drop-shadow(0 0 3px var(--zds-spark-purple)); }
+}
+
+@keyframes zymarg-spark-lens--companion {
+    0%, 100% { opacity: 0; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(0.90); filter: drop-shadow(0 0 0 transparent); }
+    50% { opacity: 0.95; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(1.03); filter: drop-shadow(0 0 3px var(--zds-spark-purple)); }
+}
+
+@keyframes zymarg-spark-lens--hero {
+    0%, 100% { opacity: 0; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(0.90); filter: drop-shadow(0 0 0 transparent); }
+    50% { opacity: 0.95; transform: translate(var(--zds-spark-offset), var(--zds-spark-offset)) scale(1.03); filter: drop-shadow(0 0 3px var(--zds-spark-purple)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .zymarg-spark-item--purple {
+        animation: none !important;
+        opacity: 0.7;
     }
-    50% {
-        opacity: 0.6;
-        transform: scale(1.1);
-    }
-}
-
-.zcrb-spark-purple path {
-    animation-name: zcrb-spark-pulse;
-    animation-duration: 1.5s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
-    transform-origin: center center;
-}
-
-.zcrb-spark-purple path:nth-child(1) {
-    animation-delay: 0s;
-}
-
-.zcrb-spark-purple path:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.zcrb-spark-purple path:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
-.zcrb-spark-gold {
-    /* Gold paths are static - no animation */
 }
 
 /* ─── Stats Grid ─── */

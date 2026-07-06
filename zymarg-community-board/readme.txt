@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,13 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.0.2 =
+* **Canonical Discovery Spark** - replaced wrong generic 8-point star SVG with the exact ZYMARG Discovery Spark at large (--xl 48px) size in both admin hub and public empty state.
+* **Discovery Spark animation fixed** - fast sequential in-place pulse via keyframes with correct per-group delays (accent 0.20s, companion 0.40s, hero 0.40s), purple drop-shadow glow, gold paths static. Replaces the old slow 1.5s whole-group pulse.
+* **Admin sidebar branding** - "Community Board" menu item now styled with ZYMARG brand purple (#9500A5), font-weight 600, turns white on hover/active/current.
+* **pre_get_posts status conflict resolved** - main archive query now includes 'publish', 'zcrb_in_progress', and 'zcrb_fulfilled' statuses so the template's custom status filters work correctly.
+* **Vendor response permissions expanded** - Dokan vendors (seller), MultiVendorX vendors (dc_vendor), and generic vendor roles can now respond to community requests. Previously only users with edit_others_posts capability could respond.
 
 = 2.0.1 =
 * **ZYMARG unified brand design alignment** - CSS updated to match the ZYMARG ecosystem design language used across Vendor Dashboard, Connection Engine, and WC Product Grid.

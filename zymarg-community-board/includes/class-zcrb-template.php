@@ -277,11 +277,22 @@ class ZCRB_Template {
                         } else {
                             ?>
                             <div class="zcrb-empty-state">
-                                <svg class="zcrb-empty-state__spark" viewBox="0 0 24 24" width="64" height="64" aria-hidden="true">
-                                    <g class="zcrb-spark-group--accent"><path d="M10.4 5.4c0 1.32-0.24 2.4-1.44 2.4 1.2 0 1.44 1.08 1.44 2.4 0-1.32 0.24-2.4 1.44-2.4-1.2 0-1.44-1.08-1.44-2.4z" fill="#6833ea"/><path d="M10.4 6.0c0 0.96-0.18 1.8-1.08 1.8 0.9 0 1.08 0.84 1.08 1.8 0-0.9 0.18-1.8 1.08-1.8-0.9 0-1.08-0.84-1.08-1.8z" fill="#ffd166"/></g>
-                                    <g class="zcrb-spark-group--companion"><path d="M9.5 10.92c0 2.25-0.45 4.12-2.4 4.12 1.95 0 2.4 1.87 2.4 4.12 0-2.25 0.45-4.12 2.4-4.12-1.95 0-2.4-1.87-2.4-4.12z" fill="#6833ea"/><path d="M9.5 11.5c0 1.9-0.38 3.54-2.0 3.54 1.62 0 2.0 1.64 2.0 3.54 0-1.9 0.38-3.54 2.0-3.54-1.62 0-2.0-1.64-2.0-3.54z" fill="#ffd166"/></g>
-                                    <g class="zcrb-spark-group--hero"><path d="M15.2 5.6c0 3.45-0.69 6.3-4.08 6.3 3.39 0 4.08 2.85 4.08 6.3 0-3.45 0.69-6.3 4.08-6.3-3.39 0-4.08-2.85-4.08-6.3z" fill="#6833ea"/><path d="M15.2 6.5c0 2.9-0.58 5.4-3.39 5.4 2.81 0 3.39 2.5 3.39 5.4 0-2.9 0.58-5.4 3.39-5.4-2.81 0-3.39-2.5-3.39-5.4z" fill="#ffd166"/></g>
-                                </svg>
+                                <span class="zymarg-spark zymarg-spark--xl" role="img" aria-label="ZYMARG Discovery Spark">
+                                  <svg class="zymarg-spark__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <g class="zymarg-spark-group--accent">
+                                      <path class="zymarg-spark-item--purple" d="M10.4 5.4c0 1.32-0.24 2.4-1.44 2.4 1.2 0 1.44 1.08 1.44 2.4 0-1.32 0.24-2.4 1.44-2.4-1.2 0-1.44-1.08-1.44-2.4z" fill="#6833ea"/>
+                                      <path class="zymarg-spark-item--gold" d="M10.4 6.0c0 0.96-0.18 1.8-1.08 1.8 0.9 0 1.08 0.84 1.08 1.8 0-0.9 0.18-1.8 1.08-1.8-0.9 0-1.08-0.84-1.08-1.8z" fill="#ffd166"/>
+                                    </g>
+                                    <g class="zymarg-spark-group--companion">
+                                      <path class="zymarg-spark-item--purple" d="M9.5 10.92c0 2.25-0.45 4.12-2.4 4.12 1.95 0 2.4 1.87 2.4 4.12 0-2.25 0.45-4.12 2.4-4.12-1.95 0-2.4-1.87-2.4-4.12z" fill="#6833ea"/>
+                                      <path class="zymarg-spark-item--gold" d="M9.5 11.5c0 1.9-0.38 3.54-2.0 3.54 1.62 0 2.0 1.64 2.0 3.54 0-1.9 0.38-3.54 2.0-3.54-1.62 0-2.0-1.64-2.0-3.54z" fill="#ffd166"/>
+                                    </g>
+                                    <g class="zymarg-spark-group--hero">
+                                      <path class="zymarg-spark-item--purple" d="M15.2 5.6c0 3.45-0.69 6.3-4.08 6.3 3.39 0 4.08 2.85 4.08 6.3 0-3.45 0.69-6.3 4.08-6.3-3.39 0-4.08-2.85-4.08-6.3z" fill="#6833ea"/>
+                                      <path class="zymarg-spark-item--gold" d="M15.2 6.5c0 2.9-0.58 5.4-3.39 5.4 2.81 0 3.39 2.5 3.39 5.4 0-2.9 0.58-5.4 3.39-5.4-2.81 0-3.39-2.5-3.39-5.4z" fill="#ffd166"/>
+                                    </g>
+                                  </svg>
+                                </span>
                                 <h3 class="zcrb-empty-state__title"><?php echo esc_html( ZCRB_I18n::t( 'empty_state_title' ) ); ?></h3>
                                 <p class="zcrb-empty-state__subtitle"><?php echo esc_html( ZCRB_I18n::t( 'empty_state_subtitle' ) ); ?></p>
                             </div>

@@ -1,33 +1,28 @@
-# ZYMARG Community Request Board — Latest Release
+# ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.0.1`
+**Latest version:** `v2.0.2`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.0.1.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.1.zip)
+[**zymarg-community-board-v2.0.2.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.2.zip)
 
-> Install in WordPress: **Plugins → Add New → Upload Plugin** → choose the zip above → **Install Now** → **Activate**.
+> Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.0.1
+## What's new in v2.0.2
 
-- **ZYMARG unified brand design alignment.** CSS updated to match the design language used across the ZYMARG ecosystem (Vendor Dashboard, Connection Engine, WC Product Grid).
-- **Card radius** updated from 12px to 18px (unified card radius).
-- **Card shadow** switched to two-layer ZYMARG standard shadow.
-- **Card hover** now includes translateY(-2px) lift, purple border-color, and purple-tinted elevated shadow with smooth transition.
-- **Section headings** (feed title, form title) use deep purple (#36003D) at font-weight 800.
-- **Primary button** default is now #9500A5 (hover: #BD00D1) matching the ZYMARG button pattern.
-- **Status badge "In Progress"** changed from orange to purple tint for brand consistency.
-- **Hero title line 2** uses deep purple for contrast with line 1.
-- **Search bar** elevated with card-like container shadow and border.
-- **Empty state** SVG replaced with the canonical ZYMARG Discovery Spark mark.
-- **Shadow-md** updated to purple-tinted elevated shadow for brand alignment.
+- **Canonical Discovery Spark** - replaced wrong generic 8-point star SVG with the exact ZYMARG Discovery Spark at large (--xl 48px) size in both admin hub and public empty state.
+- **Discovery Spark animation fixed** - fast sequential in-place pulse via keyframes with correct per-group delays (accent 0.20s, companion 0.40s, hero 0.40s), purple drop-shadow glow, gold paths static. Replaces the old slow 1.5s whole-group pulse.
+- **Admin sidebar branding** - "Community Board" menu item styled with ZYMARG brand purple (#9500A5), font-weight 600, turns white on hover/active/current.
+- **pre_get_posts status conflict resolved** - main archive query now includes 'publish', 'zcrb_in_progress', and 'zcrb_fulfilled' statuses so the template's custom status filters work correctly.
+- **Vendor response permissions expanded** - Dokan vendors (seller), MultiVendorX vendors (dc_vendor), and generic vendor roles can now respond to community requests.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.0.2  | 2025-07-06 | `main`    | Canonical Discovery Spark, admin branding, pre_get_posts fix, vendor response permissions |
 | v2.0.1  | 2025-07-06 | `main`    | ZYMARG unified brand design alignment: 18px radius, two-layer shadow, purple hover states, Discovery Spark empty state, deep purple headings |
 | v2.0.0  | 2025-07-06 | `main`    | Major release: status lifecycle, vendor responses, upvotes, notifications, search/filter, duplicate detection, bulk approve, branded admin hub, empty states, image count setting |
 | v1.4.4  | 2026-06-27 | `main`    | Settings defaults to brand palette + version constant from header |

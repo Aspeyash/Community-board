@@ -30,6 +30,26 @@ class ZCRB_Admin_Hub {
     private function __construct() {
         add_action( 'admin_menu', array( $this, 'register_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+        add_action( 'admin_head', array( $this, 'sidebar_branding_css' ) );
+    }
+
+    /**
+     * Output inline CSS to brand the sidebar menu item purple.
+     */
+    public function sidebar_branding_css(): void {
+        ?>
+        <style>
+            #adminmenu .toplevel_page_zcrb-hub .wp-menu-name {
+                color: #9500A5;
+                font-weight: 600;
+            }
+            #adminmenu .toplevel_page_zcrb-hub:hover .wp-menu-name,
+            #adminmenu .toplevel_page_zcrb-hub.wp-has-current-submenu .wp-menu-name,
+            #adminmenu .toplevel_page_zcrb-hub.current .wp-menu-name {
+                color: #fff;
+            }
+        </style>
+        <?php
     }
 
     /**
@@ -110,19 +130,22 @@ class ZCRB_Admin_Hub {
 
             <!-- Discovery Spark -->
             <div class="zcrb-hub-spark">
-                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Discovery Spark">
-                    <!-- Purple paths (animated) -->
-                    <g class="zcrb-spark-purple">
-                        <path d="M40 4 L44 36 L76 40 L44 44 L40 76 L36 44 L4 40 L36 36 Z" fill="#6833ea" />
-                        <path d="M60 10 L62 28 L72 30 L62 32 L60 50 L58 32 L48 30 L58 28 Z" fill="#6833ea" opacity="0.8" />
-                        <path d="M20 50 L22 58 L30 60 L22 62 L20 70 L18 62 L10 60 L18 58 Z" fill="#6833ea" opacity="0.7" />
+                <span class="zymarg-spark zymarg-spark--xl" role="img" aria-label="ZYMARG Discovery Spark">
+                  <svg class="zymarg-spark__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <g class="zymarg-spark-group--accent">
+                      <path class="zymarg-spark-item--purple" d="M10.4 5.4c0 1.32-0.24 2.4-1.44 2.4 1.2 0 1.44 1.08 1.44 2.4 0-1.32 0.24-2.4 1.44-2.4-1.2 0-1.44-1.08-1.44-2.4z" fill="#6833ea"/>
+                      <path class="zymarg-spark-item--gold" d="M10.4 6.0c0 0.96-0.18 1.8-1.08 1.8 0.9 0 1.08 0.84 1.08 1.8 0-0.9 0.18-1.8 1.08-1.8-0.9 0-1.08-0.84-1.08-1.8z" fill="#ffd166"/>
                     </g>
-                    <!-- Gold paths (static) -->
-                    <g class="zcrb-spark-gold">
-                        <circle cx="64" cy="58" r="3" fill="#FFD166" />
-                        <circle cx="18" cy="22" r="2.5" fill="#FFD166" />
+                    <g class="zymarg-spark-group--companion">
+                      <path class="zymarg-spark-item--purple" d="M9.5 10.92c0 2.25-0.45 4.12-2.4 4.12 1.95 0 2.4 1.87 2.4 4.12 0-2.25 0.45-4.12 2.4-4.12-1.95 0-2.4-1.87-2.4-4.12z" fill="#6833ea"/>
+                      <path class="zymarg-spark-item--gold" d="M9.5 11.5c0 1.9-0.38 3.54-2.0 3.54 1.62 0 2.0 1.64 2.0 3.54 0-1.9 0.38-3.54 2.0-3.54-1.62 0-2.0-1.64-2.0-3.54z" fill="#ffd166"/>
                     </g>
-                </svg>
+                    <g class="zymarg-spark-group--hero">
+                      <path class="zymarg-spark-item--purple" d="M15.2 5.6c0 3.45-0.69 6.3-4.08 6.3 3.39 0 4.08 2.85 4.08 6.3 0-3.45 0.69-6.3 4.08-6.3-3.39 0-4.08-2.85-4.08-6.3z" fill="#6833ea"/>
+                      <path class="zymarg-spark-item--gold" d="M15.2 6.5c0 2.9-0.58 5.4-3.39 5.4 2.81 0 3.39 2.5 3.39 5.4 0-2.9 0.58-5.4 3.39-5.4-2.81 0-3.39-2.5-3.39-5.4z" fill="#ffd166"/>
+                    </g>
+                  </svg>
+                </span>
             </div>
 
             <!-- Tab Navigation -->
