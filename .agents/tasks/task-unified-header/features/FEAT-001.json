@@ -22,5 +22,5 @@
     "Zip rebuilt"
   ],
   "blocked_reason": null,
-  "findings": "Implemented the WP sidebar fix for v2.2.1: (A) Changed CPT show_in_menu from 'zcrb-hub' to false to stop auto-adding submenu. (B) Added explicit 'All Requests' submenu with slug 'zcrb-hub-requests' pointing to render_page(). (C) Added 'zcrb-hub-requests' detection in determine_initial_view() to return 'requests'. (D) Added requests_hook check in enqueue_assets(). (E) Added initSidebarIntercept() JS function that intercepts WP sidebar clicks and does SPA view switching. (F) Updated reorder_submenu() priority map. (G) Stored requests_hook as class property. All PHP files pass syntax check. Zip rebuilt."
+  "findings": "v2.3.1 layout refactor completed: Removed vertical sidebar, replaced with horizontal header bar (Spark + title + version badge) + horizontal tab nav (Dashboard / All Requests / Settings). Full-width content area. Added redirect_cpt_list() to block raw CPT list table. Fixed search icon spacing and status tab nowrap scrolling. JS updated from .zcrb-nav-item to .zcrb-tab selectors. All 20 PHP files pass syntax check. Zip rebuilt."
 }
