@@ -108,6 +108,31 @@ class ZCRB_CPT {
             'show_in_rest'      => false,
             'sanitize_callback' => 'sanitize_text_field',
         ) );
+
+        register_post_meta( ZCRB_POST_TYPE, '_zcrb_upvote_count', array(
+            'type'              => 'integer',
+            'single'            => true,
+            'show_in_rest'      => false,
+            'default'           => 0,
+            'sanitize_callback' => 'absint',
+            'auth_callback'     => static fn() => current_user_can( 'edit_posts' ),
+        ) );
+
+        register_post_meta( ZCRB_POST_TYPE, '_zcrb_upvoted_users', array(
+            'type'              => 'array',
+            'single'            => true,
+            'show_in_rest'      => false,
+            'default'           => array(),
+            'auth_callback'     => static fn() => current_user_can( 'edit_posts' ),
+        ) );
+
+        register_post_meta( ZCRB_POST_TYPE, '_zcrb_vendor_responses', array(
+            'type'              => 'array',
+            'single'            => true,
+            'show_in_rest'      => false,
+            'default'           => array(),
+            'auth_callback'     => static fn() => current_user_can( 'edit_others_posts' ),
+        ) );
     }
 
     /**

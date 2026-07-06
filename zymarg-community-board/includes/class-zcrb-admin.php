@@ -32,6 +32,7 @@ class ZCRB_Admin {
         add_filter( 'post_row_actions', array( $this, 'row_actions' ), 10, 2 );
         add_action( 'admin_init', array( $this, 'handle_quick_action' ) );
         add_action( 'admin_notices', array( $this, 'admin_notice' ) );
+        add_action( 'admin_head', array( $this, 'admin_menu_brand_css' ) );
     }
 
     public function register_meta_boxes(): void {
@@ -230,5 +231,30 @@ class ZCRB_Admin {
         } elseif ( 'rejected' === $notice ) {
             echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'Request rejected and moved to Trash.', 'zymarg-community-board' ) . '</p></div>';
         }
+    }
+
+    /**
+     * Inject admin CSS to brand the "Community Board" sidebar menu text
+     * with the ZYMARG brand color (#9500A5).
+     */
+    public function admin_menu_brand_css(): void {
+        $screen = get_current_screen();
+        // Apply brand color to the menu item across all admin pages.
+        ?>
+        <style>
+            #adminmenu #menu-posts-<?php echo esc_attr( ZCRB_POST_TYPE ); ?> .wp-menu-name {
+                color: #9500a5;
+                font-weight: 600;
+            }
+            #adminmenu #menu-posts-<?php echo esc_attr( ZCRB_POST_TYPE ); ?>.current .wp-menu-name,
+            #adminmenu #menu-posts-<?php echo esc_attr( ZCRB_POST_TYPE ); ?>.wp-has-current-submenu .wp-menu-name,
+            #adminmenu #menu-posts-<?php echo esc_attr( ZCRB_POST_TYPE ); ?>:hover .wp-menu-name {
+                color: #9500a5 !important;
+            }
+            #adminmenu #menu-posts-<?php echo esc_attr( ZCRB_POST_TYPE ); ?> .wp-menu-image::before {
+                color: #9500a5 !important;
+            }
+        </style>
+        <?php
     }
 }

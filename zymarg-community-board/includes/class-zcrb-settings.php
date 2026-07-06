@@ -113,8 +113,10 @@ class ZCRB_Settings {
             'load_google_fonts'    => 0,
 
             // -------- Notifications --------
-            'notify_email'         => '',
-            'notify_subject'       => '',
+            'notify_email'                  => '',
+            'notify_subject'                => '',
+            'notify_submitter_on_approve'   => 1,
+            'notify_submitter_on_response'  => 1,
 
             // -------- Data Retention (auto-delete) --------
             'data_retention_days'  => 0,
@@ -188,7 +190,7 @@ class ZCRB_Settings {
         $clean['image_max_mb']        = max( 1, min( 20, (int) ( $input['image_max_mb'] ?? $defaults['image_max_mb'] ) ) );
         $clean['rate_limit_per_hour'] = max( 1, min( 50, (int) ( $input['rate_limit_per_hour'] ?? $defaults['rate_limit_per_hour'] ) ) );
 
-        foreach ( array( 'image_enabled', 'phone_required', 'email_required', 'image_required', 'enable_auto_updates', 'load_google_fonts' ) as $k ) {
+        foreach ( array( 'image_enabled', 'phone_required', 'email_required', 'image_required', 'enable_auto_updates', 'load_google_fonts', 'notify_submitter_on_approve', 'notify_submitter_on_response' ) as $k ) {
             $clean[ $k ] = ! empty( $input[ $k ] ) ? 1 : 0;
         }
 
@@ -425,6 +427,13 @@ class ZCRB_Settings {
                     <tr>
                         <th scope="row"><label for="zcrb_notify_subject"><?php esc_html_e( 'Notification subject', 'zymarg-community-board' ); ?></label></th>
                         <td><input id="zcrb_notify_subject" type="text" class="regular-text" name="<?php echo esc_attr( $opt ); ?>[notify_subject]" value="<?php echo esc_attr( $s['notify_subject'] ); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Submitter notifications', 'zymarg-community-board' ); ?></th>
+                        <td>
+                            <label><input type="checkbox" name="<?php echo esc_attr( $opt ); ?>[notify_submitter_on_approve]" value="1" <?php checked( $s['notify_submitter_on_approve'], 1 ); ?> /> <?php esc_html_e( 'Email submitter when their request is approved', 'zymarg-community-board' ); ?></label><br>
+                            <label><input type="checkbox" name="<?php echo esc_attr( $opt ); ?>[notify_submitter_on_response]" value="1" <?php checked( $s['notify_submitter_on_response'], 1 ); ?> /> <?php esc_html_e( 'Email submitter when a vendor responds', 'zymarg-community-board' ); ?></label>
+                        </td>
                     </tr>
                 </table>
 

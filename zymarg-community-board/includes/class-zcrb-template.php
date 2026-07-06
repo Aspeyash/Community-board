@@ -136,6 +136,18 @@ class ZCRB_Template {
                 <p class="zcrb-card__message" itemprop="name"><?php echo esc_html( $message ); ?></p>
                 <footer class="zcrb-card__footer">
                     <span class="zcrb-card__ref"><?php echo esc_html( ZCRB_I18n::t( 'ref_label' ) ); ?> #<?php echo esc_html( $ref ); ?></span>
+                    <?php
+                    $post_status = get_post_status( $post );
+                    if ( $post_status && 'publish' !== $post_status ) :
+                        $status_label = ZCRB_Status::get_status_label( $post_status );
+                        $status_class = 'zcrb-status-badge zcrb-status-badge--' . sanitize_html_class( str_replace( 'zcrb_', '', $post_status ) );
+                        ?>
+                        <span class="<?php echo esc_attr( $status_class ); ?>"><?php echo esc_html( $status_label ); ?></span>
+                    <?php endif; ?>
+                    <span class="zcrb-card__upvotes">
+                        <svg class="zcrb-card__upvotes-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        <?php echo esc_html( (string) ZCRB_Upvote::get_count( (int) $post->ID ) ); ?>
+                    </span>
                     <a class="zcrb-card__link" href="<?php echo esc_url( $permalink ); ?>">
                         <?php echo esc_html( ZCRB_I18n::t( 'view_details' ) ); ?>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
@@ -433,10 +445,11 @@ class ZCRB_Template {
             $author    = get_userdata( (int) $post->post_author );
             $full_name = $author ? $author->display_name : __( 'Community Member', 'zymarg-community-board' );
         }
-        $message  = wp_strip_all_tags( $post->post_content );
-        $date     = get_the_date( '', $post );
-        $iso_date = get_the_date( 'c', $post );
-        $ref      = self::ref_number( (int) $post->ID );
+        $message     = wp_strip_all_tags( $post->post_content );
+        $date        = get_the_date( '', $post );
+        $iso_date    = get_the_date( 'c', $post );
+        $ref         = self::ref_number( (int) $post->ID );
+        $post_status = get_post_status( $post );
         ?>
         <div class="zcrb-wrap zcrb-single">
             <div class="zcrb-orbs" aria-hidden="true">
@@ -454,6 +467,13 @@ class ZCRB_Template {
                     <time class="zcrb-card__date-badge" datetime="<?php echo esc_attr( $iso_date ); ?>" itemprop="dateCreated">
                         <?php echo esc_html( $date ); ?>
                     </time>
+                    <?php
+                    if ( $post_status && 'publish' !== $post_status ) :
+                        $status_label = ZCRB_Status::get_status_label( $post_status );
+                        $status_class = 'zcrb-status-badge zcrb-status-badge--' . sanitize_html_class( str_replace( 'zcrb_', '', $post_status ) );
+                        ?>
+                        <span class="<?php echo esc_attr( $status_class ); ?>"><?php echo esc_html( $status_label ); ?></span>
+                    <?php endif; ?>
                 </header>
 
                 <h1 class="zcrb-single__title" itemprop="name"><?php echo esc_html( $message ); ?></h1>
@@ -464,13 +484,17 @@ class ZCRB_Template {
                     </figure>
                 <?php endif; ?>
 
-                <p>
+                <div class="zcrb-single__meta">
                     <span class="zcrb-card__ref"><?php echo esc_html( ZCRB_I18n::t( 'ref_label' ) ); ?> #<?php echo esc_html( $ref ); ?></span>
-                </p>
+                    <?php ZCRB_Upvote::render_button( (int) $post->ID ); ?>
+                </div>
+
+                <?php ZCRB_Vendor_Response::instance()->render_responses( (int) $post->ID ); ?>
+                <?php ZCRB_Vendor_Response::instance()->render_response_form( (int) $post->ID ); ?>
 
                 <p class="zcrb-single__back">
                     <a class="zcrb-btn zcrb-btn--ghost" href="<?php echo esc_url( (string) get_post_type_archive_link( ZCRB_POST_TYPE ) ); ?>">
-                        ← <?php echo esc_html( ZCRB_I18n::t( 'page_title' ) ); ?>
+                        &larr; <?php echo esc_html( ZCRB_I18n::t( 'page_title' ) ); ?>
                     </a>
                 </p>
             </article>

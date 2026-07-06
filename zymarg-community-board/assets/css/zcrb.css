@@ -677,3 +677,204 @@
     .zcrb-card__image,
     .zcrb-btn { transition: none; }
 }
+
+/* =========================================================================
+   Status badges
+   ========================================================================= */
+.zcrb-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: var(--zcrb-radius-full);
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-card-date);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: 1.6;
+}
+.zcrb-status-badge--in_progress {
+    background: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ffcc80;
+}
+.zcrb-status-badge--fulfilled {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+/* =========================================================================
+   Upvote button
+   ========================================================================= */
+.zcrb-upvote {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border: 1px solid var(--zcrb-border);
+    border-radius: var(--zcrb-radius-full);
+    background: #fff;
+    color: var(--zcrb-muted);
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-card-ref);
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    line-height: 1;
+}
+.zcrb-upvote:hover {
+    border-color: var(--zcrb-purple-100);
+    color: var(--zcrb-purple);
+    background: var(--zcrb-purple-50);
+}
+.zcrb-upvote.is-active {
+    color: var(--zcrb-purple);
+    border-color: var(--zcrb-purple);
+    background: var(--zcrb-purple-50);
+}
+.zcrb-upvote.is-active .zcrb-upvote__icon {
+    fill: var(--zcrb-purple);
+}
+.zcrb-upvote__icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+.zcrb-upvote__count {
+    min-width: 1ch;
+}
+
+/* Card upvotes (small inline display) */
+.zcrb-card__upvotes {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--zcrb-muted);
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-card-ref);
+    font-weight: 600;
+}
+.zcrb-card__upvotes-icon {
+    color: var(--zcrb-purple-100);
+}
+
+/* =========================================================================
+   Vendor responses section
+   ========================================================================= */
+.zcrb-responses {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--zcrb-border-light);
+}
+.zcrb-responses__title {
+    font-family: var(--zcrb-font-heading);
+    font-size: var(--zcrb-fs-form-h);
+    font-weight: 600;
+    color: var(--zcrb-text);
+    margin: 0 0 16px;
+}
+.zcrb-responses__empty {
+    color: var(--zcrb-muted);
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-card-message);
+    font-style: italic;
+}
+.zcrb-responses__list {
+    display: grid;
+    gap: 12px;
+}
+.zcrb-response-card {
+    padding: 16px;
+    border: 1px solid var(--zcrb-border-light);
+    border-radius: var(--zcrb-radius-sm);
+    background: var(--zcrb-surface);
+}
+.zcrb-response-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.zcrb-response-card__vendor {
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-card-author);
+    font-weight: 600;
+    color: var(--zcrb-purple);
+}
+.zcrb-response-card__time {
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-card-date);
+    color: var(--zcrb-muted);
+}
+.zcrb-response-card__message {
+    margin: 0;
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-card-message);
+    line-height: 1.6;
+    color: var(--zcrb-text);
+}
+
+/* =========================================================================
+   Vendor response form
+   ========================================================================= */
+.zcrb-response-form {
+    margin-top: 24px;
+    padding: 20px;
+    border: 1px solid var(--zcrb-border-light);
+    border-radius: var(--zcrb-radius);
+    background: var(--zcrb-surface);
+}
+.zcrb-response-form__title {
+    font-family: var(--zcrb-font-heading);
+    font-size: var(--zcrb-fs-label);
+    font-weight: 600;
+    color: var(--zcrb-text);
+    margin: 0 0 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.zcrb-response-form__textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--zcrb-border);
+    border-radius: var(--zcrb-radius-sm);
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-input);
+    line-height: 1.5;
+    color: var(--zcrb-text);
+    background: #fff;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.zcrb-response-form__textarea:focus {
+    outline: none;
+    border-color: var(--zcrb-purple);
+    box-shadow: 0 0 0 4px rgba(149, 0, 165, 0.12);
+}
+.zcrb-response-form__submit {
+    margin-top: 12px;
+    width: auto;
+    padding: 10px 20px;
+}
+.zcrb-response-form__feedback {
+    margin: 8px 0 0;
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-privacy);
+    color: var(--zcrb-muted);
+}
+.zcrb-response-form__feedback.is-success { color: #1a7f3c; }
+.zcrb-response-form__feedback.is-error { color: #ba1a1a; }
+
+/* =========================================================================
+   Single meta row (ref + upvote)
+   ========================================================================= */
+.zcrb-single__meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 16px 0;
+}

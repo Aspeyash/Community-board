@@ -61,6 +61,10 @@ require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-admin.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-shortcode.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-seo.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-template.php';
+require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-status.php';
+require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-vendor-response.php';
+require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-upvote.php';
+require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-notify.php';
 
 /**
  * Convenience accessor — read any setting from anywhere.
@@ -95,6 +99,10 @@ add_action( 'plugins_loaded', static function () {
     ZCRB_SEO::instance();
     ZCRB_Template::instance();
     ZCRB_Retention::instance();
+    ZCRB_Status::instance();
+    ZCRB_Vendor_Response::instance();
+    ZCRB_Upvote::instance();
+    ZCRB_Notify::instance();
 
     if ( is_admin() && zcrb_get_setting( 'enable_auto_updates', 1 ) ) {
         new ZCRB_Updater( array(
@@ -184,23 +192,29 @@ add_action( 'wp_enqueue_scripts', static function () {
     );
 
     wp_localize_script( 'zcrb-frontend', 'ZCRB', array(
-        'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
-        'nonce'        => wp_create_nonce( 'zcrb_nonce' ),
-        'archiveUrl'   => get_post_type_archive_link( ZCRB_POST_TYPE ),
-        'isLoggedIn'   => is_user_logged_in(),
-        'loginUrl'     => wp_login_url( get_permalink() ),
-        'messageLimit' => (int) zcrb_get_setting( 'message_limit', ZCRB_MESSAGE_LIMIT ),
-        'imageMaxMb'   => (int) zcrb_get_setting( 'image_max_mb', 2 ),
-        'imageTypes'   => array_filter( array_map( 'trim', explode( ',', (string) zcrb_get_setting( 'image_allowed_types', 'image/jpeg,image/png,image/webp' ) ) ) ),
-        'lang'         => ZCRB_I18n::current_lang(),
-        'i18n'         => array(
-            'submitting'     => ZCRB_I18n::t( 'submitting' ),
-            'submitSuccess'  => ZCRB_I18n::t( 'submit_success' ),
-            'submitError'    => ZCRB_I18n::t( 'submit_error' ),
-            'mustLogin'      => ZCRB_I18n::t( 'must_login' ),
-            'charsRemaining' => ZCRB_I18n::t( 'chars_remaining' ),
-            'fileTooLarge'   => ZCRB_I18n::t( 'file_too_large' ),
-            'invalidImage'   => ZCRB_I18n::t( 'invalid_image' ),
+        'ajaxUrl'          => admin_url( 'admin-ajax.php' ),
+        'nonce'            => wp_create_nonce( 'zcrb_nonce' ),
+        'upvoteNonce'      => wp_create_nonce( 'zcrb_upvote_nonce' ),
+        'vendorNonce'      => wp_create_nonce( 'zcrb_vendor_respond_nonce' ),
+        'archiveUrl'       => get_post_type_archive_link( ZCRB_POST_TYPE ),
+        'isLoggedIn'       => is_user_logged_in(),
+        'canVendorRespond' => current_user_can( 'edit_others_posts' ),
+        'loginUrl'         => wp_login_url( get_permalink() ),
+        'messageLimit'     => (int) zcrb_get_setting( 'message_limit', ZCRB_MESSAGE_LIMIT ),
+        'imageMaxMb'       => (int) zcrb_get_setting( 'image_max_mb', 2 ),
+        'imageTypes'       => array_filter( array_map( 'trim', explode( ',', (string) zcrb_get_setting( 'image_allowed_types', 'image/jpeg,image/png,image/webp' ) ) ) ),
+        'lang'             => ZCRB_I18n::current_lang(),
+        'i18n'             => array(
+            'submitting'        => ZCRB_I18n::t( 'submitting' ),
+            'submitSuccess'     => ZCRB_I18n::t( 'submit_success' ),
+            'submitError'       => ZCRB_I18n::t( 'submit_error' ),
+            'mustLogin'         => ZCRB_I18n::t( 'must_login' ),
+            'charsRemaining'    => ZCRB_I18n::t( 'chars_remaining' ),
+            'fileTooLarge'      => ZCRB_I18n::t( 'file_too_large' ),
+            'invalidImage'      => ZCRB_I18n::t( 'invalid_image' ),
+            'responseSubmitted' => ZCRB_I18n::t( 'response_submitted' ),
+            'upvote'            => ZCRB_I18n::t( 'upvote' ),
+            'upvoted'           => ZCRB_I18n::t( 'upvoted' ),
         ),
     ) );
 }, 20 );
