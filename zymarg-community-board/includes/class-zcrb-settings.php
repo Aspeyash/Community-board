@@ -78,6 +78,7 @@ class ZCRB_Settings {
             // -------- Image upload --------
             'image_enabled'        => 1,
             'image_max_mb'         => 2,
+            'image_max_count'      => 1,
             'image_allowed_types'  => 'image/jpeg,image/png,image/webp',
 
             // -------- Form requirements --------
@@ -157,7 +158,7 @@ class ZCRB_Settings {
 
     public function add_menu(): void {
         add_submenu_page(
-            'edit.php?post_type=' . ZCRB_POST_TYPE,
+            'zcrb-hub',
             __( 'Community Board Settings', 'zymarg-community-board' ),
             __( 'Settings', 'zymarg-community-board' ),
             'manage_options',
@@ -188,6 +189,7 @@ class ZCRB_Settings {
         $clean['per_page']            = max( 1, min( 200, (int) ( $input['per_page'] ?? $defaults['per_page'] ) ) );
         $clean['message_limit']       = max( 50, min( 2000, (int) ( $input['message_limit'] ?? $defaults['message_limit'] ) ) );
         $clean['image_max_mb']        = max( 1, min( 20, (int) ( $input['image_max_mb'] ?? $defaults['image_max_mb'] ) ) );
+        $clean['image_max_count']     = max( 1, min( 4, (int) ( $input['image_max_count'] ?? $defaults['image_max_count'] ) ) );
         $clean['rate_limit_per_hour'] = max( 1, min( 50, (int) ( $input['rate_limit_per_hour'] ?? $defaults['rate_limit_per_hour'] ) ) );
 
         foreach ( array( 'image_enabled', 'phone_required', 'email_required', 'image_required', 'enable_auto_updates', 'load_google_fonts', 'notify_submitter_on_approve', 'notify_submitter_on_response' ) as $k ) {
@@ -316,6 +318,18 @@ class ZCRB_Settings {
                     <tr>
                         <th scope="row"><label for="zcrb_image_max_mb"><?php esc_html_e( 'Max image size (MB)', 'zymarg-community-board' ); ?></label></th>
                         <td><input id="zcrb_image_max_mb" type="number" min="1" max="20" name="<?php echo esc_attr( $opt ); ?>[image_max_mb]" value="<?php echo esc_attr( (string) $s['image_max_mb'] ); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="zcrb_image_max_count"><?php esc_html_e( 'Max images per submission', 'zymarg-community-board' ); ?></label></th>
+                        <td>
+                            <select id="zcrb_image_max_count" name="<?php echo esc_attr( $opt ); ?>[image_max_count]">
+                                <option value="1" <?php selected( (int) $s['image_max_count'], 1 ); ?>>1</option>
+                                <option value="2" <?php selected( (int) $s['image_max_count'], 2 ); ?>>2</option>
+                                <option value="3" <?php selected( (int) $s['image_max_count'], 3 ); ?>>3</option>
+                                <option value="4" <?php selected( (int) $s['image_max_count'], 4 ); ?>>4</option>
+                            </select>
+                            <p class="description"><?php esc_html_e( 'How many images a user can upload per request.', 'zymarg-community-board' ); ?></p>
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="zcrb_image_allowed_types"><?php esc_html_e( 'Allowed image MIME types', 'zymarg-community-board' ); ?></label></th>

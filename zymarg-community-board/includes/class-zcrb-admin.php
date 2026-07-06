@@ -284,21 +284,26 @@ class ZCRB_Admin {
      * with the ZYMARG brand color (#9500A5).
      */
     public function admin_menu_brand_css(): void {
-        $screen = get_current_screen();
-        // Apply brand color to the menu item across all admin pages.
         ?>
         <style>
-            #adminmenu #menu-posts-<?php echo esc_attr( ZCRB_POST_TYPE ); ?> .wp-menu-name {
+            #adminmenu .toplevel_page_zcrb-hub .wp-menu-name {
                 color: #9500a5;
                 font-weight: 600;
             }
-            #adminmenu #menu-posts-<?php echo esc_attr( ZCRB_POST_TYPE ); ?>.current .wp-menu-name,
-            #adminmenu #menu-posts-<?php echo esc_attr( ZCRB_POST_TYPE ); ?>.wp-has-current-submenu .wp-menu-name,
-            #adminmenu #menu-posts-<?php echo esc_attr( ZCRB_POST_TYPE ); ?>:hover .wp-menu-name {
+            #adminmenu .toplevel_page_zcrb-hub.current .wp-menu-name,
+            #adminmenu .toplevel_page_zcrb-hub.wp-has-current-submenu .wp-menu-name {
+                color: #fff !important;
+            }
+            #adminmenu .toplevel_page_zcrb-hub:hover .wp-menu-name {
+                color: #fff !important;
+            }
+            #adminmenu .toplevel_page_zcrb-hub .wp-menu-image::before {
                 color: #9500a5 !important;
             }
-            #adminmenu #menu-posts-<?php echo esc_attr( ZCRB_POST_TYPE ); ?> .wp-menu-image::before {
-                color: #9500a5 !important;
+            #adminmenu .toplevel_page_zcrb-hub.current .wp-menu-image::before,
+            #adminmenu .toplevel_page_zcrb-hub.wp-has-current-submenu .wp-menu-image::before,
+            #adminmenu .toplevel_page_zcrb-hub:hover .wp-menu-image::before {
+                color: #fff !important;
             }
         </style>
         <?php

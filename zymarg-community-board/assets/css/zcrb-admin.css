@@ -1,0 +1,172 @@
+/**
+ * ZYMARG Community Board — Admin Hub Styles
+ *
+ * Brand colors:
+ *   Primary Purple: #9500A5
+ *   Primary Container: #BD00D1
+ *   Accent: #FEA9FF
+ *   Dark Purple Text: #36003D
+ *   Discovery Spark Purple: #6833ea
+ *   Discovery Spark Gold: #FFD166
+ */
+
+/* ─── Hub Container ─── */
+.zcrb-hub-wrap {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+/* ─── Gradient Header ─── */
+.zcrb-hub-header {
+    background: linear-gradient(to right, #9500A5, #FEA9FF);
+    padding: 24px 32px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    margin-bottom: 24px;
+}
+
+.zcrb-hub-header__title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.zcrb-hub-header__version {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: #fff;
+}
+
+/* ─── Tab Navigation ─── */
+.zcrb-hub-tabs {
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid #e2e8f0;
+    margin: 24px 0;
+    padding-bottom: 0;
+}
+
+.zcrb-hub-tab {
+    padding: 12px 4px;
+    text-decoration: none;
+    color: #534152;
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.zcrb-hub-tab:hover {
+    color: #9500A5;
+    text-decoration: none;
+}
+
+.zcrb-hub-tab.is-active {
+    border-color: #9500A5;
+    color: #9500A5;
+    font-weight: 600;
+}
+
+/* ─── Discovery Spark Panel ─── */
+.zcrb-hub-spark {
+    text-align: center;
+    padding: 32px;
+    background: #fcfaff;
+    border-radius: 12px;
+    border: 1px solid #eaedff;
+    margin-bottom: 24px;
+}
+
+/* ─── Discovery Spark Animation ─── */
+@keyframes zcrb-spark-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
+}
+
+.zcrb-spark-purple path {
+    animation-name: zcrb-spark-pulse;
+    animation-duration: 1.5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    transform-origin: center center;
+}
+
+.zcrb-spark-purple path:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.zcrb-spark-purple path:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.zcrb-spark-purple path:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.zcrb-spark-gold {
+    /* Gold paths are static - no animation */
+}
+
+/* ─── Stats Grid ─── */
+.zcrb-hub-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.zcrb-hub-stat {
+    padding: 24px 16px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.zcrb-hub-stat__count {
+    font-size: 36px;
+    font-weight: 700;
+    color: #9500A5;
+    line-height: 1.2;
+}
+
+.zcrb-hub-stat__label {
+    font-size: 14px;
+    color: #534152;
+    margin-top: 4px;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 782px) {
+    .zcrb-hub-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 20px 24px;
+    }
+
+    .zcrb-hub-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .zcrb-hub-tabs {
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .zcrb-hub-stats {
+        grid-template-columns: 1fr;
+    }
+}

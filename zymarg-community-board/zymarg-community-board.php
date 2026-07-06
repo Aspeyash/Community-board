@@ -58,6 +58,7 @@ require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-cpt.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-form.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-ajax.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-admin.php';
+require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-admin-hub.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-shortcode.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-seo.php';
 require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-template.php';
@@ -95,6 +96,7 @@ add_action( 'plugins_loaded', static function () {
     ZCRB_Form::instance();
     ZCRB_Ajax::instance();
     ZCRB_Admin::instance();
+    ZCRB_Admin_Hub::instance();
     ZCRB_Shortcode::instance();
     ZCRB_SEO::instance();
     ZCRB_Template::instance();
