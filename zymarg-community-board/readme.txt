@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.0.7
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.1.0 =
+* **Full AJAX save on the Settings page** - the Settings form now saves via `admin-ajax.php` (action `zcrb_save_settings`) instead of the classic `options.php` full page reload. On success a toast notification appears next to the Save Changes button, and the button is disabled + relabeled ("Saving…") for the duration of the request. Uses the same `sanitize()` pipeline as the classic path, so every knob (per-page, message limit, image rules, colors, typography, notifications, retention, GitHub updater) is validated exactly the same way. Nonce-protected (`zcrb_settings_save`) and gated on `manage_options`.
 
 = 2.0.7 =
 * **Duplicate "All Requests" submenu removed** - removed the manual `add_submenu_page` call for "All Requests" in the admin hub. WordPress already auto-creates this submenu entry from the CPT registration (`show_in_menu => 'zcrb-hub'`), so the manual call produced a duplicate sidebar item.

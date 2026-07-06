@@ -220,3 +220,33 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+/* ─── Settings AJAX save toast ─── */
+.zcrb-settings-toast {
+    display: inline-block;
+    margin-left: 12px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    vertical-align: middle;
+}
+.zcrb-settings-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.zcrb-settings-toast.is-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.zcrb-settings-toast.is-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}

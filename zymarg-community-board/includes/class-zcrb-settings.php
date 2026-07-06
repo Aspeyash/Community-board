@@ -36,6 +36,7 @@ class ZCRB_Settings {
         add_action( 'admin_menu', array( $this, 'add_menu' ), 20 );
         add_action( 'admin_init', array( $this, 'register' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin' ) );
+        add_action( 'wp_ajax_zcrb_save_settings', array( $this, 'ajax_save_settings' ) );
     }
 
     /**
@@ -248,6 +249,46 @@ class ZCRB_Settings {
         return $clean;
     }
 
+    /**
+     * AJAX handler: save the settings form without a full page reload.
+     * The JS layer serializes the entire form (`$form.serialize()`) and posts
+     * it as `settings=<query-string>`, so we parse_str() it back into an array
+     * and run it through the same sanitize() pipeline the classic
+     * options.php path uses.
+     */
+    public function ajax_save_settings(): void {
+        if ( ! check_ajax_referer( 'zcrb_settings_save', 'nonce', false ) ) {
+            wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'zymarg-community-board' ) ), 403 );
+        }
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to save these settings.', 'zymarg-community-board' ) ), 403 );
+        }
+
+        $raw = isset( $_POST['settings'] ) ? wp_unslash( $_POST['settings'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+
+        $parsed = array();
+        if ( is_string( $raw ) ) {
+            parse_str( $raw, $parsed );
+        } elseif ( is_array( $raw ) ) {
+            $parsed = $raw;
+        }
+
+        // The serialized form nests the settings under OPTION_KEY (matches the
+        // classic options.php path). Unwrap it if present, otherwise treat the
+        // parsed payload as the settings array itself.
+        if ( isset( $parsed[ self::OPTION_KEY ] ) && is_array( $parsed[ self::OPTION_KEY ] ) ) {
+            $input = $parsed[ self::OPTION_KEY ];
+        } else {
+            $input = $parsed;
+        }
+
+        $clean = $this->sanitize( $input );
+        update_option( self::OPTION_KEY, $clean );
+
+        wp_send_json_success( array( 'message' => __( 'Settings saved successfully.', 'zymarg-community-board' ) ) );
+    }
+
     public function enqueue_admin( string $hook ): void {
         if ( false === strpos( $hook, self::SETTINGS_SLUG ) ) {
             return;
@@ -260,6 +301,22 @@ class ZCRB_Settings {
         );
         wp_enqueue_style( 'wp-color-picker' );
         wp_enqueue_script( 'wp-color-picker' );
+        wp_enqueue_script(
+            'zcrb-admin-settings',
+            ZCRB_PLUGIN_URL . 'assets/js/zcrb-admin.js',
+            array( 'jquery', 'wp-color-picker' ),
+            ZCRB_VERSION,
+            true
+        );
+        wp_localize_script( 'zcrb-admin-settings', 'ZCRBSettings', array(
+            'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+            'nonce'   => wp_create_nonce( 'zcrb_settings_save' ),
+            'i18n'    => array(
+                'saving'    => __( 'Saving…', 'zymarg-community-board' ),
+                'saved'     => __( 'Settings saved', 'zymarg-community-board' ),
+                'saveError' => __( 'Failed to save settings. Please try again.', 'zymarg-community-board' ),
+            ),
+        ) );
         wp_add_inline_script(
             'wp-color-picker',
             'jQuery(function($){ $(".zcrb-color").wpColorPicker(); });'
@@ -283,6 +340,7 @@ class ZCRB_Settings {
 
             <form method="post" action="options.php">
                 <?php settings_fields( 'zcrb_settings_group' ); ?>
+                <?php wp_nonce_field( 'zcrb_settings_save', 'zcrb_ajax_nonce' ); ?>
 
                 <h2><?php esc_html_e( 'General', 'zymarg-community-board' ); ?></h2>
                 <table class="form-table" role="presentation">
@@ -510,6 +568,7 @@ class ZCRB_Settings {
                 </table>
 
                 <?php submit_button(); ?>
+                <div class="zcrb-settings-toast" data-zcrb-toast></div>
             </form>
         </div>
         <?php
