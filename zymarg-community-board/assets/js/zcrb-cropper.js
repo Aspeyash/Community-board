@@ -286,12 +286,14 @@
         document.addEventListener('touchend', onMouseUp);
 
         // Button handlers
-        skipBtn.addEventListener('click', function () {
+        skipBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
             closeCropper();
             if (onSkip) onSkip();
         });
 
-        cropBtn.addEventListener('click', function () {
+        cropBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
             // Extract crop region from original image at full resolution
             var sx = Math.round(cropRect.x / scale);
             var sy = Math.round(cropRect.y / scale);
@@ -318,16 +320,23 @@
                 mimeType = 'image/jpeg';
             }
             var quality = mimeType === 'image/png' ? undefined : 0.92;
+            var baseName = file.name.replace(/\.[^.]+$/, '');
 
             outCanvas.toBlob(function (blob) {
                 if (!blob) {
-                    if (onSkip) onSkip();
-                    closeCropper();
+                    // Fallback: try jpeg if original type failed
+                    outCanvas.toBlob(function (fallbackBlob) {
+                        closeCropper();
+                        if (fallbackBlob && onCrop) {
+                            onCrop(fallbackBlob, baseName + '-cropped.jpg', 'image/jpeg');
+                        } else if (onSkip) {
+                            onSkip();
+                        }
+                    }, 'image/jpeg', 0.9);
                     return;
                 }
                 // Build a filename
                 var ext = mimeType === 'image/png' ? '.png' : mimeType === 'image/webp' ? '.webp' : '.jpg';
-                var baseName = file.name.replace(/\.[^.]+$/, '');
                 var croppedName = baseName + '-cropped' + ext;
 
                 closeCropper();
