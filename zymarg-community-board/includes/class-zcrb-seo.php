@@ -137,25 +137,17 @@ class ZCRB_SEO {
     }
 
     private function json_ld_archive(): void {
+        global $wp_query;
+
         $paged    = $this->current_paged();
         $per_page = function_exists( 'zcrb_get_setting' ) ? (int) zcrb_get_setting( 'per_page', ZCRB_PER_PAGE ) : ZCRB_PER_PAGE;
-
-        $query = new WP_Query( array(
-            'post_type'      => ZCRB_POST_TYPE,
-            'post_status'    => 'publish',
-            'posts_per_page' => $per_page,
-            'paged'          => $paged,
-            'orderby'        => 'date',
-            'order'          => 'DESC',
-            'no_found_rows'  => true,
-        ) );
 
         $faq_items  = array();
         $list_items = array();
         $position   = ( $paged - 1 ) * $per_page;
 
-        if ( $query->have_posts() ) {
-            foreach ( $query->posts as $post ) {
+        if ( ! empty( $wp_query->posts ) ) {
+            foreach ( $wp_query->posts as $post ) {
                 $position++;
                 $msg = wp_strip_all_tags( $post->post_content );
                 if ( '' === $msg ) {

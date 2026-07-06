@@ -122,7 +122,7 @@ class ZCRB_Settings {
             // -------- GitHub Updates --------
             'enable_auto_updates'  => 1,
             'github_owner'         => 'Aspeyash',
-            'github_repo'          => 'Community-page',
+            'github_repo'          => 'Community-board',
             'github_branch'        => 'main',
             'github_token'         => '',
         );

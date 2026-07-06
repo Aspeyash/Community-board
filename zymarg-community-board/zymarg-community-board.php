@@ -12,9 +12,9 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       zymarg-community-board
  * Domain Path:       /languages
- * GitHub Plugin URI: https://github.com/Aspeyash/Community-page
+ * GitHub Plugin URI: https://github.com/Aspeyash/Community-board
  * GitHub Branch:     main
- * Update URI:        https://github.com/Aspeyash/Community-page
+ * Update URI:        https://github.com/Aspeyash/Community-board
  *
  * @package ZymargCommunityBoard
  */
@@ -69,8 +69,10 @@ require_once ZCRB_PLUGIN_DIR . 'includes/class-zcrb-template.php';
  * @param mixed  $default
  * @return mixed
  */
-function zcrb_get_setting( string $key, $default = null ) {
-    return ZCRB_Settings::instance()->get( $key, $default );
+if ( ! function_exists( 'zcrb_get_setting' ) ) {
+    function zcrb_get_setting( string $key, $default = null ) {
+        return ZCRB_Settings::instance()->get( $key, $default );
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -97,7 +99,7 @@ add_action( 'plugins_loaded', static function () {
     if ( is_admin() && zcrb_get_setting( 'enable_auto_updates', 1 ) ) {
         new ZCRB_Updater( array(
             'owner'       => (string) zcrb_get_setting( 'github_owner', 'Aspeyash' ),
-            'repo'        => (string) zcrb_get_setting( 'github_repo', 'Community-page' ),
+            'repo'        => (string) zcrb_get_setting( 'github_repo', 'Community-board' ),
             'plugin_file' => ZCRB_PLUGIN_BASENAME,
             'version'     => ZCRB_VERSION,
             'token'       => (string) zcrb_get_setting( 'github_token', '' ),

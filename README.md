@@ -15,14 +15,14 @@ bilingual (English + Bengali), Astra / Elementor Pro / WooCommerce / Dokan compa
 - Public feed exposes only Name, Message, Date, and Image. Phone / Email never appear publicly.
 - SEO: H1, meta description, Open Graph + Twitter Card, JSON-LD `FAQPage`, `ItemList`, `CollectionPage`, and `Question` schema.
 - Bilingual UI via `?lang=bn` / `?lang=en`, persisted via cookie. Honours WP locale `bn_BD` automatically.
-- White base + soft purple radial gradient orbs, ZYMARG primary purple (`#6b3fa0`) action buttons by default. **Every color is editable from Settings.**
+- White base + soft purple radial gradient orbs, ZYMARG primary purple (`#9500A5`) action buttons by default. **Every color is editable from Settings.**
 - **GitHub Releases auto-updater** — push a tag, get a release, WordPress installs the update.
 
 ## Install
 
 ### Option A — Upload the ZIP
 
-1. Download [`zymarg-community-board.zip`](https://github.com/Aspeyash/Community-page/raw/feat/community-board-v1/dist/zymarg-community-board.zip).
+1. Download [`zymarg-community-board.zip`](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v1.4.4.zip).
 2. In WordPress: **Plugins → Add New → Upload Plugin**, choose the ZIP, click **Install Now**, then **Activate**.
 3. Visit **Settings → Permalinks → Save** to flush rewrite rules.
 4. Visit **Community Board → Settings** to configure.

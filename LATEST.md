@@ -6,7 +6,7 @@
 
 ## Download
 
-[**zymarg-community-board-v1.4.4.zip**](https://github.com/Aspeyash/Community-page/raw/refs/heads/main/zymarg-community-board-v1.4.4.zip)
+[**zymarg-community-board-v1.4.4.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v1.4.4.zip)
 
 > Install in WordPress: **Plugins → Add New → Upload Plugin** → choose the zip above → **Install Now** → **Activate**.
 
@@ -32,7 +32,7 @@
 1. **This file** — [`LATEST.md`](./LATEST.md) at the repo root.
 2. **`VERSION`** — one-line plain-text file at the repo root for scripts/CI: [`VERSION`](./VERSION).
 3. **Plugin header** — `Version:` line in [`zymarg-community-board/zymarg-community-board.php`](./zymarg-community-board/zymarg-community-board.php) (also the runtime source of truth for `ZCRB_VERSION` via `get_file_data()`).
-4. **GitHub Releases** — once a tagged release is published, [`/releases/latest`](https://github.com/Aspeyash/Community-page/releases/latest) is a permanent URL that always points at the newest.
+4. **GitHub Releases** — once a tagged release is published, [`/releases/latest`](https://github.com/Aspeyash/Community-board/releases/latest) is a permanent URL that always points at the newest.
 
 All four are updated in the same commit on every release.
 

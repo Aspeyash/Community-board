@@ -3,11 +3,20 @@
  * Uninstall handler.
  * Only runs on explicit "Delete" from the Plugins screen — not on deactivation.
  *
+ * NON-DESTRUCTIVE by default. Data is only removed if the site administrator
+ * has opted in by defining the constant ZCRB_REMOVE_ALL_DATA as truthy
+ * (e.g., in wp-config.php: define( 'ZCRB_REMOVE_ALL_DATA', true ); ).
+ *
  * @package ZymargCommunityBoard
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     exit;
+}
+
+// Bail early unless the site owner explicitly opted in to data removal.
+if ( ! defined( 'ZCRB_REMOVE_ALL_DATA' ) || ! ZCRB_REMOVE_ALL_DATA ) {
+    return;
 }
 
 global $wpdb;

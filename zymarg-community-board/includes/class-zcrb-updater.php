@@ -275,7 +275,7 @@ class ZCRB_Updater {
      * After the zip is extracted, make sure the resulting folder is named
      * `zymarg-community-board` so the plugin reactivates correctly.
      *
-     * GitHub's source code zipball extracts to e.g. `Aspeyash-Community-page-abc1234/`
+     * GitHub's source code zipball extracts to e.g. `Aspeyash-Community-board-abc1234/`
      * and our plugin lives in `zymarg-community-board/` *inside* that folder.
      * If a release asset built by our workflow is used, it already extracts
      * straight to `zymarg-community-board/` and this method is a no-op.
