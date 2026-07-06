@@ -1375,9 +1375,25 @@
         gap: 10px;
     }
 
+    .zcrb-status-tabs-wrap {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .zcrb-status-tabs {
+        width: max-content;
+    }
+
     .zcrb-requests-search-wrap {
         flex: 1 1 auto;
         min-width: 0;
+        width: 100%;
+    }
+
+    .zcrb-requests-search {
+        width: 100% !important;
     }
 
     /* Bulk actions stack vertically. */
