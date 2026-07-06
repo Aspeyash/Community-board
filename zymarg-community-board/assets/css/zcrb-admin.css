@@ -1481,6 +1481,20 @@
         padding: 10px 14px;
         font-size: 14px;
     }
+
+    .zcrb-settings .form-table td {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        padding: 4px 0 12px 0;
+    }
+
+    .zcrb-settings .form-table td input[type="number"] {
+        width: calc(100% - 32px) !important;
+        flex: 1 1 auto;
+    }
 }
 
 /* Very small phones (<=480px): tighter spacing, smaller fonts. */
