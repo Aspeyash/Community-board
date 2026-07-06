@@ -1,26 +1,30 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.1.2`
+**Latest version:** `v2.2.0`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.1.2.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.1.2.zip)
+[**zymarg-community-board-v2.2.0.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.2.0.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.1.2
+## What's new in v2.2.0
 
-Sidebar submenu order fix + branded header now shows the current section name:
+Full SPA admin — no page reloads between sections, matching the canonical ZYMARG admin design language.
 
-- **Submenu order corrected** — under Community Board the sidebar was rendering **All Requests → Dashboard → Settings**. WordPress' `_add_post_type_submenus()` runs on `admin_menu` priority 9 (before the hub's own `register_menu()` at priority 10), so the CPT's auto-added "All Requests" entry ended up first. A new `reorder_submenu()` pass hooked at priority 999 now runs last and sorts the submenu into the canonical **Dashboard → All Requests → Settings** order.
-- **Per-section header titles** — every admin screen used to show the exact same "ZYMARG Community Board" title in the branded gradient header (Dashboard, All Requests, Settings — all identical). The header now follows the canonical ZYMARG Theme Builder pattern: the big bold title is the SECTION NAME (Dashboard / All Requests / Edit Request / Settings), and "ZYMARG Community Board" becomes a small uppercase kicker/eyebrow above it. `render_branded_header()` takes an optional `$section_title` argument; the CPT-screen auto-injector auto-detects the title from the current screen id.
+- **Sidebar + main-panel layout** — the horizontal tab strip is replaced by a proper sidebar navigation (Discovery Spark brand mark + three nav buttons: Dashboard, All Requests, Settings) and a topbar that shows the current section name and plugin version badge. Design mirrors ZYMARG Backups and the Theme Builder admin so all three plugins now share one visual language.
+- **Client-side view switching** — all three sections are rendered server-side in a single page load. Clicking a nav button just toggles which panel is visible. No AJAX fetch, no re-render, no re-init. The URL updates via `pushState` so refresh, bookmark, and browser back/forward all work.
+- **Custom "All Requests" list inside the hub** — previously clicking All Requests navigated out to the WordPress CPT list table (full reload, different UI). Requests now render inline as branded cards with Ref number, colored status badge, submitter name, upvote count, date, message excerpt, and inline action buttons (View, Edit, Approve, Reject, Delete). Live keyword + status filtering happens entirely client-side. A link to the classic WP list view is still there for power-user workflows.
+- **Settings hosted in the SPA** — `admin.php?page=zcrb-settings` still works for existing bookmarks and renders the same shell with the Settings view active. The AJAX save from v2.1.0 is preserved (toast confirmation, no page reload).
+- **Fixes the "every click reloads" bug** — the old tabs were plain `<a>` hrefs to `admin.php?page=...`, so every click was a full page load. Nav is now `<button>` elements handled entirely client-side.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.2.0  | 2025-07-06 | `main`    | Full SPA admin: sidebar + main-panel layout, client-side view switching (no AJAX/reloads), custom All Requests list inside the hub |
 | v2.1.2  | 2025-07-06 | `main`    | Submenu order fix (Dashboard first) + per-section header titles (Dashboard/All Requests/Settings) instead of the same "ZYMARG Community Board" on every page |
 | v2.1.1  | 2025-07-06 | `main`    | Settings page fixes: white Spark backdrop, no duplicate heading, fixed redirects, inline toast, unified container width |
 | v2.1.0  | 2025-07-06 | `main`    | Full AJAX save on the Settings page — no page reload, toast notification |

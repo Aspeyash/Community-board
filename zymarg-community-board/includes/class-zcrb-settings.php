@@ -289,49 +289,51 @@ class ZCRB_Settings {
         wp_send_json_success( array( 'message' => __( 'Settings saved successfully.', 'zymarg-community-board' ) ) );
     }
 
+    /**
+     * Enqueue the settings-page color picker.
+     *
+     * The main admin CSS + JS are enqueued by ZCRB_Admin_Hub::enqueue_assets()
+     * (which fires on BOTH the hub slug and the settings slug so the SPA
+     * shell works from either URL). We only add the color picker init here
+     * because it depends on the `.zcrb-color` inputs already being in the DOM.
+     */
     public function enqueue_admin( string $hook ): void {
-        if ( false === strpos( $hook, self::SETTINGS_SLUG ) ) {
+        if ( false === strpos( $hook, self::SETTINGS_SLUG ) && false === strpos( $hook, ZCRB_Admin_Hub::MENU_SLUG ) ) {
             return;
         }
-        wp_enqueue_style(
-            'zcrb-admin',
-            ZCRB_PLUGIN_URL . 'assets/css/zcrb-admin.css',
-            array(),
-            ZCRB_VERSION
-        );
-        wp_enqueue_style( 'wp-color-picker' );
-        wp_enqueue_script( 'wp-color-picker' );
-        wp_enqueue_script(
-            'zcrb-admin-settings',
-            ZCRB_PLUGIN_URL . 'assets/js/zcrb-admin.js',
-            array( 'jquery', 'wp-color-picker' ),
-            ZCRB_VERSION,
-            true
-        );
-        wp_localize_script( 'zcrb-admin-settings', 'ZCRBSettings', array(
-            'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-            'nonce'   => wp_create_nonce( 'zcrb_settings_save' ),
-            'i18n'    => array(
-                'saving'    => __( 'Saving…', 'zymarg-community-board' ),
-                'saved'     => __( 'Settings saved', 'zymarg-community-board' ),
-                'saveError' => __( 'Failed to save settings. Please try again.', 'zymarg-community-board' ),
-            ),
-        ) );
         wp_add_inline_script(
             'wp-color-picker',
-            'jQuery(function($){ $(".zcrb-color").wpColorPicker(); });'
+            'jQuery(function($){ if ($.fn.wpColorPicker) { $(".zcrb-color").wpColorPicker(); } });'
         );
     }
 
+    /**
+     * Render the Settings page. The Settings slug (`admin.php?page=zcrb-settings`)
+     * shares the same SPA shell as the main hub — we just tell the hub to
+     * open with the Settings view active.
+     */
     public function render_page(): void {
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_die( esc_html__( 'You do not have permission to access this page.', 'zymarg-community-board' ) );
         }
+        // Delegate to the hub so both URLs render an identical shell.
+        // (The hub reads `$_GET['page']` to decide which view starts active,
+        // and the settings slug maps to the "settings" view.)
+        ZCRB_Admin_Hub::instance()->render_page();
+    }
+
+    /**
+     * Render only the Settings form body — no wrap, no shell, no branded
+     * header. Called from inside the SPA hub's Settings view container.
+     */
+    public function render_settings_body(): void {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
         $s = $this->all();
         $opt = self::OPTION_KEY;
         ?>
-        <div class="wrap zcrb-hub-wrap zcrb-settings">
-            <?php ZCRB_Admin_Hub::render_branded_header( __( 'Settings', 'zymarg-community-board' ) ); ?>
+        <div class="zcrb-settings">
 
             <p class="description">
                 <?php esc_html_e( 'Settings — Configure every aspect of the Community Request Board. Defaults are sensible — leave a field blank to keep the built-in value.', 'zymarg-community-board' ); ?>

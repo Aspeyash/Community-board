@@ -1,32 +1,803 @@
 /**
- * ZYMARG Community Board — Admin Hub Styles
+ * ZYMARG Community Board — admin hub styles.
  *
- * Brand colors:
- *   Primary Purple: #9500A5
- *   Primary Container: #BD00D1
- *   Accent: #FEA9FF
- *   Dark Purple Text: #36003D
- *   Discovery Spark Purple: #6833ea
- *   Discovery Spark Gold: #FFD166
+ * Adopts the canonical ZYMARG admin design language (sidebar + main panel)
+ * used by ZYMARG Backups and the Theme Builder admin. Client-side view
+ * switching only — no AJAX section loading.
+ *
+ * Brand palette:
+ *   Primary purple .............. #9500A5
+ *   Primary container ........... #BD00D1
+ *   Accent ...................... #FEA9FF
+ *   Deep purple text ............ #36003D
+ *   Soft surface container ...... #EAEDFF
+ *   Border ...................... #D8BFD3
+ *   Text ........................ #131B2E
+ *   Muted text .................. #534152
+ *   Discovery Spark purple ...... #6833EA
+ *   Discovery Spark gold ........ #FFD166
  */
 
-/* ─── Hub Container ─── */
-.zcrb-hub-wrap {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 20px;
+:root {
+    --zcrb-primary:            #9500A5;
+    --zcrb-primary-container:  #BD00D1;
+    --zcrb-accent:             #FEA9FF;
+    --zcrb-on-primary-fixed:   #36003D;
+    --zcrb-surface-container:  #EAEDFF;
+    --zcrb-border:             #D8BFD3;
+    --zcrb-text:               #131B2E;
+    --zcrb-text-secondary:     #534152;
+    --zcrb-grey:               #505F76;
+
+    --zcrb-radius:             18px;
+    --zcrb-shadow:             0 1px 2px rgba( 19, 27, 46, .04 ), 0 8px 24px rgba( 19, 27, 46, .06 );
+    --zcrb-grad:               linear-gradient( 135deg, var( --zcrb-primary ) 0%, var( --zcrb-primary-container ) 60%, var( --zcrb-accent ) 130% );
 }
 
-/* ─── Gradient Header ─── */
+/* Reset the default WP wrap padding so the shell can breathe. */
+.zcrb-wrap {
+    margin: 20px 20px 0 2px;
+}
+
+/* ==========================================================================
+   App shell (sidebar + main)
+   ========================================================================== */
+
+.zcrb-app {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    background: #fff;
+    border-radius: var( --zcrb-radius );
+    box-shadow: var( --zcrb-shadow );
+    border: 1px solid var( --zcrb-border );
+    overflow: hidden;
+    min-height: 560px;
+    position: relative;
+}
+
+/* Signature gradient strip at the very top of the app. */
+.zcrb-app::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 5px;
+    background: linear-gradient( to right, var( --zcrb-primary ), var( --zcrb-accent ) );
+    z-index: 2;
+}
+
+/* ---------- Sidebar ---------- */
+.zcrb-sidebar {
+    flex: 0 0 232px;
+    background: #fff;
+    border-right: 1px solid var( --zcrb-border );
+    padding: 28px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    min-height: 560px;
+}
+
+.zcrb-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 8px 20px;
+}
+
+.zcrb-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+}
+
+.zcrb-brand-name {
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var( --zcrb-primary );
+    font-size: 16px;
+}
+
+.zcrb-brand-sub {
+    font-size: 12px;
+    color: var( --zcrb-primary );
+    font-weight: 600;
+}
+
+.zcrb-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.zcrb-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 11px 14px;
+    border-radius: 12px;
+    color: var( --zcrb-text-secondary );
+    font-size: 13.5px;
+    font-weight: 600;
+    text-align: left;
+    transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+}
+
+.zcrb-nav-item .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.zcrb-nav-item:hover {
+    background: var( --zcrb-surface-container );
+    color: var( --zcrb-on-primary-fixed );
+}
+
+.zcrb-nav-item.is-active {
+    background: var( --zcrb-grad );
+    color: #fff;
+    box-shadow: 0 6px 16px rgba( 149, 0, 165, .28 );
+}
+
+.zcrb-nav-item:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba( 149, 0, 165, .18 );
+}
+
+.zcrb-nav-item.is-active:focus {
+    box-shadow: 0 6px 16px rgba( 149, 0, 165, .28 ), 0 0 0 3px rgba( 149, 0, 165, .28 );
+}
+
+.zcrb-sidebar-foot {
+    margin-top: auto;
+    padding: 12px 8px 0;
+}
+
+/* ---------- Main ---------- */
+.zcrb-main {
+    flex: 1 1 auto;
+    padding: 26px 28px 30px;
+    min-width: 0;
+}
+
+.zcrb-topbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.zcrb-topbar-title h1,
+.zcrb-topbar h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: var( --zcrb-on-primary-fixed );
+    padding: 0;
+}
+
+.zcrb-topbar-sub {
+    margin: 4px 0 0;
+    color: var( --zcrb-text-secondary );
+    font-size: 13px;
+}
+
+.zcrb-topbar-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+}
+
+.zcrb-ver-badge {
+    display: inline-block;
+    background: var( --zcrb-grad );
+    color: #fff;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: .02em;
+    padding: 6px 12px;
+    border-radius: 999px;
+    box-shadow: 0 6px 16px rgba( 149, 0, 165, .28 );
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   Views
+   ========================================================================== */
+
+.zcrb-view {
+    display: none;
+    animation: zcrb-fade .2s ease;
+}
+
+.zcrb-view.is-active {
+    display: block;
+}
+
+@keyframes zcrb-fade {
+    from { opacity: 0; transform: translateY( 4px ); }
+    to   { opacity: 1; transform: translateY( 0 ); }
+}
+
+/* Notice / alert bar */
+.zcrb-notice {
+    background: var( --zcrb-surface-container );
+    border: 1px solid var( --zcrb-border );
+    border-left: 4px solid var( --zcrb-primary );
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var( --zcrb-text );
+    font-size: 13.5px;
+    margin-bottom: 20px;
+}
+
+.zcrb-notice strong {
+    color: var( --zcrb-on-primary-fixed );
+    margin-right: 4px;
+}
+
+.zcrb-notice--warn {
+    border-left-color: #b8860b;
+    background: #fff8e6;
+    border-color: #f0d9a0;
+}
+
+/* Cards */
+.zcrb-cards {
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax( 210px, 1fr ) );
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.zcrb-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border: 1px solid var( --zcrb-border );
+    border-radius: var( --zcrb-radius );
+    box-shadow: var( --zcrb-shadow );
+    padding: 18px;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.zcrb-card:hover {
+    transform: translateY( -2px );
+    border-color: var( --zcrb-primary );
+    box-shadow: 0 10px 24px rgba( 149, 0, 165, .16 );
+}
+
+.zcrb-card-icon {
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+    color: var( --zcrb-primary );
+    flex: 0 0 auto;
+}
+
+.zcrb-card-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.zcrb-card-label {
+    font-size: 12px;
+    color: var( --zcrb-text-secondary );
+    font-weight: 600;
+}
+
+.zcrb-card-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var( --zcrb-on-primary-fixed );
+}
+
+/* Panels */
+.zcrb-panel {
+    background: #fff;
+    border: 1px solid var( --zcrb-border );
+    border-radius: var( --zcrb-radius );
+    box-shadow: var( --zcrb-shadow );
+    padding: 22px 24px;
+    margin-bottom: 20px;
+}
+
+.zcrb-panel h2 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 800;
+    color: var( --zcrb-on-primary-fixed );
+    padding: 0;
+    border: 0;
+}
+
+.zcrb-panel p {
+    color: var( --zcrb-text-secondary );
+    font-size: 13.5px;
+    margin: 0 0 10px;
+}
+
+.zcrb-check-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.zcrb-check-list li {
+    position: relative;
+    padding: 6px 0 6px 26px;
+    color: var( --zcrb-text );
+    font-size: 13.5px;
+}
+
+.zcrb-check-list li::before {
+    content: "\2713";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    border-radius: 50%;
+    background: var( --zcrb-surface-container );
+    color: var( --zcrb-primary );
+    font-weight: 800;
+    font-size: 11px;
+}
+
+.zcrb-empty-inline {
+    padding: 22px;
+    text-align: center;
+    color: var( --zcrb-text-secondary );
+    background: var( --zcrb-surface-container );
+    border: 1px dashed var( --zcrb-border );
+    border-radius: 12px;
+    font-size: 13.5px;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.zcrb-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    cursor: pointer;
+    background: var( --zcrb-grad );
+    color: #fff;
+    font-weight: 700;
+    font-size: 13.5px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    box-shadow: 0 6px 16px rgba( 149, 0, 165, .28 );
+    transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    text-decoration: none;
+}
+
+.zcrb-btn:hover {
+    transform: translateY( -1px );
+    box-shadow: 0 10px 22px rgba( 149, 0, 165, .34 );
+    color: #fff;
+    text-decoration: none;
+}
+
+.zcrb-btn:focus {
+    outline: none;
+    box-shadow: 0 6px 16px rgba( 149, 0, 165, .28 ), 0 0 0 3px rgba( 149, 0, 165, .18 );
+    color: #fff;
+}
+
+.zcrb-btn:disabled,
+.zcrb-btn.is-busy {
+    opacity: .6;
+    cursor: default;
+    transform: none;
+}
+
+.zcrb-btn .dashicons {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+}
+
+.zcrb-btn--sm {
+    font-size: 12.5px;
+    padding: 6px 12px;
+}
+
+.zcrb-btn--sm .dashicons {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+}
+
+.zcrb-btn--ghost {
+    background: #fff;
+    color: var( --zcrb-primary );
+    border: 1px solid var( --zcrb-border );
+    box-shadow: none;
+}
+
+.zcrb-btn--ghost:hover {
+    background: var( --zcrb-surface-container );
+    border-color: var( --zcrb-primary );
+    box-shadow: none;
+    color: var( --zcrb-primary );
+    transform: translateY( -1px );
+}
+
+.zcrb-btn--danger {
+    color: #b3261e;
+}
+
+.zcrb-btn--ghost.zcrb-btn--danger:hover {
+    border-color: #b3261e;
+    background: #fff0f0;
+    color: #b3261e;
+}
+
+/* ==========================================================================
+   All Requests view — custom list
+   ========================================================================== */
+
+.zcrb-requests-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.zcrb-requests-filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.zcrb-requests-search {
+    flex: 1 1 260px;
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1px solid var( --zcrb-border );
+    border-radius: 10px;
+    font-size: 13.5px;
+    color: var( --zcrb-text );
+    background: #fff;
+}
+
+.zcrb-requests-search:focus,
+.zcrb-requests-status-select:focus {
+    outline: none;
+    border-color: var( --zcrb-primary );
+    box-shadow: 0 0 0 3px rgba( 149, 0, 165, .12 );
+}
+
+.zcrb-requests-status-select {
+    padding: 8px 12px;
+    border: 1px solid var( --zcrb-border );
+    border-radius: 10px;
+    font-size: 13.5px;
+    background: #fff;
+    min-width: 180px;
+}
+
+.zcrb-requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.zcrb-request {
+    background: #fff;
+    border: 1px solid var( --zcrb-border );
+    border-radius: 14px;
+    padding: 16px 18px;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+.zcrb-request:hover {
+    border-color: var( --zcrb-primary );
+    box-shadow: 0 6px 16px rgba( 149, 0, 165, .10 );
+    transform: translateY( -1px );
+}
+
+.zcrb-request.is-hidden {
+    display: none;
+}
+
+.zcrb-request-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.zcrb-request-ref {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var( --zcrb-text-secondary );
+    background: var( --zcrb-surface-container );
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.zcrb-request-status {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: #fff;
+    background: var( --zcrb-grey );
+}
+
+.zcrb-request-status--publish          { background: #1a7f52; }
+.zcrb-request-status--pending          { background: #b8860b; }
+.zcrb-request-status--draft            { background: var( --zcrb-grey ); }
+.zcrb-request-status--zcrb_in_progress { background: var( --zcrb-primary ); }
+.zcrb-request-status--zcrb_fulfilled   { background: var( --zcrb-primary-container ); }
+.zcrb-request-status--trash            { background: #b3261e; }
+
+.zcrb-request-date {
+    font-size: 12.5px;
+    color: var( --zcrb-text-secondary );
+}
+
+.zcrb-request-upvotes {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var( --zcrb-primary );
+    background: var( --zcrb-surface-container );
+    padding: 3px 8px;
+    border-radius: 999px;
+    margin-left: auto;
+}
+
+.zcrb-request-upvotes .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+.zcrb-request-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var( --zcrb-on-primary-fixed );
+    margin-bottom: 4px;
+}
+
+.zcrb-request-body {
+    font-size: 13.5px;
+    color: var( --zcrb-text );
+    line-height: 1.55;
+    margin-bottom: 8px;
+}
+
+.zcrb-request-meta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+    color: var( --zcrb-text-secondary );
+    margin-bottom: 12px;
+}
+
+.zcrb-request-submitter {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.zcrb-request-submitter .dashicons {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    color: var( --zcrb-primary );
+}
+
+.zcrb-request-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px dashed var( --zcrb-surface-container );
+}
+
+/* Pagination */
+.zcrb-requests-pagination {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.zcrb-page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var( --zcrb-border );
+    border-radius: 8px;
+    text-decoration: none;
+    color: var( --zcrb-text );
+    font-weight: 600;
+    font-size: 13px;
+    background: #fff;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.zcrb-page:hover {
+    background: var( --zcrb-surface-container );
+    border-color: var( --zcrb-primary );
+    color: var( --zcrb-primary );
+    text-decoration: none;
+}
+
+.zcrb-page.is-active {
+    background: var( --zcrb-grad );
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba( 149, 0, 165, .24 );
+}
+
+.zcrb-page.is-active:hover {
+    color: #fff;
+}
+
+/* ==========================================================================
+   Settings view (form styles preserved from v2.1.x)
+   ========================================================================== */
+
+.zcrb-settings .description {
+    color: var( --zcrb-text-secondary );
+    font-size: 13.5px;
+    margin: 0 0 18px;
+    padding: 12px 16px;
+    background: var( --zcrb-surface-container );
+    border: 1px solid var( --zcrb-border );
+    border-radius: 12px;
+}
+
+.zcrb-settings h2 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var( --zcrb-primary );
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin: 28px 0 10px;
+    padding: 0 0 8px;
+    border-bottom: 1px solid var( --zcrb-surface-container );
+}
+
+.zcrb-settings h2:first-child {
+    margin-top: 0;
+}
+
+.zcrb-settings .form-table {
+    background: #fff;
+    border: 1px solid var( --zcrb-border );
+    border-radius: 12px;
+    box-shadow: var( --zcrb-shadow );
+    padding: 8px 18px;
+    margin-top: 6px;
+}
+
+.zcrb-settings .form-table th {
+    padding-left: 6px;
+    color: var( --zcrb-on-primary-fixed );
+    font-weight: 600;
+    font-size: 13.5px;
+}
+
+.zcrb-settings .form-table td {
+    padding-right: 6px;
+    color: var( --zcrb-text );
+    font-size: 13.5px;
+}
+
+.zcrb-settings input[type="text"]:focus,
+.zcrb-settings input[type="email"]:focus,
+.zcrb-settings input[type="password"]:focus,
+.zcrb-settings input[type="number"]:focus,
+.zcrb-settings select:focus,
+.zcrb-settings textarea:focus {
+    border-color: var( --zcrb-primary );
+    box-shadow: 0 0 0 3px rgba( 149, 0, 165, .12 );
+    outline: none;
+}
+
+/* Settings submit row (button + toast side-by-side) */
+.zcrb-submit-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 14px;
+}
+
+.zcrb-submit-row .button-primary {
+    background: var( --zcrb-primary );
+    border-color: var( --zcrb-primary );
+    box-shadow: 0 6px 16px rgba( 149, 0, 165, .28 );
+    font-weight: 700;
+    padding: 4px 20px;
+    border-radius: 999px;
+    text-shadow: none;
+}
+
+.zcrb-submit-row .button-primary:hover {
+    background: var( --zcrb-primary-container );
+    border-color: var( --zcrb-primary-container );
+}
+
+/* Settings AJAX save toast */
+.zcrb-settings-toast {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    opacity: 0;
+    transform: translateY( -4px );
+    transition: opacity .3s ease, transform .3s ease;
+    pointer-events: none;
+    vertical-align: middle;
+}
+
+.zcrb-settings-toast.is-visible {
+    opacity: 1;
+    transform: translateY( 0 );
+}
+
+.zcrb-settings-toast.is-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.zcrb-settings-toast.is-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* ==========================================================================
+   Legacy branded gradient header (kept only for CPT list/edit screens)
+   ========================================================================== */
+
 .zcrb-hub-header {
-    background: linear-gradient(to right, #9500A5, #FEA9FF);
-    padding: 24px 32px;
+    background: linear-gradient( to right, #9500A5, #FEA9FF );
+    padding: 20px 28px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     gap: 16px;
     color: #fff;
-    margin-bottom: 24px;
+    margin: 12px 20px 20px 2px;
 }
 
 .zcrb-hub-header .zymarg-spark {
@@ -34,7 +805,7 @@
     background: #ffffff;
     border-radius: 12px;
     padding: 8px;
-    box-shadow: 0 2px 8px rgba(19, 27, 46, 0.12);
+    box-shadow: 0 2px 8px rgba( 19, 27, 46, .12 );
     box-sizing: content-box;
 }
 
@@ -49,21 +820,21 @@
 .zcrb-hub-header__kicker {
     font-size: 12px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba( 255, 255, 255, .85 );
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: .08em;
     line-height: 1.2;
 }
 
 .zcrb-hub-header__title {
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 800;
     color: #fff;
     line-height: 1.2;
 }
 
 .zcrb-hub-header__version {
-    background: rgba(255, 255, 255, 0.22);
+    background: rgba( 255, 255, 255, .22 );
     border-radius: 999px;
     padding: 5px 14px;
     font-size: 13px;
@@ -73,54 +844,18 @@
     white-space: nowrap;
 }
 
-/* ─── Tab Navigation ─── */
-.zcrb-hub-tabs {
-    display: flex;
-    gap: 24px;
-    border-bottom: 1px solid #e2e8f0;
-    margin: 24px 0;
-    padding-bottom: 0;
-}
+/* ==========================================================================
+   Canonical ZYMARG Discovery Spark(TM)
+   ========================================================================== */
 
-.zcrb-hub-tab {
-    padding: 12px 4px;
-    text-decoration: none;
-    color: #534152;
-    border-bottom: 2px solid transparent;
-    font-size: 14px;
-    transition: color 0.2s, border-color 0.2s;
-}
-
-.zcrb-hub-tab:hover {
-    color: #9500A5;
-    text-decoration: none;
-}
-
-.zcrb-hub-tab.is-active {
-    border-color: #9500A5;
-    color: #9500A5;
-    font-weight: 600;
-}
-
-/* ─── Discovery Spark Panel ─── */
-.zcrb-hub-spark {
-    text-align: center;
-    padding: 32px;
-    background: #ffffff;
-    border-radius: 12px;
-    border: 1px solid #eaedff;
-    margin-bottom: 24px;
-}
-
-/* ─── Canonical ZYMARG Discovery Spark(TM) ─── */
 .zymarg-spark {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	vertical-align: middle;
-	--zds-spark-purple: #6833ea;
-	--zds-spark-gold: #ffd166;
-	--zds-spark-offset: 0.7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    --zds-spark-purple: #6833ea;
+    --zds-spark-gold: #ffd166;
+    --zds-spark-offset: 0.7px;
 }
 
 .zymarg-spark--sm { --zds-spark-offset: 0.55px; width: 20px; height: 20px; }
@@ -129,156 +864,109 @@
 .zymarg-spark--xl { --zds-spark-offset: 1.20px; width: 48px; height: 48px; }
 
 .zymarg-spark__svg {
-	width: 100%;
-	height: 100%;
-	display: block;
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 @keyframes zymarg-spark-lens--accent {
-	0%, 0%      { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104, 51, 234, 0)); }
-	8.3%, 25%   { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(104, 51, 234, 0.25)); }
-	33.3%, 100% { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104, 51, 234, 0)); }
+    0%, 0%      { opacity: 0;    transform: scale( 0.90 ); filter: drop-shadow( 0 0 0px rgba( 104, 51, 234, 0 ) ); }
+    8.3%, 25%   { opacity: 0.95; transform: scale( 1.03 ); filter: drop-shadow( 0 0 1.5px rgba( 104, 51, 234, 0.25 ) ); }
+    33.3%, 100% { opacity: 0;    transform: scale( 0.90 ); filter: drop-shadow( 0 0 0px rgba( 104, 51, 234, 0 ) ); }
 }
 
 @keyframes zymarg-spark-lens--companion {
-	0%, 33.3%    { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104, 51, 234, 0)); }
-	41.6%, 58.3% { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(104, 51, 234, 0.25)); }
-	66.6%, 100%  { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104, 51, 234, 0)); }
+    0%, 33.3%    { opacity: 0;    transform: scale( 0.90 ); filter: drop-shadow( 0 0 0px rgba( 104, 51, 234, 0 ) ); }
+    41.6%, 58.3% { opacity: 0.95; transform: scale( 1.03 ); filter: drop-shadow( 0 0 1.5px rgba( 104, 51, 234, 0.25 ) ); }
+    66.6%, 100%  { opacity: 0;    transform: scale( 0.90 ); filter: drop-shadow( 0 0 0px rgba( 104, 51, 234, 0 ) ); }
 }
 
 @keyframes zymarg-spark-lens--hero {
-	0%, 66.6%   { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104, 51, 234, 0)); }
-	75%, 91.6%  { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(104, 51, 234, 0.25)); }
-	100%, 100%  { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104, 51, 234, 0)); }
+    0%, 66.6%   { opacity: 0;    transform: scale( 0.90 ); filter: drop-shadow( 0 0 0px rgba( 104, 51, 234, 0 ) ); }
+    75%, 91.6%  { opacity: 0.95; transform: scale( 1.03 ); filter: drop-shadow( 0 0 1.5px rgba( 104, 51, 234, 0.25 ) ); }
+    100%, 100%  { opacity: 0;    transform: scale( 0.90 ); filter: drop-shadow( 0 0 0px rgba( 104, 51, 234, 0 ) ); }
 }
 
 .zymarg-spark-item--purple {
-	fill: var(--zds-spark-purple);
-	transform: translate(var(--zds-spark-offset), var(--zds-spark-offset));
+    fill: var( --zds-spark-purple );
+    transform: translate( var( --zds-spark-offset ), var( --zds-spark-offset ) );
 }
 
 .zymarg-spark-item--gold {
-	fill: var(--zds-spark-gold);
-	animation: none !important;
+    fill: var( --zds-spark-gold );
+    animation: none !important;
 }
 
 .zymarg-spark-group--accent .zymarg-spark-item--purple {
-	animation: zymarg-spark-lens--accent 0.20s cubic-bezier(0.25, 1, 0.5, 1) infinite;
-	transform-origin: 9.68px 7.8px;
+    animation: zymarg-spark-lens--accent 0.20s cubic-bezier( 0.25, 1, 0.5, 1 ) infinite;
+    transform-origin: 9.68px 7.8px;
 }
+
 .zymarg-spark-group--companion .zymarg-spark-item--purple {
-	animation: zymarg-spark-lens--companion 0.40s cubic-bezier(0.25, 1, 0.5, 1) infinite;
-	transform-origin: 8.3px 15.04px;
+    animation: zymarg-spark-lens--companion 0.40s cubic-bezier( 0.25, 1, 0.5, 1 ) infinite;
+    transform-origin: 8.3px 15.04px;
 }
+
 .zymarg-spark-group--hero .zymarg-spark-item--purple {
-	animation: zymarg-spark-lens--hero 0.40s cubic-bezier(0.25, 1, 0.5, 1) infinite;
-	transform-origin: 13.16px 11.9px;
+    animation: zymarg-spark-lens--hero 0.40s cubic-bezier( 0.25, 1, 0.5, 1 ) infinite;
+    transform-origin: 13.16px 11.9px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.zymarg-spark-item--purple { animation: none !important; opacity: 0.7; }
+@media ( prefers-reduced-motion: reduce ) {
+    .zymarg-spark-item--purple { animation: none !important; opacity: 0.7; }
 }
 
-/* ─── Stats Grid ─── */
-.zcrb-hub-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-top: 24px;
-}
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
 
-.zcrb-hub-stat {
-    padding: 24px 16px;
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    text-align: center;
-}
+@media screen and ( max-width: 782px ) {
+    .zcrb-wrap {
+        margin: 10px 10px 0 0;
+    }
 
-.zcrb-hub-stat__count {
-    font-size: 36px;
-    font-weight: 700;
-    color: #9500A5;
-    line-height: 1.2;
-}
+    .zcrb-app {
+        flex-direction: column;
+    }
 
-.zcrb-hub-stat__label {
-    font-size: 14px;
-    color: #534152;
-    margin-top: 4px;
-}
+    .zcrb-sidebar {
+        flex-basis: auto;
+        width: 100%;
+        min-height: 0;
+        border-right: 0;
+        border-bottom: 1px solid var( --zcrb-border );
+        padding: 20px 16px 12px;
+    }
 
-/* ─── Responsive ─── */
-@media (max-width: 782px) {
+    .zcrb-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .zcrb-nav-item {
+        width: auto;
+    }
+
+    .zcrb-main {
+        padding: 20px 18px 24px;
+    }
+
+    .zcrb-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .zcrb-hub-header {
         flex-wrap: wrap;
-        padding: 20px 24px;
+        padding: 16px 20px;
         gap: 12px;
     }
 
-    .zcrb-hub-header__text {
-        flex: 1 1 auto;
-        min-width: 0;
-    }
-
-    .zcrb-hub-header__version {
-        flex-shrink: 0;
-    }
-
     .zcrb-hub-header__title {
-        font-size: 22px;
+        font-size: 20px;
     }
 
-    .zcrb-hub-stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .zcrb-hub-tabs {
-        gap: 16px;
-    }
-}
-
-@media (max-width: 480px) {
-    .zcrb-hub-stats {
+    .zcrb-cards {
         grid-template-columns: 1fr;
     }
-}
-
-
-/* ─── Settings submit row (button + toast side-by-side) ─── */
-.zcrb-submit-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-/* ─── Settings AJAX save toast ─── */
-.zcrb-settings-toast {
-    display: inline-block;
-    margin-left: 12px;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 1.5;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    pointer-events: none;
-    vertical-align: middle;
-}
-.zcrb-settings-toast.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-.zcrb-settings-toast.is-success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-.zcrb-settings-toast.is-error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
 }

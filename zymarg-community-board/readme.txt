@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.1.2
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,13 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.2.0 =
+* **Full SPA admin navigation — zero page reloads between sections.** Adopts the canonical ZYMARG admin design language (sidebar + main panel, matching ZYMARG Backups and Theme Builder). All three sections — Dashboard, All Requests, Settings — now render server-side into a single page, and switching between them is instant: JS just toggles which view is visible. No AJAX fetches, no re-renders, no re-inits. The URL updates via `pushState` so refresh / bookmark / share / browser back+forward all work exactly as expected.
+* **New sidebar navigation** — replaces the old horizontal tab strip. Discovery Spark + brand mark at the top, three navigation buttons (Dashboard / All Requests / Settings) below. Active item gets the ZYMARG gradient chip; hover state uses the soft surface container. Users without `manage_options` never see the Settings tab.
+* **Custom "All Requests" list view built into the hub.** Previously, clicking All Requests jumped out to the WordPress CPT list at `edit.php?post_type=zcrb_request` (full page reload, different UI). It now renders inline as a card list with Ref number, colored status badge, submitter name, upvote count, date, message excerpt, and inline action buttons (View, Edit, Approve, Reject, Delete). Live keyword + status filtering runs entirely client-side (no server round-trip). A link to the advanced WordPress list view is still available for power-user workflows.
+* **Settings page hosted inside the SPA.** The Settings URL (`admin.php?page=zcrb-settings`) keeps working for existing bookmarks — it just renders the same SPA shell with the Settings view preselected. Existing AJAX save (nonce `zcrb_settings_save`, endpoint `zcrb_save_settings`) is unchanged: form submits without a page reload, toast confirms save.
+* **Fixes the user-reported bug** — every click on a tab previously triggered a full page reload because the tabs were plain `<a>` hrefs to `admin.php?page=...`. Nav buttons are now proper `<button>` elements handled entirely client-side, so switching sections has zero latency.
 
 = 2.1.2 =
 * **Submenu order fixed — Dashboard is now the first item** — under Community Board the sidebar showed "All Requests" first, then "Dashboard", then "Settings". The root cause was WordPress' `_add_post_type_submenus()` running on `admin_menu` priority 9 (BEFORE our hub's `register_menu()` at the default priority 10), which put the CPT's auto-added "All Requests" entry at the top. Added a new `reorder_submenu()` pass hooked at `admin_menu` priority 999 — it runs after every module is done registering menu items and sorts `$submenu['zcrb-hub']` into the canonical order: **Dashboard → All Requests → Settings**.
