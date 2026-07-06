@@ -433,11 +433,7 @@
     display: flex;
     flex: 1 1 auto;
     gap: 8px;
-    overflow-x: auto;
-    overflow-y: hidden;
     flex-wrap: nowrap;
-    scrollbar-width: thin;
-    -webkit-overflow-scrolling: touch;
     min-width: 0;
 }
 
@@ -522,20 +518,29 @@
     position: relative;
     flex: 1 1 auto;
     min-width: 0;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.zcrb-status-tabs-wrap::-webkit-scrollbar {
+    display: none;
 }
 
 .zcrb-status-tabs-wrap::after {
     content: "";
-    position: absolute;
-    top: 0;
+    position: sticky;
     right: 0;
+    top: 0;
     bottom: 0;
     width: 40px;
+    min-height: 100%;
     background: linear-gradient( to right, rgba( 255, 255, 255, 0 ), rgba( 255, 255, 255, 1 ) );
     pointer-events: none;
     z-index: 1;
-    border-radius: 0 999px 999px 0;
+    flex-shrink: 0;
+    display: inline-block;
 }
 
 .zcrb-status-tabs-wrap.is-scrolled-end::after {
@@ -556,9 +561,9 @@
 
 .zcrb-requests-search {
     width: 100%;
-    padding: 10px 14px 10px 46px;
-    border: 1px solid var( --zcrb-border );
-    border-radius: 10px;
+    padding: 10px 14px 10px 46px !important;
+    border: 1px solid var( --zcrb-border ) !important;
+    border-radius: 10px !important;
     font-size: 14px;
     color: var( --zcrb-text );
     background: #fff;
