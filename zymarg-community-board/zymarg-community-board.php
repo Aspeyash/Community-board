@@ -3,7 +3,7 @@
  * Plugin Name:       ZYMARG Community Request Board
  * Plugin URI:        https://zymarg.com/community/
  * Description:       SEO-optimized Community Request Board for ZYMARG. Logged-in users submit requests (Name, Phone, Email, Message, Image). Admin approves/rejects from the WP dashboard. Public feed shows only Name, Message, Date, and Image. Bilingual (English/Bengali), schema-marked, mobile responsive, with a Material 3 inspired glass-card design, fully customizable typography (per-element font sizes for desktop + mobile), numbered-pagination crawlable feed, and configurable data retention. Updates ship via GitHub Releases. Compatible with Astra, Elementor Pro, WooCommerce, and Dokan.
- * Version:           2.2.1
+ * Version:           2.3.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            ZYMARG
@@ -246,5 +246,29 @@ add_action( 'admin_notices', static function () {
                 $deleted
             ) )
             . '</p></div>';
+    } elseif ( 'bulk_done' === $msg ) {
+        $done = isset( $_GET['zcrb_done'] ) ? (int) $_GET['zcrb_done'] : 0;
+        $op   = isset( $_GET['zcrb_op'] ) ? sanitize_key( wp_unslash( $_GET['zcrb_op'] ) ) : 'processed';
+
+        // Map internal action keys to a human-readable past-tense verb.
+        $op_labels = array(
+            'approve' => __( 'approved', 'zymarg-community-board' ),
+            'reject'  => __( 'rejected', 'zymarg-community-board' ),
+            'trash'   => __( 'moved to Trash', 'zymarg-community-board' ),
+            'delete'  => __( 'permanently deleted', 'zymarg-community-board' ),
+            'restore' => __( 'restored', 'zymarg-community-board' ),
+        );
+        $op_display = isset( $op_labels[ $op ] ) ? $op_labels[ $op ] : $op;
+
+        if ( $done > 0 ) {
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sprintf(
+                /* translators: 1: number of requests, 2: past-tense verb (approved, rejected, ...) */
+                _n( '%1$d request %2$s.', '%1$d requests %2$s.', $done, 'zymarg-community-board' ),
+                $done,
+                $op_display
+            ) ) . '</p></div>';
+        } else {
+            echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'No requests were changed. Select at least one row and choose a bulk action.', 'zymarg-community-board' ) . '</p></div>';
+        }
     }
 } );

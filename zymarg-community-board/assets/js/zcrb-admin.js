@@ -203,30 +203,214 @@
     }
 
     // ------------------------------------------------------------------
-    // All Requests view — live keyword + status filter (no server hit).
+    // All Requests view — live keyword filter, sortable columns,
+    // select-all, bulk-action guard, per-page change.
+    //
+    // Status filter is now driven server-side by ?zcrb_status={tab} so
+    // pagination and counts stay accurate — this JS only handles the
+    // in-page keyword search + sort + selection interactions.
     // ------------------------------------------------------------------
     function initRequestsFilter() {
         var $view = $( '.zcrb-view[data-view="requests"]' );
         if ( ! $view.length ) {
             return;
         }
-        var $search  = $view.find( '[data-zcrb-requests-search]' );
-        var $status  = $view.find( '[data-zcrb-requests-status]' );
-        var $rows    = $view.find( '.zcrb-request' );
 
-        function apply() {
+        var $search   = $view.find( '[data-zcrb-requests-search]' );
+        var $tbody    = $view.find( '[data-zcrb-tbody]' );
+        var $cards    = $view.find( '[data-zcrb-cards]' );
+        var $emptyMsg = $view.find( '[data-zcrb-empty-message]' );
+        var $emptyMsgCards = $view.find( '[data-zcrb-empty-message-cards]' );
+
+        // Combine table rows + mobile card rows so keyword + sort keep the
+        // two views in lock-step. Each element carries the same data-* attrs.
+        function allRowGroups() {
+            return [
+                { $container: $tbody, $rows: $tbody.children( 'tr' ) },
+                { $container: $cards, $rows: $cards.children( '.zcrb-request' ) }
+            ];
+        }
+
+        // -------- Live keyword search (client-side) ----------------
+        function applyKeyword() {
             var q = ( $search.val() || '' ).toLowerCase().trim();
-            var s = $status.val() || '';
-            $rows.each( function () {
-                var $row = $( this );
-                var matchQ = ! q || ( $row.attr( 'data-search' ) || '' ).indexOf( q ) !== -1;
-                var matchS = ! s || ( $row.attr( 'data-status' ) === s );
-                $row.toggleClass( 'is-hidden', ! ( matchQ && matchS ) );
+            var visibleTable = 0;
+            var visibleCards = 0;
+
+            allRowGroups().forEach( function ( group ) {
+                group.$rows.each( function () {
+                    var $row  = $( this );
+                    var hay   = ( $row.attr( 'data-search' ) || '' );
+                    var match = ! q || hay.indexOf( q ) !== -1;
+                    $row.toggleClass( 'is-hidden', ! match );
+                    if ( match ) {
+                        if ( group.$container.is( 'tbody' ) ) {
+                            visibleTable++;
+                        } else {
+                            visibleCards++;
+                        }
+                    }
+                } );
+            } );
+
+            // Show / hide the "no matching requests" empty state per view.
+            if ( $emptyMsg.length ) {
+                $emptyMsg.toggle( q !== '' && visibleTable === 0 );
+            }
+            if ( $emptyMsgCards.length ) {
+                $emptyMsgCards.toggle( q !== '' && visibleCards === 0 );
+            }
+        }
+
+        if ( $search.length ) {
+            $search.on( 'input', applyKeyword );
+        }
+
+        // -------- Sortable table columns (click header) ------------
+        var currentSort = { key: null, dir: 'asc' };
+
+        function sortRows( key, dir ) {
+            allRowGroups().forEach( function ( group ) {
+                var rows = group.$rows.get();
+                rows.sort( function ( a, b ) {
+                    var av = $( a ).attr( 'data-sort-' + key ) || '';
+                    var bv = $( b ).attr( 'data-sort-' + key ) || '';
+
+                    // Numeric compare when both look numeric.
+                    var an = parseFloat( av );
+                    var bn = parseFloat( bv );
+                    var isNum = ! isNaN( an ) && ! isNaN( bn ) && av !== '' && bv !== '';
+
+                    var cmp;
+                    if ( isNum ) {
+                        cmp = an - bn;
+                    } else {
+                        cmp = av.localeCompare( bv );
+                    }
+                    return dir === 'asc' ? cmp : -cmp;
+                } );
+                // Re-append rows in sorted order.
+                rows.forEach( function ( r ) { group.$container.append( r ); } );
             } );
         }
 
-        $search.on( 'input', apply );
-        $status.on( 'change', apply );
+        $view.on( 'click', '.zcrb-sortable .zcrb-sort-btn', function ( e ) {
+            e.preventDefault();
+            var $th  = $( this ).closest( '.zcrb-sortable' );
+            var key  = $th.data( 'sort-key' );
+            if ( ! key ) {
+                return;
+            }
+
+            // Toggle direction if same column, otherwise start ascending.
+            var dir = ( currentSort.key === key && currentSort.dir === 'asc' ) ? 'desc' : 'asc';
+            currentSort = { key: key, dir: dir };
+
+            // Update visual indicator on all headers.
+            $view.find( '.zcrb-sortable' )
+                .removeClass( 'is-sorted-asc is-sorted-desc' );
+            $th.addClass( dir === 'asc' ? 'is-sorted-asc' : 'is-sorted-desc' );
+
+            sortRows( key, dir );
+        } );
+
+        // -------- Select-all master checkbox -----------------------
+        $view.on( 'change', '[data-zcrb-check-all]', function () {
+            var checked = this.checked;
+            var scope   = $( this ).data( 'zcrb-check-all' );
+
+            if ( 'table' === scope ) {
+                $tbody.find( '.zcrb-row-check' ).each( function () {
+                    if ( ! $( this ).closest( 'tr' ).hasClass( 'is-hidden' ) ) {
+                        this.checked = checked;
+                    }
+                } );
+            } else {
+                $view.find( '.zcrb-row-check' ).each( function () {
+                    if ( ! $( this ).closest( '.zcrb-row, .zcrb-request' ).hasClass( 'is-hidden' ) ) {
+                        this.checked = checked;
+                    }
+                } );
+            }
+
+            // Keep table + card checkboxes in sync (same post_id).
+            syncCheckboxesByPostId();
+        } );
+
+        // Individual row checkbox → sync its twin in the other view.
+        $view.on( 'change', '.zcrb-row-check', function () {
+            var postId  = $( this ).data( 'post-id' );
+            var checked = this.checked;
+            if ( typeof postId === 'undefined' ) {
+                return;
+            }
+            $view.find( '.zcrb-row-check[data-post-id="' + postId + '"]' ).each( function () {
+                if ( this !== null ) {
+                    this.checked = checked;
+                }
+            } );
+        } );
+
+        function syncCheckboxesByPostId() {
+            var checkedIds = {};
+            $view.find( '.zcrb-row-check' ).each( function () {
+                if ( this.checked ) {
+                    checkedIds[ $( this ).data( 'post-id' ) ] = true;
+                }
+            } );
+            $view.find( '.zcrb-row-check' ).each( function () {
+                this.checked = !! checkedIds[ $( this ).data( 'post-id' ) ];
+            } );
+        }
+
+        // -------- Bulk action form guard --------------------------
+        $view.on( 'submit', '[data-zcrb-bulk-form]', function ( e ) {
+            var $form  = $( this );
+            var action = $form.find( 'select[name="zcrb_bulk_action"]' ).val();
+            var checked = $form.find( '.zcrb-row-check:checked' );
+
+            if ( ! action ) {
+                e.preventDefault();
+                window.alert( ( window.wp && window.wp.i18n && window.wp.i18n.__ )
+                    ? window.wp.i18n.__( 'Please choose a bulk action.', 'zymarg-community-board' )
+                    : 'Please choose a bulk action.' );
+                return false;
+            }
+            if ( 0 === checked.length ) {
+                e.preventDefault();
+                window.alert( ( window.wp && window.wp.i18n && window.wp.i18n.__ )
+                    ? window.wp.i18n.__( 'Please select at least one request.', 'zymarg-community-board' )
+                    : 'Please select at least one request.' );
+                return false;
+            }
+            if ( 'delete' === action ) {
+                if ( ! window.confirm( 'Permanently delete the selected request(s)? This cannot be undone.' ) ) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        } );
+
+        // -------- Per-page selector ------------------------------
+        $view.on( 'change', '[data-zcrb-per-page]', function () {
+            var $sel = $( this );
+            var val  = $sel.val();
+            var base = $sel.data( 'base-url' ) || '';
+            if ( ! base ) {
+                return;
+            }
+            var sep = base.indexOf( '?' ) === -1 ? '?' : '&';
+            // Strip any existing per_page= from the base to avoid duplicates.
+            var cleaned = base.replace( /([?&])per_page=[^&]*(&|$)/, function ( m, p1, p2 ) {
+                return p2 === '&' ? p1 : ( p1 === '?' ? '' : '' );
+            } );
+            // Ensure the separator character is correct after strip.
+            var finalSep = cleaned.indexOf( '?' ) === -1 ? '?' : '&';
+            window.location.href = cleaned + finalSep + 'per_page=' + encodeURIComponent( val );
+        } );
+
+        // Run once on init so the empty-message toggles start in sync.
+        applyKeyword();
     }
 
     // ------------------------------------------------------------------

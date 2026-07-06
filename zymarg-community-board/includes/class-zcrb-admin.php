@@ -226,12 +226,30 @@ class ZCRB_Admin {
         } elseif ( 'delete' === $action ) {
             ZCRB_Retention::delete_request( $post_id );
             $msg = 'deleted';
+        } elseif ( 'restore' === $action ) {
+            wp_untrash_post( $post_id );
+            $msg = 'restored';
         } else {
             wp_update_post( array(
                 'ID'          => $post_id,
                 'post_status' => 'trash',
             ) );
             $msg = 'rejected';
+        }
+
+        // If the action was triggered from the SPA hub, bounce the user
+        // back to the branded All Requests view instead of dumping them on
+        // the raw WordPress CPT list table.
+        $return_hub = isset( $_GET['zcrb_return'] ) && 'hub' === sanitize_key( wp_unslash( $_GET['zcrb_return'] ) );
+        if ( $return_hub ) {
+            $return_tab = isset( $_GET['zcrb_tab'] ) ? sanitize_key( wp_unslash( $_GET['zcrb_tab'] ) ) : 'all';
+            wp_safe_redirect( add_query_arg( array(
+                'page'        => 'zcrb-hub',
+                'section'     => 'requests',
+                'zcrb_status' => $return_tab,
+                'zcrb_notice' => $msg,
+            ), admin_url( 'admin.php' ) ) );
+            exit;
         }
 
         wp_safe_redirect( add_query_arg( array(
@@ -250,6 +268,8 @@ class ZCRB_Admin {
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Request approved and published.', 'zymarg-community-board' ) . '</p></div>';
         } elseif ( 'rejected' === $notice ) {
             echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'Request rejected and moved to Trash.', 'zymarg-community-board' ) . '</p></div>';
+        } elseif ( 'restored' === $notice ) {
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Request restored from Trash.', 'zymarg-community-board' ) . '</p></div>';
         } elseif ( 'bulk_approved' === $notice ) {
             $count = isset( $_GET['zcrb_count'] ) ? absint( $_GET['zcrb_count'] ) : 0;
             if ( $count > 0 ) {

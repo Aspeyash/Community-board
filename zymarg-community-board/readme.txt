@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.2.1
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,19 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.3.0 =
+* **Full-featured "All Requests" management surface — total parity with the WordPress CPT list table, built into the SPA hub.** The custom SPA list now covers every workflow an admin used to jump to `edit.php?post_type=zcrb_request` for: status filtering, bulk actions, sortable columns, permanent-delete flow with a proper Trash tab, restore-from-trash, per-page paging, live keyword search, and a one-click "Add New" shortcut. The "Advanced list view" escape hatch has been removed — users never have to visit the raw WP list table.
+* **Status tab strip with live counts** — `All (N) | Approved (N) | Pending (N) | In Progress (N) | Fulfilled (N) | Trash (N)`. Counts come from `wp_count_posts()` in a single DB round-trip. Server-side filtering via `?zcrb_status={tab}` keeps pagination + counts accurate. On mobile the tabs collapse into a horizontally-scrollable strip so no viewport is too small to reach any status.
+* **Sortable data table on desktop, card fallback on mobile** — `>= 768px` shows a proper `<table>` with columns: Checkbox / Ref / Title / Submitter / Status / Upvotes / Date / Actions. Ref, Title, Submitter, Upvotes and Date headers are clickable to sort ascending/descending (arrow indicator shows current direction). Row hover reveals the action buttons, matching WordPress core list-table UX. Below 768px the table hides and the same rows render as full-width cards with always-visible actions.
+* **Bulk actions** — checkbox per row + "select all" in the table header. Bulk actions dropdown offers Approve / Reject / Move to Trash / Delete Permanently in normal tabs, and Restore / Delete Permanently in the Trash tab. Submits through `admin-post.php?action=zcrb_bulk_action` with a nonce (`zcrb_bulk` / `zcrb_bulk_nonce`), then redirects back to the SPA with a success notice (`X requests approved.` / `X requests moved to Trash.` etc). Delete Permanently double-confirms before firing.
+* **Trash tab** — a full Trash workflow inside the SPA. Trashed requests are hidden from the main list (they get their own tab), and while the Trash tab is active the action buttons become Restore + Delete Permanently. `Restore` calls `wp_untrash_post()`; `Delete Permanently` uses the existing retention-safe delete pipeline.
+* **"Add New" button** — a prominent action button next to the panel title opens the standard WP editor at `post-new.php?post_type=zcrb_request` so admins can seed requests manually.
+* **Per-page selector** — a screen-options-style "Show [20|50|100|All] per page" dropdown at the top of the table reloads with `?per_page=N` when changed. All 4 tab links, the pagination bar, and the bulk-action form preserve the current per-page choice.
+* **Empty state per tab** — instead of a single generic "no requests" line, each tab now renders its own friendly copy: "No approved requests.", "No pending requests.", "Trash is empty.", etc. If a keyword search filters everything out, a "No matching requests." line replaces the rows without wiping the toolbar.
+* **Row-level quick actions redirect back to the SPA** — the individual Approve / Reject / Delete / Restore links now include `zcrb_return=hub` so the redirect after each action lands on the hub with the previous tab preserved, instead of dumping the user on the raw CPT list.
+* **Fully responsive down to 320px width** — the panel padding, tab strip, bulk-action bar, per-page dropdown, and card actions all reshape at breakpoints `< 768px`, `<= 480px`, and `<= 360px`. Buttons wrap, tabs scroll, cards stack, action rows wrap — no horizontal overflow at any tested viewport width. The "Add New" button spans the full row width on the smallest phones.
+* **New PHP hooks / handlers** — `ZCRB_Admin_Hub::handle_bulk_action()` (on `admin_post_zcrb_bulk_action`) processes bulk operations with capability + nonce + post-type guards and dedupes checkbox IDs (mobile-card + desktop-table checkboxes both submit under the same `zcrb_bulk_ids[]` name). `ZCRB_Admin::handle_quick_action()` now knows how to redirect back to the hub when `zcrb_return=hub` is passed, and gained a `restore` branch backed by `wp_untrash_post()`. The main plugin file adds a `bulk_done` admin notice that says e.g. "3 requests approved." with proper pluralization.
 
 = 2.2.1 =
 * **WP sidebar clicks now use SPA view switching** - clicking Dashboard, All Requests, or Settings in the WordPress admin sidebar no longer causes a full page reload. All sidebar submenu links are intercepted client-side and perform the same instant view switch as the in-app navigation buttons.

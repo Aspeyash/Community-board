@@ -1,27 +1,35 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.2.1`
+**Latest version:** `v2.3.0`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.2.1.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.2.1.zip)
+[**zymarg-community-board-v2.3.0.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.3.0.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.2.1
+## What's new in v2.3.0
 
-Fixes the WP admin sidebar reload issue and the "All Requests" link pointing to the wrong page.
+Full-featured **All Requests** management surface — total parity with the WordPress CPT list table, built into the SPA hub. Admins never need to leave the branded view.
 
-- **Sidebar clicks use SPA view switching** - clicking Dashboard, All Requests, or Settings in the WordPress admin sidebar no longer causes a full page reload. JavaScript intercepts sidebar submenu clicks and performs the same instant view switch as the in-app navigation buttons.
-- **All Requests sidebar link fixed** - the sidebar "All Requests" item previously pointed to `edit.php?post_type=zcrb_request` (the standard WordPress CPT list table, a completely different page). It now points to the branded SPA hub with the Requests view active.
-- **CPT hidden from admin menu** - the custom post type registration no longer auto-adds its own submenu item. An explicit submenu slug (`zcrb-hub-requests`) renders the SPA page, keeping all three sidebar links consistent.
+- **Status tab strip with counts** — `All (N) | Approved (N) | Pending (N) | In Progress (N) | Fulfilled (N) | Trash (N)`. Server-side filtering keeps pagination + counts accurate. On mobile the tabs collapse into a horizontally-scrollable strip.
+- **Sortable table on desktop, card fallback on mobile** — `>= 768px` shows a proper `<table>` with columns Checkbox / Ref / Title / Submitter / Status / Upvotes / Date / Actions. Sortable columns toggle asc/desc. Row hover reveals action buttons (WP-core-like). Below 768px the same rows render as full-width cards with always-visible actions.
+- **Bulk actions** — checkbox per row + "select all" in the table header. Dropdown offers Approve / Reject / Move to Trash / Delete Permanently, plus Restore / Delete Permanently in the Trash tab. Nonce-protected POST to `admin-post.php`, redirect back with a "X requests approved." notice. Delete Permanently double-confirms.
+- **Trash tab** — full trash workflow inside the SPA. Restore uses `wp_untrash_post()`; Delete Permanently uses the retention-safe delete pipeline.
+- **"Add New" button** — prominent action next to the panel title opens the standard WP editor at `post-new.php?post_type=zcrb_request`.
+- **Per-page selector** — screen-options-style "Show [20|50|100|All] per page" dropdown; changing it reloads with `?per_page=N`. Tabs, pagination and the bulk-form all preserve the current per-page choice.
+- **Empty state per tab** — friendly copy per tab ("No approved requests.", "Trash is empty.", etc). A separate "No matching requests." line replaces rows when live keyword search filters everything out.
+- **Row-level quick actions bounce back to the SPA** — Approve / Reject / Delete / Restore links now pass `zcrb_return=hub` so the redirect lands on the hub with the previous tab preserved.
+- **Fully responsive down to 320px** — panel padding, tab strip, bulk-action bar, per-page dropdown, and card actions all reshape at `< 768px`, `<= 480px`, and `<= 360px`. Buttons wrap, tabs scroll, cards stack, action rows wrap — no horizontal overflow at any tested viewport width.
+- **"Advanced list view" escape hatch removed** — the link to `edit.php?post_type=zcrb_request` is gone; the SPA now covers every workflow.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.3.0  | 2025-07-06 | `main`    | Full-featured All Requests view — status tabs with counts, bulk actions, sortable table, Trash tab, per-page selector, mobile-responsive down to 320px |
 | v2.2.1  | 2025-07-06 | `main`    | WP sidebar clicks use SPA view switching, All Requests link fixed |
 | v2.2.0  | 2025-07-06 | `main`    | Full SPA admin: sidebar + main-panel layout, client-side view switching (no AJAX/reloads), custom All Requests list inside the hub |
 | v2.1.2  | 2025-07-06 | `main`    | Submenu order fix (Dashboard first) + per-section header titles (Dashboard/All Requests/Settings) instead of the same "ZYMARG Community Board" on every page |
