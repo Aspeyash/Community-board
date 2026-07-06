@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.0.6
+Stable tag: 2.0.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.0.7 =
+* **Duplicate "All Requests" submenu removed** - removed the manual `add_submenu_page` call for "All Requests" in the admin hub. WordPress already auto-creates this submenu entry from the CPT registration (`show_in_menu => 'zcrb-hub'`), so the manual call produced a duplicate sidebar item.
 
 = 2.0.6 =
 * **Duplicate admin menu removed** - removed stray `menu_icon` and `menu_position` args from the CPT registration. The CPT is nested under the hub menu (`show_in_menu => 'zcrb-hub'`), so these args are unnecessary and could cause a duplicate top-level "All Requests" item on some WP configurations.

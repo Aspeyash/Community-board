@@ -76,15 +76,6 @@ class ZCRB_Admin_Hub {
             self::MENU_SLUG,
             array( $this, 'render_page' )
         );
-
-        // "All Requests" links to the CPT list table.
-        add_submenu_page(
-            self::MENU_SLUG,
-            __( 'All Requests', 'zymarg-community-board' ),
-            __( 'All Requests', 'zymarg-community-board' ),
-            'edit_posts',
-            'edit.php?post_type=' . ZCRB_POST_TYPE
-        );
     }
 
     /**

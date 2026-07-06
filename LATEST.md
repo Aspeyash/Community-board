@@ -1,23 +1,24 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.0.6`
+**Latest version:** `v2.0.7`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.0.6.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.6.zip)
+[**zymarg-community-board-v2.0.7.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.7.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.0.6
+## What's new in v2.0.7
 
-- **Duplicate admin menu removed** - removed stray `menu_icon` and `menu_position` args from the CPT registration. The CPT is nested under the hub menu (`show_in_menu => 'zcrb-hub'`), so these args are unnecessary and could cause a duplicate top-level "All Requests" item on some WP configurations.
+- **Duplicate "All Requests" submenu removed** - removed the manual `add_submenu_page` call for "All Requests" in the admin hub. WordPress already auto-creates this submenu entry from the CPT registration (`show_in_menu => 'zcrb-hub'`), so the manual call produced a duplicate sidebar item.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.0.7  | 2025-07-06 | `main`    | Remove duplicate "All Requests" submenu entry |
 | v2.0.6  | 2025-07-06 | `main`    | Remove duplicate admin menu - CPT nested under hub |
 | v2.0.5  | 2025-07-06 | `main`    | Discovery Spark CSS copied verbatim from canonical Theme Builder source, SVG fill attributes removed |
 | v2.0.4  | 2025-07-06 | `main`    | Discovery Spark animation - sequential visible pulse matching canonical, white background |
