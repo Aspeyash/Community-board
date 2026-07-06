@@ -431,18 +431,17 @@
      */
     function closeCropper() {
         if (!activeCropper) return;
-        activeCropper.cleanup();
-        if (activeCropper.overlay && activeCropper.overlay.parentNode) {
-            activeCropper.overlay.classList.remove('is-visible');
-            // Remove after transition
+        var cropper = activeCropper;
+        activeCropper = null;
+        cropper.cleanup();
+        if (cropper.overlay && cropper.overlay.parentNode) {
+            cropper.overlay.style.pointerEvents = 'none';
+            cropper.overlay.classList.remove('is-visible');
             setTimeout(function () {
-                if (activeCropper && activeCropper.overlay && activeCropper.overlay.parentNode) {
-                    activeCropper.overlay.parentNode.removeChild(activeCropper.overlay);
+                if (cropper.overlay && cropper.overlay.parentNode) {
+                    cropper.overlay.parentNode.removeChild(cropper.overlay);
                 }
-                activeCropper = null;
-            }, 200);
-        } else {
-            activeCropper = null;
+            }, 300);
         }
     }
 
