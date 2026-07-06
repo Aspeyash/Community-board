@@ -87,8 +87,14 @@ class ZCRB_Form {
         }
 
         // Image required check (only when uploads are also enabled).
-        if ( $image_enabled && $image_required && empty( $files['zcrb_image']['name'] ) ) {
+        $image_max_count = (int) $this->setting( 'image_max_count', 1 );
+        $has_images      = ! empty( $files['zcrb_images']['name'][0] );
+        if ( $image_enabled && $image_required && ! $has_images ) {
             return new WP_Error( 'zcrb_missing_image', __( 'Please attach an image.', 'zymarg-community-board' ) );
+        }
+        // Also support the legacy single input name for backward compatibility.
+        if ( ! $has_images && ! empty( $files['zcrb_image']['name'] ) ) {
+            $has_images = true;
         }
 
         // Throttle: max N submissions per user per hour.
@@ -136,17 +142,59 @@ class ZCRB_Form {
             return $post_id;
         }
 
-        // Optional / required image upload.
-        if ( $image_enabled && ! empty( $files['zcrb_image']['name'] ) ) {
-            $upload = $this->handle_image_upload( $files['zcrb_image'], (int) $post_id );
-            if ( is_wp_error( $upload ) ) {
-                update_post_meta( $post_id, '_zcrb_image_error', $upload->get_error_message() );
-                if ( $image_required ) {
-                    wp_delete_post( (int) $post_id, true );
-                    return $upload;
+        // Optional / required image upload (supports multiple files via zcrb_images[]).
+        if ( $image_enabled && $has_images ) {
+            $uploaded_count = 0;
+            $first_attachment_id = 0;
+
+            // Handle new multi-file input (zcrb_images[]).
+            if ( ! empty( $files['zcrb_images']['name'][0] ) ) {
+                $file_count = count( $files['zcrb_images']['name'] );
+                // Enforce the max image count.
+                $file_count = min( $file_count, $image_max_count );
+
+                for ( $i = 0; $i < $file_count; $i++ ) {
+                    if ( empty( $files['zcrb_images']['name'][ $i ] ) ) {
+                        continue;
+                    }
+                    $single_file = array(
+                        'name'     => $files['zcrb_images']['name'][ $i ],
+                        'type'     => $files['zcrb_images']['type'][ $i ],
+                        'tmp_name' => $files['zcrb_images']['tmp_name'][ $i ],
+                        'error'    => $files['zcrb_images']['error'][ $i ],
+                        'size'     => $files['zcrb_images']['size'][ $i ],
+                    );
+                    $upload = $this->handle_image_upload( $single_file, (int) $post_id );
+                    if ( is_wp_error( $upload ) ) {
+                        update_post_meta( $post_id, '_zcrb_image_error', $upload->get_error_message() );
+                        if ( $image_required && 0 === $uploaded_count ) {
+                            wp_delete_post( (int) $post_id, true );
+                            return $upload;
+                        }
+                    } else {
+                        $uploaded_count++;
+                        if ( 0 === $first_attachment_id ) {
+                            $first_attachment_id = $upload;
+                        }
+                    }
                 }
-            } else {
-                set_post_thumbnail( $post_id, $upload );
+            } elseif ( ! empty( $files['zcrb_image']['name'] ) ) {
+                // Legacy single-file input fallback.
+                $upload = $this->handle_image_upload( $files['zcrb_image'], (int) $post_id );
+                if ( is_wp_error( $upload ) ) {
+                    update_post_meta( $post_id, '_zcrb_image_error', $upload->get_error_message() );
+                    if ( $image_required ) {
+                        wp_delete_post( (int) $post_id, true );
+                        return $upload;
+                    }
+                } else {
+                    $first_attachment_id = $upload;
+                }
+            }
+
+            // Set the first uploaded image as the post thumbnail.
+            if ( $first_attachment_id ) {
+                set_post_thumbnail( $post_id, $first_attachment_id );
             }
         }
 

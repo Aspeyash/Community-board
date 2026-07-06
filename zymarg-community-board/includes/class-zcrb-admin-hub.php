@@ -92,10 +92,10 @@ class ZCRB_Admin_Hub {
         $version = defined( 'ZCRB_VERSION' ) ? ZCRB_VERSION : '0.0.0';
 
         // Gather stats.
-        $total      = $this->count_posts( array( 'publish', 'pending', 'draft' ) );
-        $pending    = $this->count_posts( array( 'pending', 'draft' ) );
-        $in_progress = $this->count_posts_by_meta( '_zcrb_status', 'in_progress' );
-        $fulfilled  = $this->count_posts_by_meta( '_zcrb_status', 'fulfilled' );
+        $total       = $this->count_posts( array( 'publish', 'pending', 'draft', 'zcrb_in_progress', 'zcrb_fulfilled' ) );
+        $pending     = $this->count_posts( array( 'pending', 'draft' ) );
+        $in_progress = $this->count_posts( array( 'zcrb_in_progress' ) );
+        $fulfilled   = $this->count_posts( array( 'zcrb_fulfilled' ) );
 
         $settings_url = admin_url( 'admin.php?page=' . ZCRB_Settings::SETTINGS_SLUG );
         $requests_url = admin_url( 'edit.php?post_type=' . ZCRB_POST_TYPE );
@@ -168,21 +168,5 @@ class ZCRB_Admin_Hub {
             }
         }
         return $total;
-    }
-
-    /**
-     * Count posts by a specific meta value (for custom statuses).
-     */
-    private function count_posts_by_meta( string $meta_key, string $meta_value ): int {
-        $query = new WP_Query( array(
-            'post_type'      => ZCRB_POST_TYPE,
-            'post_status'    => array( 'publish', 'pending', 'draft' ),
-            'meta_key'       => $meta_key,
-            'meta_value'     => $meta_value,
-            'posts_per_page' => -1,
-            'fields'         => 'ids',
-            'no_found_rows'  => true,
-        ) );
-        return $query->post_count;
     }
 }

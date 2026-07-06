@@ -204,6 +204,7 @@ add_action( 'wp_enqueue_scripts', static function () {
         'loginUrl'         => wp_login_url( get_permalink() ),
         'messageLimit'     => (int) zcrb_get_setting( 'message_limit', ZCRB_MESSAGE_LIMIT ),
         'imageMaxMb'       => (int) zcrb_get_setting( 'image_max_mb', 2 ),
+        'imageMaxCount'    => (int) zcrb_get_setting( 'image_max_count', 1 ),
         'imageTypes'       => array_filter( array_map( 'trim', explode( ',', (string) zcrb_get_setting( 'image_allowed_types', 'image/jpeg,image/png,image/webp' ) ) ) ),
         'lang'             => ZCRB_I18n::current_lang(),
         'i18n'             => array(
@@ -214,6 +215,7 @@ add_action( 'wp_enqueue_scripts', static function () {
             'charsRemaining'    => ZCRB_I18n::t( 'chars_remaining' ),
             'fileTooLarge'      => ZCRB_I18n::t( 'file_too_large' ),
             'invalidImage'      => ZCRB_I18n::t( 'invalid_image' ),
+            'tooManyImages'     => ZCRB_I18n::t( 'too_many_images' ),
             'responseSubmitted' => ZCRB_I18n::t( 'response_submitted' ),
             'upvote'            => ZCRB_I18n::t( 'upvote' ),
             'upvoted'           => ZCRB_I18n::t( 'upvoted' ),

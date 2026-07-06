@@ -30,11 +30,13 @@
         var counter = form.querySelector('[data-zcrb-counter]');
         var submitBtn = form.querySelector('[data-zcrb-submit]');
         var feedback = form.querySelector('[data-zcrb-feedback]');
-        var fileInput = form.querySelector('input[name="zcrb_image"]');
+        var fileInput = form.querySelector('input[name="zcrb_images[]"]');
+        var fileInputs = form.querySelectorAll('input[name="zcrb_images[]"]');
         var fileLabel = form.querySelector('[data-zcrb-filename]');
 
         var limit = parseInt(cfg.messageLimit, 10) || 200;
         var maxMb = parseInt(cfg.imageMaxMb, 10) || 2;
+        var maxCount = parseInt(cfg.imageMaxCount, 10) || 1;
         var allowedTypes = Array.isArray(cfg.imageTypes) && cfg.imageTypes.length
             ? cfg.imageTypes
             : ['image/jpeg', 'image/png', 'image/webp'];
@@ -52,7 +54,34 @@
             updateCounter();
         }
 
-        if (fileInput) {
+        if (fileInputs && fileInputs.length) {
+            for (var fi = 0; fi < fileInputs.length; fi++) {
+                (function(input) {
+                    var label = input.closest('.zcrb-upload') ? input.closest('.zcrb-upload').querySelector('[data-zcrb-filename]') : null;
+                    input.addEventListener('change', function () {
+                        if (!input.files || !input.files[0]) {
+                            if (label) label.textContent = '';
+                            return;
+                        }
+                        var file = input.files[0];
+                        if (file.size > maxMb * 1024 * 1024) {
+                            showFeedback(feedback, i18n.fileTooLarge || 'Image is too large.', 'error');
+                            input.value = '';
+                            if (label) label.textContent = '';
+                            return;
+                        }
+                        if (allowedTypes.indexOf(file.type) === -1) {
+                            showFeedback(feedback, i18n.invalidImage || 'Invalid image format.', 'error');
+                            input.value = '';
+                            if (label) label.textContent = '';
+                            return;
+                        }
+                        if (label) label.textContent = file.name;
+                        showFeedback(feedback, '', '');
+                    });
+                })(fileInputs[fi]);
+            }
+        } else if (fileInput) {
             fileInput.addEventListener('change', function () {
                 if (!fileInput.files || !fileInput.files[0]) {
                     if (fileLabel) fileLabel.textContent = '';
@@ -258,7 +287,9 @@
             }
             var text = textarea.value.trim();
             if (text.length < 10) {
-                similarDiv.innerHTML = '';
+                while (similarDiv.firstChild) {
+                    similarDiv.removeChild(similarDiv.firstChild);
+                }
                 return;
             }
             debounceTimer = setTimeout(function () {
@@ -274,23 +305,45 @@
                 })
                     .then(function (res) { return res.json(); })
                     .then(function (json) {
+                        while (similarDiv.firstChild) {
+                            similarDiv.removeChild(similarDiv.firstChild);
+                        }
                         if (json && json.success && json.data && json.data.matches && json.data.matches.length > 0) {
-                            var html = '<p class="zcrb-similar__heading">' + (i18n.similarRequestsFound || 'Similar requests found:') + '</p>';
-                            html += '<div class="zcrb-similar__list">';
+                            var heading = document.createElement('p');
+                            heading.className = 'zcrb-similar__heading';
+                            heading.textContent = i18n.similarRequestsFound || 'Similar requests found:';
+                            similarDiv.appendChild(heading);
+
+                            var list = document.createElement('div');
+                            list.className = 'zcrb-similar__list';
+
                             json.data.matches.forEach(function (match) {
-                                html += '<a class="zcrb-similar__item" href="' + match.permalink + '" target="_blank" rel="noopener">';
-                                html += '<span class="zcrb-similar__item-ref">#' + match.ref + '</span>';
-                                html += '<span class="zcrb-similar__item-title">' + match.title + '</span>';
-                                html += '</a>';
+                                var link = document.createElement('a');
+                                link.className = 'zcrb-similar__item';
+                                link.href = match.permalink;
+                                link.target = '_blank';
+                                link.rel = 'noopener';
+
+                                var refSpan = document.createElement('span');
+                                refSpan.className = 'zcrb-similar__item-ref';
+                                refSpan.textContent = '#' + match.ref;
+
+                                var titleSpan = document.createElement('span');
+                                titleSpan.className = 'zcrb-similar__item-title';
+                                titleSpan.textContent = match.title;
+
+                                link.appendChild(refSpan);
+                                link.appendChild(titleSpan);
+                                list.appendChild(link);
                             });
-                            html += '</div>';
-                            similarDiv.innerHTML = html;
-                        } else {
-                            similarDiv.innerHTML = '';
+
+                            similarDiv.appendChild(list);
                         }
                     })
                     .catch(function () {
-                        similarDiv.innerHTML = '';
+                        while (similarDiv.firstChild) {
+                            similarDiv.removeChild(similarDiv.firstChild);
+                        }
                     });
             }, 500);
         });

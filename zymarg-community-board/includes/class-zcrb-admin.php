@@ -198,7 +198,7 @@ class ZCRB_Admin {
             ),
             'zcrb_quick_action_' . $post->ID
         );
-        $actions['zcrb_delete'] = '<a href="' . esc_url( $delete_url ) . '" style="color:#a00;">' . esc_html__( 'Delete Permanently', 'zymarg-community-board' ) . '</a>';
+        $actions['zcrb_delete'] = '<a href="' . esc_url( $delete_url ) . '" style="color:#a00;" onclick="return confirm(\'' . esc_js( __( 'Are you sure you want to permanently delete this request? This action cannot be undone.', 'zymarg-community-board' ) ) . '\');">' . esc_html__( 'Delete Permanently', 'zymarg-community-board' ) . '</a>';
 
         return $actions;
     }

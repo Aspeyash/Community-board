@@ -449,12 +449,27 @@ class ZCRB_Template {
                     </div>
 
                     <?php if ( $image_enabled ) : ?>
+                        <?php
+                        $image_max_count = (int) self::setting( 'image_max_count', 1 );
+                        for ( $img_i = 0; $img_i < $image_max_count; $img_i++ ) :
+                            $input_name = 'zcrb_images[]';
+                            $input_id   = 'zcrb-image-' . $img_i;
+                            $is_first   = ( 0 === $img_i );
+                        ?>
                         <div class="zcrb-field">
-                            <label for="zcrb-image">
-                                <?php echo esc_html( $image_required ? ZCRB_I18n::t( 'image_required' ) : ZCRB_I18n::t( 'image_optional' ) ); ?>
-                                <?php if ( $image_required ) : ?><span class="zcrb-req">*</span><?php endif; ?>
+                            <label for="<?php echo esc_attr( $input_id ); ?>">
+                                <?php
+                                if ( $is_first ) {
+                                    echo esc_html( $image_required ? ZCRB_I18n::t( 'image_required' ) : ZCRB_I18n::t( 'image_optional' ) );
+                                    if ( $image_required ) {
+                                        echo ' <span class="zcrb-req">*</span>';
+                                    }
+                                } else {
+                                    echo esc_html( ZCRB_I18n::t( 'image_optional' ) );
+                                }
+                                ?>
                             </label>
-                            <label class="zcrb-upload" for="zcrb-image">
+                            <label class="zcrb-upload" for="<?php echo esc_attr( $input_id ); ?>">
                                 <svg class="zcrb-upload__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <path d="M16 16l-4-4-4 4M12 12v9"/>
                                     <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
@@ -462,9 +477,10 @@ class ZCRB_Template {
                                 </svg>
                                 <p class="zcrb-upload__text"><?php echo esc_html( sprintf( ZCRB_I18n::t( 'upload_hint' ), $image_max_mb ) ); ?></p>
                                 <span class="zcrb-upload__filename" data-zcrb-filename></span>
-                                <input id="zcrb-image" type="file" name="zcrb_image" <?php echo $image_required ? 'required' : ''; ?> accept="<?php echo esc_attr( $image_types ); ?>" />
+                                <input id="<?php echo esc_attr( $input_id ); ?>" type="file" name="<?php echo esc_attr( $input_name ); ?>" <?php echo ( $is_first && $image_required ) ? 'required' : ''; ?> accept="<?php echo esc_attr( $image_types ); ?>" />
                             </label>
                         </div>
+                        <?php endfor; ?>
                     <?php endif; ?>
 
                     <div class="zcrb-form__actions">

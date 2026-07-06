@@ -126,7 +126,7 @@ class ZCRB_Vendor_Response {
         wp_send_json_success( array(
             'message'     => ZCRB_I18n::t( 'response_submitted' ),
             'vendor_name' => $user->display_name,
-            'timestamp'   => current_time( 'timestamp' ),
+            'timestamp'   => time(),
         ) );
     }
 
@@ -139,7 +139,7 @@ class ZCRB_Vendor_Response {
             'vendor_id'   => $vendor_id,
             'vendor_name' => $vendor_name,
             'message'     => $message,
-            'timestamp'   => current_time( 'timestamp' ),
+            'timestamp'   => time(),
         );
 
         update_post_meta( $post_id, '_zcrb_vendor_responses', $responses );
