@@ -20,6 +20,7 @@
     document.addEventListener('DOMContentLoaded', initForm);
     document.addEventListener('DOMContentLoaded', initUpvote);
     document.addEventListener('DOMContentLoaded', initVendorResponse);
+    document.addEventListener('DOMContentLoaded', initDuplicateDetection);
 
     function initForm() {
         var form = document.querySelector('[data-zcrb-form]');
@@ -233,6 +234,65 @@
                 .finally(function () {
                     submitBtn.disabled = false;
                 });
+        });
+    }
+
+    /**
+     * Duplicate detection (search-before-submit).
+     * Listens to the message textarea and shows similar existing requests.
+     */
+    function initDuplicateDetection() {
+        var form = document.querySelector('[data-zcrb-form]');
+        if (!form) return;
+
+        var textarea = form.querySelector('[data-zcrb-message]');
+        var similarDiv = form.querySelector('[data-zcrb-similar]');
+        if (!textarea || !similarDiv) return;
+        if (!cfg.ajaxUrl || !cfg.nonce) return;
+
+        var debounceTimer = null;
+
+        textarea.addEventListener('input', function () {
+            if (debounceTimer) {
+                clearTimeout(debounceTimer);
+            }
+            var text = textarea.value.trim();
+            if (text.length < 10) {
+                similarDiv.innerHTML = '';
+                return;
+            }
+            debounceTimer = setTimeout(function () {
+                var fd = new FormData();
+                fd.append('action', 'zcrb_duplicate_search');
+                fd.append('nonce', cfg.nonce);
+                fd.append('query', text);
+
+                fetch(cfg.ajaxUrl, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    body: fd
+                })
+                    .then(function (res) { return res.json(); })
+                    .then(function (json) {
+                        if (json && json.success && json.data && json.data.matches && json.data.matches.length > 0) {
+                            var html = '<p class="zcrb-similar__heading">' + (i18n.similarRequestsFound || 'Similar requests found:') + '</p>';
+                            html += '<div class="zcrb-similar__list">';
+                            json.data.matches.forEach(function (match) {
+                                html += '<a class="zcrb-similar__item" href="' + match.permalink + '" target="_blank" rel="noopener">';
+                                html += '<span class="zcrb-similar__item-ref">#' + match.ref + '</span>';
+                                html += '<span class="zcrb-similar__item-title">' + match.title + '</span>';
+                                html += '</a>';
+                            });
+                            html += '</div>';
+                            similarDiv.innerHTML = html;
+                        } else {
+                            similarDiv.innerHTML = '';
+                        }
+                    })
+                    .catch(function () {
+                        similarDiv.innerHTML = '';
+                    });
+            }, 500);
         });
     }
 })();

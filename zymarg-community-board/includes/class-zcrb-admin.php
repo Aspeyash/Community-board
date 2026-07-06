@@ -33,6 +33,9 @@ class ZCRB_Admin {
         add_action( 'admin_init', array( $this, 'handle_quick_action' ) );
         add_action( 'admin_notices', array( $this, 'admin_notice' ) );
         add_action( 'admin_head', array( $this, 'admin_menu_brand_css' ) );
+
+        add_filter( 'bulk_actions-edit-' . ZCRB_POST_TYPE, array( $this, 'register_bulk_approve' ) );
+        add_filter( 'handle_bulk_actions-edit-' . ZCRB_POST_TYPE, array( $this, 'handle_bulk_approve' ), 10, 3 );
     }
 
     public function register_meta_boxes(): void {
@@ -230,7 +233,50 @@ class ZCRB_Admin {
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Request approved and published.', 'zymarg-community-board' ) . '</p></div>';
         } elseif ( 'rejected' === $notice ) {
             echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'Request rejected and moved to Trash.', 'zymarg-community-board' ) . '</p></div>';
+        } elseif ( 'bulk_approved' === $notice ) {
+            $count = isset( $_GET['zcrb_count'] ) ? absint( $_GET['zcrb_count'] ) : 0;
+            if ( $count > 0 ) {
+                echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sprintf( ZCRB_I18n::t( 'bulk_approved_notice' ), $count ) ) . '</p></div>';
+            }
         }
+    }
+
+    /**
+     * Register bulk approve action in the post list table.
+     */
+    public function register_bulk_approve( array $actions ): array {
+        $actions['zcrb_bulk_approve'] = __( 'Approve', 'zymarg-community-board' );
+        return $actions;
+    }
+
+    /**
+     * Handle bulk approve action.
+     */
+    public function handle_bulk_approve( string $redirect_url, string $action, array $post_ids ): string {
+        if ( 'zcrb_bulk_approve' !== $action ) {
+            return $redirect_url;
+        }
+
+        $count = 0;
+        foreach ( $post_ids as $post_id ) {
+            $post = get_post( (int) $post_id );
+            if ( ! $post || ZCRB_POST_TYPE !== $post->post_type ) {
+                continue;
+            }
+            if ( 'pending' !== $post->post_status && 'draft' !== $post->post_status ) {
+                continue;
+            }
+            wp_update_post( array(
+                'ID'          => (int) $post_id,
+                'post_status' => 'publish',
+            ) );
+            $count++;
+        }
+
+        return add_query_arg( array(
+            'zcrb_notice' => 'bulk_approved',
+            'zcrb_count'  => $count,
+        ), $redirect_url );
     }
 
     /**

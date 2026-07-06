@@ -176,14 +176,32 @@ class ZCRB_Template {
             $paged = max( 1, (int) get_query_var( 'page' ) );
         }
 
-        $query = new WP_Query( array(
+        // Search and filter parameters.
+        $zcrb_search = isset( $_GET['zcrb_search'] ) ? sanitize_text_field( wp_unslash( $_GET['zcrb_search'] ) ) : '';
+        $zcrb_filter = isset( $_GET['zcrb_filter'] ) ? sanitize_key( wp_unslash( $_GET['zcrb_filter'] ) ) : '';
+
+        // Determine post_status based on filter.
+        $post_status = array( 'publish', 'zcrb_in_progress', 'zcrb_fulfilled' );
+        if ( 'in_progress' === $zcrb_filter ) {
+            $post_status = 'zcrb_in_progress';
+        } elseif ( 'fulfilled' === $zcrb_filter ) {
+            $post_status = 'zcrb_fulfilled';
+        }
+
+        $query_args = array(
             'post_type'      => ZCRB_POST_TYPE,
-            'post_status'    => 'publish',
+            'post_status'    => $post_status,
             'posts_per_page' => $per_page,
             'paged'          => $paged,
             'orderby'        => 'date',
             'order'          => 'DESC',
-        ) );
+        );
+
+        if ( '' !== $zcrb_search ) {
+            $query_args['s'] = $zcrb_search;
+        }
+
+        $query = new WP_Query( $query_args );
 
         $total        = (int) $query->found_posts;
         $current_lang = ZCRB_I18n::current_lang();
@@ -238,6 +256,16 @@ class ZCRB_Template {
                         <h2 class="zcrb-feed__title"><?php echo esc_html( ZCRB_I18n::t( 'recent_requests' ) ); ?></h2>
                     </header>
 
+                    <form class="zcrb-search-bar" method="get" action="<?php echo esc_url( (string) $archive_url ); ?>">
+                        <input type="text" name="zcrb_search" value="<?php echo esc_attr( $zcrb_search ); ?>" placeholder="<?php echo esc_attr( ZCRB_I18n::t( 'search_placeholder' ) ); ?>" />
+                        <select name="zcrb_filter">
+                            <option value="" <?php selected( $zcrb_filter, '' ); ?>><?php echo esc_html( ZCRB_I18n::t( 'filter_all' ) ); ?></option>
+                            <option value="in_progress" <?php selected( $zcrb_filter, 'in_progress' ); ?>><?php echo esc_html( ZCRB_I18n::t( 'filter_in_progress' ) ); ?></option>
+                            <option value="fulfilled" <?php selected( $zcrb_filter, 'fulfilled' ); ?>><?php echo esc_html( ZCRB_I18n::t( 'filter_fulfilled' ) ); ?></option>
+                        </select>
+                        <button type="submit" class="zcrb-btn zcrb-btn--ghost"><?php echo esc_html( ZCRB_I18n::t( 'search_button' ) ); ?></button>
+                    </form>
+
                     <div class="zcrb-grid" data-zcrb-grid>
                         <?php
                         if ( $query->have_posts() ) {
@@ -247,7 +275,21 @@ class ZCRB_Template {
                             }
                             wp_reset_postdata();
                         } else {
-                            echo '<p class="zcrb-empty">' . esc_html( ZCRB_I18n::t( 'no_requests' ) ) . '</p>';
+                            ?>
+                            <div class="zcrb-empty-state">
+                                <svg class="zcrb-empty-state__illustration" width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <circle cx="60" cy="60" r="50" stroke="#9500A5" stroke-width="2" stroke-dasharray="6 4" opacity="0.3"/>
+                                    <circle cx="60" cy="60" r="30" fill="#FEA9FF" opacity="0.2"/>
+                                    <circle cx="60" cy="60" r="12" fill="#9500A5" opacity="0.5"/>
+                                    <line x1="20" y1="90" x2="40" y2="70" stroke="#BD00D1" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+                                    <line x1="80" y1="30" x2="100" y2="50" stroke="#BD00D1" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+                                    <circle cx="25" cy="35" r="5" fill="#FEA9FF" opacity="0.4"/>
+                                    <circle cx="95" cy="85" r="7" fill="#FEA9FF" opacity="0.3"/>
+                                </svg>
+                                <h3 class="zcrb-empty-state__title"><?php echo esc_html( ZCRB_I18n::t( 'empty_state_title' ) ); ?></h3>
+                                <p class="zcrb-empty-state__subtitle"><?php echo esc_html( ZCRB_I18n::t( 'empty_state_subtitle' ) ); ?></p>
+                            </div>
+                            <?php
                         }
                         ?>
                     </div>
@@ -403,6 +445,7 @@ class ZCRB_Template {
                             <span data-zcrb-counter><?php echo (int) $message_limit; ?></span>
                             <?php echo esc_html( ZCRB_I18n::t( 'chars_remaining' ) ); ?>
                         </small>
+                        <div class="zcrb-similar" data-zcrb-similar></div>
                     </div>
 
                     <?php if ( $image_enabled ) : ?>

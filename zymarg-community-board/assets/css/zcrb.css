@@ -878,3 +878,152 @@
     gap: 16px;
     margin: 16px 0;
 }
+
+/* =========================================================================
+   Search bar
+   ========================================================================= */
+.zcrb-search-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+    align-items: center;
+}
+.zcrb-search-bar input[type="text"] {
+    flex: 1 1 200px;
+    padding: 10px 14px;
+    border: 1px solid var(--zcrb-border);
+    border-radius: var(--zcrb-radius-sm);
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-input);
+    color: var(--zcrb-text);
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.zcrb-search-bar input[type="text"]::placeholder {
+    color: var(--zcrb-muted);
+    opacity: 0.6;
+}
+.zcrb-search-bar input[type="text"]:focus {
+    outline: none;
+    border-color: var(--zcrb-purple);
+    box-shadow: 0 0 0 4px rgba(149, 0, 165, 0.12);
+}
+.zcrb-search-bar select {
+    padding: 10px 14px;
+    border: 1px solid var(--zcrb-border);
+    border-radius: var(--zcrb-radius-sm);
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-input);
+    color: var(--zcrb-text);
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    appearance: auto;
+}
+.zcrb-search-bar select:focus {
+    outline: none;
+    border-color: var(--zcrb-purple);
+    box-shadow: 0 0 0 4px rgba(149, 0, 165, 0.12);
+}
+.zcrb-search-bar .zcrb-btn--ghost {
+    padding: 10px 18px;
+    width: auto;
+}
+
+/* =========================================================================
+   Similar requests (duplicate detection)
+   ========================================================================= */
+.zcrb-similar {
+    margin-top: 8px;
+}
+.zcrb-similar:empty {
+    display: none;
+}
+.zcrb-similar__heading {
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-card-ref);
+    font-weight: 600;
+    color: var(--zcrb-muted);
+    margin: 0 0 6px;
+}
+.zcrb-similar__list {
+    display: grid;
+    gap: 6px;
+}
+.zcrb-similar__item {
+    display: block;
+    padding: 8px 12px;
+    border: 1px solid var(--zcrb-border-light);
+    border-radius: var(--zcrb-radius-sm);
+    background: var(--zcrb-surface);
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+}
+.zcrb-similar__item:hover {
+    border-color: var(--zcrb-purple-100);
+    background: var(--zcrb-purple-50);
+}
+.zcrb-similar__item-ref {
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-card-date);
+    font-weight: 600;
+    color: var(--zcrb-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.zcrb-similar__item-title {
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-card-ref);
+    color: var(--zcrb-text);
+    margin-top: 2px;
+    display: block;
+}
+
+/* =========================================================================
+   Branded empty state
+   ========================================================================= */
+.zcrb-empty-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 64px 24px;
+    border: 1px dashed var(--zcrb-border);
+    border-radius: var(--zcrb-radius);
+    background: rgba(255, 255, 255, 0.6);
+}
+.zcrb-empty-state__illustration {
+    margin-bottom: 24px;
+}
+.zcrb-empty-state__title {
+    font-family: var(--zcrb-font-heading);
+    font-size: var(--zcrb-fs-section-h);
+    font-weight: 700;
+    color: var(--zcrb-purple-deep);
+    margin: 0 0 8px;
+}
+.zcrb-empty-state__subtitle {
+    font-family: var(--zcrb-font-body);
+    font-size: var(--zcrb-fs-card-message);
+    color: var(--zcrb-muted);
+    margin: 0;
+    max-width: 400px;
+    line-height: 1.6;
+}
+
+/* =========================================================================
+   Skeleton loader (future use)
+   ========================================================================= */
+.zcrb-skeleton {
+    background: linear-gradient(90deg, var(--zcrb-surface-low) 25%, var(--zcrb-surface-high) 50%, var(--zcrb-surface-low) 75%);
+    background-size: 200% 100%;
+    animation: zcrb-skeleton-pulse 1.5s ease-in-out infinite;
+    border-radius: var(--zcrb-radius-sm);
+}
+@keyframes zcrb-skeleton-pulse {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
