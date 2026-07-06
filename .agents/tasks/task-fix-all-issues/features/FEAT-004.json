@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Build branded admin hub with Discovery Spark, gradient header, tabs, version badge, and purple admin sidebar styling. Implements all ZYMARG ecosystem branding standards for the admin area.",
+  "status": "completed",
+  "steps": [
+    "Create new file zymarg-community-board/includes/class-zcrb-admin-hub.php: Build a branded admin hub page registered as the TOP-LEVEL menu page (replacing the default CPT menu position). The hub should have: (1) A gradient header bar using linear-gradient(to right, #9500A5, #FEA9FF) with white wordmark text 'ZYMARG Community Board' and version badge 'v{VERSION}' in the top-right corner. (2) The canonical Discovery Spark SVG animation inside the hub panel (NOT as the WP admin menu icon - menu icon stays as a standard dashicon). Discovery Spark paths: purple paths use #6833ea, gold paths use #FFD166, fast sequential pulse animation on purple paths only, gold is static. (3) Tab navigation: Dashboard (overview/stats), All Requests (link to CPT list), Settings (embed or link to existing settings page). The hub is the landing page when clicking 'Community Board' in the admin sidebar.",
+    "Update zymarg-community-board/includes/class-zcrb-cpt.php: Change 'show_in_menu' from true to the admin hub slug so the CPT appears as a submenu item under the hub. Keep menu_icon as 'dashicons-megaphone' for the top-level menu.",
+    "Add admin sidebar purple text styling: In the admin hub class or the bootstrap file, add an admin_head action that outputs inline CSS to style the Community Board admin menu item text with color #9500A5 and font-weight 600. On hover/focus/active (current menu), text should be white. Target: #adminmenu .toplevel_page_zcrb-hub .wp-menu-name",
+    "Update zymarg-community-board/includes/class-zcrb-settings.php: Change add_menu() to register settings as a submenu under the hub page instead of under the CPT menu.",
+    "Update zymarg-community-board/zymarg-community-board.php: Add require_once for class-zcrb-admin-hub.php. Instantiate ZCRB_Admin_Hub in the plugins_loaded callback.",
+    "Add admin CSS: Create zymarg-community-board/assets/css/zcrb-admin.css with styles for the hub page header (gradient), Discovery Spark animation, tab navigation, version badge, and responsive layout. Enqueue this CSS only on admin pages belonging to the plugin."
+  ],
+  "acceptance_criteria": [
+    "Admin menu shows 'Community Board' with dashicons-megaphone icon and purple #9500A5 text (font-weight 600)",
+    "Admin menu text turns white on hover/active states",
+    "Hub page has gradient header with signature gradient (to right, #9500A5, #FEA9FF)",
+    "Version badge shows in top-right of hub header",
+    "Discovery Spark SVG with correct colors (#6833ea purple paths, #FFD166 gold) and pulse animation appears inside the hub panel",
+    "Tab navigation provides access to Dashboard, All Requests, and Settings",
+    "Settings page is accessible as a submenu under the hub",
+    "CPT list table is accessible as a submenu under the hub",
+    "All PHP files pass syntax check"
+  ],
+  "verification": [
+    "Run: find /projects/sandbox/Community-board/zymarg-community-board -name '*.php' -exec php -l {} \\;",
+    "Run: grep -n 'Discovery Spark\\|6833ea\\|FFD166' /projects/sandbox/Community-board/zymarg-community-board/includes/class-zcrb-admin-hub.php",
+    "Run: grep -n '#9500A5\\|9500a5' /projects/sandbox/Community-board/zymarg-community-board/includes/class-zcrb-admin-hub.php",
+    "Run: grep -n 'linear-gradient' /projects/sandbox/Community-board/zymarg-community-board/assets/css/zcrb-admin.css"
+  ],
+  "blocked_reason": null,
+  "findings": "All acceptance criteria met. Admin hub registered as top-level menu with dashicons-megaphone. CPT nested under hub via show_in_menu='zcrb-hub'. Settings submenu registered under hub. Brand CSS updated to target .toplevel_page_zcrb-hub with purple text and white hover/active. Discovery Spark SVG uses #6833ea (purple animated) and #FFD166 (gold static). Gradient header uses linear-gradient(to right, #9500A5, #FEA9FF). Also added image_max_count setting (1-4) per user steering request."
+}

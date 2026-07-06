@@ -1,0 +1,37 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Add status lifecycle, vendor response mechanism, upvote system, and notification system. This is the core functional expansion: custom post statuses (Pending, In Progress, Fulfilled), vendor response meta/display, upvote AJAX endpoint, and email notifications to submitters on approval/vendor response.",
+  "status": "completed",
+  "steps": [
+    "Create new file zymarg-community-board/includes/class-zcrb-status.php: Register custom post statuses 'zcrb_in_progress' and 'zcrb_fulfilled' (using register_post_status). Add status transition hooks. Provide a status label helper. Pending uses WP built-in 'pending', Published means 'Approved/Live'. Add 'In Progress' (vendor is working on it) and 'Fulfilled' (request completed). Add status dropdown to the admin edit screen. Add status badge CSS classes.",
+    "Create new file zymarg-community-board/includes/class-zcrb-vendor-response.php: Add a meta box on the single request edit screen for vendor responses. Store responses as post meta '_zcrb_vendor_responses' (serialized array of {vendor_id, vendor_name, message, timestamp}). Provide a public render method that shows responses on the single-post frontend view. Only users with 'edit_others_posts' capability (vendors/admins) can add responses. Add an AJAX endpoint for vendor response submission from the frontend single-post view (if user has capability).",
+    "Create new file zymarg-community-board/includes/class-zcrb-upvote.php: Add upvote functionality using post meta '_zcrb_upvote_count' (int) and '_zcrb_upvoted_users' (serialized array of user IDs). Add AJAX endpoint 'zcrb_upvote' for logged-in users to upvote (toggle). Each user can upvote once per request. Display upvote count on cards and single view. Add a heart/thumbs-up icon button.",
+    "Create new file zymarg-community-board/includes/class-zcrb-notify.php: Send email notification to the submitter when their request is approved (status changes to publish). Send email when a vendor responds. Use the submitter's stored _zcrb_email. Respect a new setting 'notify_submitter_on_approve' (default 1) and 'notify_submitter_on_response' (default 1). Hook into post status transitions and the vendor response action.",
+    "Update zymarg-community-board/zymarg-community-board.php: Add require_once for the 4 new class files. Instantiate them in the plugins_loaded callback. Register new post meta for upvotes and vendor responses in class-zcrb-cpt.php.",
+    "Update zymarg-community-board/includes/class-zcrb-settings.php: Add new settings 'notify_submitter_on_approve' and 'notify_submitter_on_response' (both default 1) to defaults(). Add checkboxes in the Notifications section of the settings page. Add sanitization for the new boolean settings.",
+    "Update zymarg-community-board/includes/class-zcrb-template.php: In render_card(), add upvote count display and status badge. In render_single(), add vendor responses section and upvote button. Add the vendor response form for authorized users on single view.",
+    "Update zymarg-community-board/includes/class-zcrb-i18n.php: Add bilingual strings for: 'upvote', 'upvoted', 'upvotes_count', 'vendor_response', 'vendor_responses', 'no_responses_yet', 'respond_placeholder', 'submit_response', 'response_submitted', 'status_pending', 'status_approved', 'status_in_progress', 'status_fulfilled', 'notification_approved_subject', 'notification_approved_body', 'notification_response_subject', 'notification_response_body'.",
+    "Update zymarg-community-board/assets/js/zcrb.js: Add upvote toggle handler (AJAX POST to admin-ajax.php with action zcrb_upvote). Add vendor response form submission handler. Localize new nonces.",
+    "Update zymarg-community-board/assets/css/zcrb.css: Add styles for status badges (.zcrb-status-badge with variants for each status), upvote button (.zcrb-upvote), vendor response section (.zcrb-responses), and the vendor response form.",
+    "Update the wp_localize_script call in zymarg-community-board/zymarg-community-board.php to include the new nonce for upvote and vendor response AJAX actions."
+  ],
+  "acceptance_criteria": [
+    "Custom post statuses zcrb_in_progress and zcrb_fulfilled are registered",
+    "Vendor responses can be stored and displayed on single request view",
+    "Upvote system works via AJAX with user-unique constraint",
+    "Email notifications fire on approval and vendor response",
+    "New settings appear in the Notifications section",
+    "All new i18n strings have both en and bn translations",
+    "All PHP files pass syntax check"
+  ],
+  "verification": [
+    "Run: find /projects/sandbox/Community-board/zymarg-community-board -name '*.php' -exec php -l {} \\;",
+    "Run: grep -n 'register_post_status' /projects/sandbox/Community-board/zymarg-community-board/includes/class-zcrb-status.php",
+    "Run: grep -n 'zcrb_upvote' /projects/sandbox/Community-board/zymarg-community-board/includes/class-zcrb-upvote.php",
+    "Run: grep -n 'vendor_response' /projects/sandbox/Community-board/zymarg-community-board/includes/class-zcrb-vendor-response.php",
+    "Run: grep -n 'wp_mail' /projects/sandbox/Community-board/zymarg-community-board/includes/class-zcrb-notify.php"
+  ],
+  "blocked_reason": null,
+  "findings": "All 11 steps completed. Created 4 new class files (ZCRB_Status, ZCRB_Vendor_Response, ZCRB_Upvote, ZCRB_Notify). Updated bootstrap, settings, template, i18n (en+bn), CSS, JS, and CPT. Also added admin brand color CSS to the ZCRB_Admin class so the WordPress sidebar 'Community Board' menu text displays in the ZYMARG brand color (#9500A5). All PHP files pass syntax check (php -l)."
+}

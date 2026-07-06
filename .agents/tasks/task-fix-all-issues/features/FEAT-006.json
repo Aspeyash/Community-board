@@ -1,0 +1,26 @@
+{
+  "id": "FEAT-006",
+  "type": "feat",
+  "description": "Add manual delete functionality for admin: bulk delete action in admin list table and a 'Delete Permanently' quick action in row actions, so admins can easily remove community requests without going through trash.",
+  "status": "completed",
+  "steps": [
+    "In class-zcrb-admin.php, add a 'zcrb_bulk_delete' option to the bulk actions dropdown (alongside the existing bulk approve). Handle it by permanently deleting selected posts using ZCRB_Retention::delete_request() which also removes images and meta.",
+    "In class-zcrb-admin.php row_actions(), add a 'Delete Permanently' link for published/pending/in-progress requests (styled red like Reject).",
+    "In handle_quick_action(), add 'delete' case that calls ZCRB_Retention::delete_request() and redirects with 'deleted' notice.",
+    "Add admin notice for bulk delete and single delete results.",
+    "Rebuild the zip: rm old zip, create new zymarg-community-board-v2.0.0.zip"
+  ],
+  "acceptance_criteria": [
+    "Bulk delete action appears in admin list table bulk actions dropdown",
+    "Delete Permanently quick action appears in row actions",
+    "Both correctly permanently delete posts including images and meta",
+    "Admin notices confirm deletion count",
+    "All PHP files pass syntax check"
+  ],
+  "verification": [
+    "Run: find /projects/sandbox/Community-board/zymarg-community-board -name '*.php' -exec php -l {} \\;",
+    "Run: grep -n 'bulk_delete\\|Delete Permanently' /projects/sandbox/Community-board/zymarg-community-board/includes/class-zcrb-admin.php"
+  ],
+  "blocked_reason": null,
+  "findings": "Implemented cleanly. Added bulk delete action (zcrb_bulk_delete) in dropdown, handle_bulk_delete() method, Delete Permanently quick row action for all posts, delete case in handle_quick_action(), and admin notices for single/bulk delete. All PHP files pass lint. Zip rebuilt."
+}

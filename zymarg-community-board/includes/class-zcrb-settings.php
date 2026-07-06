@@ -330,12 +330,11 @@ class ZCRB_Settings {
         $s = $this->all();
         $opt = self::OPTION_KEY;
         ?>
-        <div class="wrap zcrb-settings">
+        <div class="wrap zcrb-hub-wrap zcrb-settings">
             <?php ZCRB_Admin_Hub::render_branded_header(); ?>
 
-            <h1><?php esc_html_e( 'ZYMARG Community Board — Settings', 'zymarg-community-board' ); ?></h1>
             <p class="description">
-                <?php esc_html_e( 'Configure every aspect of the Community Request Board. Defaults are sensible — leave a field blank to keep the built-in value.', 'zymarg-community-board' ); ?>
+                <?php esc_html_e( 'Settings — Configure every aspect of the Community Request Board. Defaults are sensible — leave a field blank to keep the built-in value.', 'zymarg-community-board' ); ?>
             </p>
 
             <form method="post" action="options.php">
@@ -567,8 +566,10 @@ class ZCRB_Settings {
                     </tr>
                 </table>
 
-                <?php submit_button(); ?>
-                <div class="zcrb-settings-toast" data-zcrb-toast></div>
+                <p class="submit zcrb-submit-row">
+                    <?php submit_button( null, 'primary', 'submit', false ); ?>
+                    <span class="zcrb-settings-toast" data-zcrb-toast></span>
+                </p>
             </form>
         </div>
         <?php

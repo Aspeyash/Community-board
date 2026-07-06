@@ -93,11 +93,10 @@ class ZCRB_Updater {
         wp_safe_redirect(
             add_query_arg(
                 array(
-                    'post_type' => ZCRB_POST_TYPE,
                     'page'      => ZCRB_Settings::SETTINGS_SLUG,
                     'zcrb_msg'  => 'updates_checked',
                 ),
-                admin_url( 'edit.php' )
+                admin_url( 'admin.php' )
             )
         );
         exit;

@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-007",
+  "type": "fix",
+  "description": "Fix review issues: XSS in duplicate-detection, hub stats always zero, image_max_count unenforced, no delete confirmation, deprecated current_time('timestamp').",
+  "status": "completed",
+  "steps": [
+    "Fix XSS in duplicate-detection JS: replace innerHTML with createElement/textContent",
+    "Fix hub stats to query post_status instead of meta key",
+    "Enforce image_max_count: render multiple file inputs in form, validate in AJAX handler, pass to localized JS",
+    "Add onclick confirm to delete permanently row action",
+    "Replace deprecated current_time('timestamp') with time()",
+    "Rebuild the zip"
+  ],
+  "acceptance_criteria": [
+    "No innerHTML with user data in duplicate-detection code",
+    "Hub stats use post_status field for in_progress/fulfilled counts",
+    "image_max_count enforced in form template, AJAX handler, and JS config",
+    "Delete Permanently row action has confirmation dialog",
+    "No uses of current_time('timestamp') remain",
+    "All PHP files pass syntax check",
+    "Zip rebuilt"
+  ],
+  "verification": [
+    "Run: find /projects/sandbox/Community-board/zymarg-community-board -name '*.php' -exec php -l {} \\;",
+    "Run: grep -n 'innerHTML' /projects/sandbox/Community-board/zymarg-community-board/assets/js/zcrb.js",
+    "Run: grep -n 'count_posts_by_meta' /projects/sandbox/Community-board/zymarg-community-board/includes/class-zcrb-admin-hub.php",
+    "Run: grep -rn \"current_time.*timestamp\" /projects/sandbox/Community-board/zymarg-community-board/",
+    "Run: grep -n 'imageMaxCount' /projects/sandbox/Community-board/zymarg-community-board/zymarg-community-board.php"
+  ],
+  "blocked_reason": null,
+  "findings": "All 6 review issues addressed. Issue 1 (XSS): replaced innerHTML with createElement/textContent in initDuplicateDetection. Issue 2 (hub stats): changed from count_posts_by_meta to count_posts with post_status array including zcrb_in_progress and zcrb_fulfilled. Issue 3 (image_max_count): renders N file inputs based on setting, added imageMaxCount to localized JS, AJAX handler processes zcrb_images[] array with count enforcement. Issue 4 (delete confirm): added onclick confirm() to Delete Permanently row action link. Issue 5 (upvote race): acknowledged as low priority, acceptable at WordPress scale. Issue 6 (deprecated): replaced both current_time('timestamp') calls with time(). Issue 7 (email): acceptable as-is, plain text with URL on own line is standard WP pattern."
+}

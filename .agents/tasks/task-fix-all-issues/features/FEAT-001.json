@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Fix rule violations and technical debt: non-destructive uninstall.php, function_exists() guard on zcrb_get_setting(), fix github_repo default from 'Community-page' to 'Community-board', fix SEO double-query, fix LATEST.md download URL repo reference",
+  "status": "completed",
+  "steps": [
+    "Rewrite zymarg-community-board/uninstall.php to be non-destructive by default. Only delete data if the constant ZCRB_REMOVE_ALL_DATA is defined and truthy. Add a clear comment explaining the opt-in mechanism.",
+    "In zymarg-community-board/zymarg-community-board.php, wrap the zcrb_get_setting() function definition in a function_exists('zcrb_get_setting') guard.",
+    "In zymarg-community-board/includes/class-zcrb-settings.php, change the default value of 'github_repo' from 'Community-page' to 'Community-board' in the defaults() method.",
+    "In zymarg-community-board/zymarg-community-board.php bootstrap section, change the fallback for github_repo from 'Community-page' to 'Community-board'.",
+    "Fix the SEO double-query issue in zymarg-community-board/includes/class-zcrb-seo.php: the json_ld_archive() method runs a new WP_Query identical to what render_board() already ran. Refactor to use the global $wp_query (the main query) when on the archive, eliminating the duplicate database query. Use $wp_query->posts directly instead of running a new WP_Query.",
+    "In LATEST.md, fix the download URL from 'Community-page' to 'Community-board' in the link and all other references to the old repo name.",
+    "In zymarg-community-board/zymarg-community-board.php plugin header, change 'GitHub Plugin URI' and 'Update URI' from 'Community-page' to 'Community-board'."
+  ],
+  "acceptance_criteria": [
+    "uninstall.php checks for defined('ZCRB_REMOVE_ALL_DATA') && ZCRB_REMOVE_ALL_DATA before deleting any data",
+    "zcrb_get_setting() is wrapped in if (!function_exists('zcrb_get_setting'))",
+    "All references to 'Community-page' are replaced with 'Community-board'",
+    "json_ld_archive() uses global $wp_query->posts instead of running a new WP_Query",
+    "All PHP files pass syntax check (php -l)"
+  ],
+  "verification": [
+    "Run: find /projects/sandbox/Community-board/zymarg-community-board -name '*.php' -exec php -l {} \\;",
+    "Run: grep -r 'Community-page' /projects/sandbox/Community-board/ --include='*.php' --include='*.md' --include='*.txt' (should return nothing)",
+    "Run: grep -n 'ZCRB_REMOVE_ALL_DATA' /projects/sandbox/Community-board/zymarg-community-board/uninstall.php (should show the guard)",
+    "Run: grep -n 'function_exists.*zcrb_get_setting' /projects/sandbox/Community-board/zymarg-community-board/zymarg-community-board.php (should show the guard)"
+  ],
+  "blocked_reason": null,
+  "findings": "All 7 steps completed. Also fixed README.md brand color mismatch (#6b3fa0 -> #9500A5) and updater class comment referencing old repo name. The only remaining #6b3fa0 reference is in readme.txt changelog entry (historical note, not a live value). All PHP files pass syntax check. No remaining Community-page references in source files."
+}

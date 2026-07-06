@@ -1,23 +1,31 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.1.0`
+**Latest version:** `v2.1.1`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.1.0.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.1.0.zip)
+[**zymarg-community-board-v2.1.1.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.1.1.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.1.0
+## What's new in v2.1.1
 
-- **Full AJAX save on the Settings page** - the Settings form now saves via `admin-ajax.php` instead of the classic `options.php` full-page reload. On success a toast notification appears next to the Save Changes button, and the button is disabled + relabeled ("Saving…") for the duration of the request. Uses the same `sanitize()` pipeline as the classic path, so every knob (per-page, message limit, image rules, colors, typography, notifications, retention, GitHub updater) is validated exactly the same way. Nonce-protected (`zcrb_settings_save`) and gated on `manage_options`.
+Settings page polish + a CRITICAL Discovery Spark visibility fix:
+
+- **Discovery Spark visibility (brand-critical)** — the spark's purple paths (`#6833ea`) were invisible against the header's purple gradient. The spark now sits inside a small white rounded chip (12px radius, 8px padding, subtle shadow) so it's always visible. Permanent ZYMARG brand rule: **never** put a purple background behind the Discovery Spark.
+- **Duplicate Settings-page heading removed** — the branded gradient header already shows "ZYMARG Community Board", so the extra `<h1>` beneath it was redundant. Description text refined.
+- **Broken redirects fixed** — "Run cleanup now" and "Force re-check for updates" no longer send you to a 404. Both now redirect to `admin.php?page=zcrb-settings` (matches the new admin-menu location under the hub).
+- **Save-Settings toast alignment** — toast now renders inline next to the Save Changes button instead of dropping to a new line.
+- **Container width unified** — Settings page now shares the same 1200px centered container (`.zcrb-hub-wrap`) as the Dashboard hub.
+- **Dead color-picker no-op removed** from the settings JS.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.1.1  | 2025-07-06 | `main`    | Settings page fixes: white Spark backdrop, no duplicate heading, fixed redirects, inline toast, unified container width |
 | v2.1.0  | 2025-07-06 | `main`    | Full AJAX save on the Settings page — no page reload, toast notification |
 | v2.0.7  | 2025-07-06 | `main`    | Remove duplicate "All Requests" submenu entry |
 | v2.0.6  | 2025-07-06 | `main`    | Remove duplicate admin menu - CPT nested under hub |

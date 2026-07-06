@@ -20,14 +20,6 @@
         $form.on('submit', function (e) {
             e.preventDefault();
 
-            // Sync all wpColorPicker values back to their inputs
-            $('.zcrb-color').each(function () {
-                var $input = $(this);
-                if ($input.wpColorPicker && typeof $input.wpColorPicker === 'function') {
-                    // Value is already synced by wpColorPicker
-                }
-            });
-
             var formData = $form.serialize();
 
             $submit.prop('disabled', true);

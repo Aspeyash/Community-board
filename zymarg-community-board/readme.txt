@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,14 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.1.1 =
+* **Discovery Spark visibility fix (CRITICAL brand rule)** — the Discovery Spark's purple paths were invisible on the ZYMARG purple gradient header. The spark now sits inside a small white rounded "chip" (12px radius, 8px padding, subtle shadow) so the purple paths are always visible while the header keeps its gradient look. This enforces the permanent ZYMARG brand rule: **never** put a purple background behind the Discovery Spark.
+* **Duplicate Settings-page heading removed** — the branded gradient header already shows "ZYMARG Community Board", so the second `<h1>` under it was redundant. Kept the branded header and updated the description paragraph to lead with "Settings — ...".
+* **Broken redirects fixed** — after the admin menu was restructured (Settings now under `zcrb-hub`), the "Run cleanup now" and "Force re-check updates" buttons redirected to a `edit.php?post_type=…` URL that no longer exists. Both now correctly redirect to `admin.php?page=zcrb-settings`.
+* **Save-Settings toast alignment fixed** — the AJAX save toast was dropping to a new line because `submit_button()` wrapped the button in its own `<p>`. Refactored to a single flex row (`.zcrb-submit-row`) with the button and toast as siblings; the toast now appears inline next to Save Changes.
+* **Settings container width unified** — the Settings page now uses the same `.zcrb-hub-wrap` max-width (1200px, centered) as the Dashboard hub for visual consistency across the admin.
+* **Dead color picker code removed** — deleted a no-op `.zcrb-color` loop in the settings JS (wpColorPicker syncs the underlying input value automatically).
 
 = 2.1.0 =
 * **Full AJAX save on the Settings page** - the Settings form now saves via `admin-ajax.php` (action `zcrb_save_settings`) instead of the classic `options.php` full page reload. On success a toast notification appears next to the Save Changes button, and the button is disabled + relabeled ("Saving…") for the duration of the request. Uses the same `sanitize()` pipeline as the classic path, so every knob (per-page, message limit, image rules, colors, typography, notifications, retention, GitHub updater) is validated exactly the same way. Nonce-protected (`zcrb_settings_save`) and gated on `manage_options`.

@@ -31,6 +31,11 @@
 
 .zcrb-hub-header .zymarg-spark {
     flex-shrink: 0;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 2px 8px rgba(19, 27, 46, 0.12);
+    box-sizing: content-box;
 }
 
 .zcrb-hub-header__title {
@@ -222,6 +227,14 @@
 }
 
 
+/* ─── Settings submit row (button + toast side-by-side) ─── */
+.zcrb-submit-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 /* ─── Settings AJAX save toast ─── */
 .zcrb-settings-toast {
     display: inline-block;
@@ -230,6 +243,7 @@
     border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
+    line-height: 1.5;
     opacity: 0;
     transform: translateY(-4px);
     transition: opacity 0.3s ease, transform 0.3s ease;

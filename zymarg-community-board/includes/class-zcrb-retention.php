@@ -175,12 +175,11 @@ class ZCRB_Retention {
         wp_safe_redirect(
             add_query_arg(
                 array(
-                    'post_type'    => ZCRB_POST_TYPE,
                     'page'         => ZCRB_Settings::SETTINGS_SLUG,
                     'zcrb_msg'     => 'cleanup_done',
                     'zcrb_deleted' => (int) $deleted,
                 ),
-                admin_url( 'edit.php' )
+                admin_url( 'admin.php' )
             )
         );
         exit;

@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Add search/filter on public board, duplicate detection (search-before-submit), bulk approve in admin, and branded empty states with loading personality.",
+  "status": "completed",
+  "steps": [
+    "Add search/filter to the public board: In zymarg-community-board/includes/class-zcrb-template.php, add a search bar above the feed grid. The search form should use GET parameter 'zcrb_search' and filter the WP_Query in render_board() using 's' parameter. Add filter dropdown for status (All, In Progress, Fulfilled) using 'zcrb_filter_status'. Style the search bar and filter with the existing design system.",
+    "Add duplicate detection / search-before-submit: In the submission form section of render_form(), add a hint that links to the search. In zymarg-community-board/assets/js/zcrb.js, add a live-search feature that triggers when the user types in the message field (debounced 500ms, min 10 chars). Show a 'Similar requests' dropdown below the message textarea that queries an AJAX endpoint. Create the AJAX endpoint in class-zcrb-ajax.php that searches published requests by keyword and returns top 3 matches with title, ref number, and permalink.",
+    "Add bulk approve in admin: In zymarg-community-board/includes/class-zcrb-admin.php, register a bulk action 'zcrb_bulk_approve' using the 'bulk_actions-edit-zcrb_request' filter. Handle the bulk action via 'handle_bulk_actions-edit-zcrb_request' filter - loop through selected post IDs, change status from pending to publish. Show admin notice with count of approved requests.",
+    "Add branded empty states: In zymarg-community-board/includes/class-zcrb-template.php, replace the plain text '.zcrb-empty' paragraph with a branded empty state component featuring the ZYMARG purple accent, a decorative SVG illustration (simple geometric shapes in brand colors), and personality text. Add a loading skeleton CSS class '.zcrb-skeleton' for future use. Update the bilingual empty-state text in class-zcrb-i18n.php to be more engaging.",
+    "Update zymarg-community-board/includes/class-zcrb-i18n.php: Add strings for 'search_placeholder', 'search_button', 'filter_all', 'filter_in_progress', 'filter_fulfilled', 'similar_requests_found', 'no_similar_found', 'check_existing', 'empty_state_title', 'empty_state_subtitle', 'bulk_approved_notice'.",
+    "Update zymarg-community-board/assets/css/zcrb.css: Add styles for search bar (.zcrb-search), filter (.zcrb-filter), similar requests dropdown (.zcrb-similar), branded empty state (.zcrb-empty-state), and skeleton loader (.zcrb-skeleton).",
+    "Update zymarg-community-board/assets/js/zcrb.js: Add the debounced duplicate-detection search functionality."
+  ],
+  "acceptance_criteria": [
+    "Search bar appears above the feed and filters results via GET parameter",
+    "Status filter dropdown works alongside search",
+    "Duplicate detection fires on message textarea input with debounce",
+    "Bulk approve action appears in the admin list table bulk actions dropdown",
+    "Bulk approve correctly transitions pending posts to published",
+    "Empty state shows branded design with personality text",
+    "All PHP files pass syntax check"
+  ],
+  "verification": [
+    "Run: find /projects/sandbox/Community-board/zymarg-community-board -name '*.php' -exec php -l {} \\;",
+    "Run: grep -n 'bulk_actions' /projects/sandbox/Community-board/zymarg-community-board/includes/class-zcrb-admin.php",
+    "Run: grep -n 'zcrb_search' /projects/sandbox/Community-board/zymarg-community-board/includes/class-zcrb-template.php",
+    "Run: grep -n 'zcrb_duplicate_search' /projects/sandbox/Community-board/zymarg-community-board/includes/class-zcrb-ajax.php"
+  ],
+  "blocked_reason": null,
+  "findings": "All 7 sub-features implemented successfully: search/filter on public board (GET params zcrb_search + zcrb_filter), duplicate detection AJAX endpoint (zcrb_duplicate_search) with debounced JS, bulk approve admin action, branded empty state with decorative SVG, i18n strings for both en/bn, CSS for search bar + similar results + empty state + skeleton loader, and JS duplicate detection with 500ms debounce. All PHP files pass syntax check. Brand colors (#9500A5, #BD00D1, #FEA9FF) used consistently."
+}

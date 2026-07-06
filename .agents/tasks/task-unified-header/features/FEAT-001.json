@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Unified branded gradient header with integrated Discovery Spark across all admin pages (Dashboard, All Requests CPT, Settings). Version bump 2.0.2 to 2.0.3.",
+  "status": "completed",
+  "steps": [
+    "Create shared helper function zcrb_admin_branded_header() that outputs gradient header with Discovery Spark integrated inside (to left of title text)",
+    "Update class-zcrb-admin-hub.php to use the shared helper, remove separate .zcrb-hub-spark section",
+    "Update class-zcrb-settings.php render_page() to add branded header at top",
+    "Add all_admin_notices hook to inject header on CPT screens (edit.php?post_type=zcrb_request and post.php editing a zcrb_request)",
+    "Extend enqueue_assets to load zcrb-admin.css on CPT screens",
+    "Update CSS to style the integrated spark within the header",
+    "Version bump 2.0.2 to 2.0.3 in all 4 pointer files",
+    "Rebuild the zip"
+  ],
+  "acceptance_criteria": [
+    "Branded header with Discovery Spark appears on Dashboard, All Requests, and Settings pages",
+    "Discovery Spark is inside the header (to the left of title), not a separate panel below",
+    "zcrb-admin.css loads on CPT screens",
+    "Version is 2.0.3 everywhere",
+    "All PHP files pass syntax check",
+    "Zip rebuilt"
+  ],
+  "blocked_reason": null
+}
