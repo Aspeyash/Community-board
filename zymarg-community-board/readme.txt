@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,12 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.3.1 =
+* **Horizontal top-nav layout** - removed the vertical left sidebar and replaced it with a horizontal header bar (Discovery Spark + "ZYMARG Community Board" title + version badge) and horizontal tab navigation (Dashboard / All Requests / Settings). Content area is now full-width with no sidebar consuming space.
+* **CPT list table redirect** - navigating to `edit.php?post_type=zcrb_request` now automatically redirects to the branded SPA hub All Requests view. The raw WordPress list table is never shown.
+* **Search icon overlap fix** - increased padding-left on the search input and adjusted icon positioning so the search placeholder text no longer overlaps the magnifying glass icon.
+* **Status tabs scroll fix** - status filter tabs now use `flex-wrap: nowrap` with `overflow-x: auto` so they scroll horizontally instead of getting cut off at narrow widths.
 
 = 2.3.0 =
 * **Full-featured "All Requests" management surface — total parity with the WordPress CPT list table, built into the SPA hub.** The custom SPA list now covers every workflow an admin used to jump to `edit.php?post_type=zcrb_request` for: status filtering, bulk actions, sortable columns, permanent-delete flow with a proper Trash tab, restore-from-trash, per-page paging, live keyword search, and a one-click "Add New" shortcut. The "Advanced list view" escape hatch has been removed — users never have to visit the raw WP list table.

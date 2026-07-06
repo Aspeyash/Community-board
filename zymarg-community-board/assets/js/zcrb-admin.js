@@ -60,9 +60,8 @@
             return;
         }
 
-        var $navItems = $app.find( '.zcrb-nav-item' );
-        var $views    = $app.find( '.zcrb-view' );
-        var $title    = $( '#zcrb-view-title' );
+        var $tabs  = $app.find( '.zcrb-tab' );
+        var $views = $app.find( '.zcrb-view' );
 
         function activate( view, pushState ) {
             if ( VALID_VIEWS.indexOf( view ) === -1 ) {
@@ -74,7 +73,7 @@
                 return;
             }
 
-            $navItems
+            $tabs
                 .removeClass( 'is-active' )
                 .attr( 'aria-selected', 'false' )
                 .filter( '[data-view="' + view + '"]' )
@@ -83,15 +82,6 @@
 
             $views.removeClass( 'is-active' );
             $target.addClass( 'is-active' );
-
-            // Update the topbar title to match the nav label.
-            var $activeBtn = $navItems.filter( '.is-active' );
-            if ( $title.length && $activeBtn.length ) {
-                var lbl = $activeBtn.find( '.zcrb-nav-label' ).text();
-                if ( lbl ) {
-                    $title.text( lbl );
-                }
-            }
 
             // Update the URL so refresh / bookmark / share all preserve the view.
             if ( pushState !== false && window.history && window.history.pushState ) {
@@ -106,8 +96,8 @@
             $( document ).trigger( 'zcrb-hub:view-shown', [ view ] );
         }
 
-        // Wire up nav clicks.
-        $navItems.on( 'click', function ( e ) {
+        // Wire up tab clicks.
+        $tabs.on( 'click', function ( e ) {
             e.preventDefault();
             activate( $( this ).data( 'view' ), true );
         } );
@@ -440,12 +430,11 @@
                 if ( view !== null ) {
                     e.preventDefault();
 
-                    // Trigger the existing SPA view switch logic.
-                    var $navItems = $app.find( '.zcrb-nav-item' );
-                    var $views    = $app.find( '.zcrb-view' );
-                    var $title    = $( '#zcrb-view-title' );
+                    // Trigger the existing SPA view switch logic via the tab buttons.
+                    var $tabs  = $app.find( '.zcrb-tab' );
+                    var $views = $app.find( '.zcrb-view' );
 
-                    $navItems
+                    $tabs
                         .removeClass( 'is-active' )
                         .attr( 'aria-selected', 'false' )
                         .filter( '[data-view="' + view + '"]' )
@@ -453,11 +442,6 @@
                         .attr( 'aria-selected', 'true' );
 
                     $views.removeClass( 'is-active' ).filter( '[data-view="' + view + '"]' ).addClass( 'is-active' );
-
-                    var lbl = $navItems.filter( '.is-active' ).find( '.zcrb-nav-label' ).text();
-                    if ( $title.length && lbl ) {
-                        $title.text( lbl );
-                    }
 
                     var url = ( ZCRBHub && ZCRBHub.hubUrl ) || 'admin.php?page=zcrb-hub';
                     history.pushState( { zcrbView: view }, '', url + '&section=' + view );

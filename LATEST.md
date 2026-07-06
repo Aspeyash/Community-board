@@ -1,16 +1,25 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.3.0`
+**Latest version:** `v2.3.1`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.3.0.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.3.0.zip)
+[**zymarg-community-board-v2.3.1.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.3.1.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.3.0
+## What's new in v2.3.1
+
+**Horizontal top-nav layout** - the vertical left sidebar has been removed and replaced with a horizontal header bar and tab navigation. Content area is now full-width.
+
+- **Header bar** - Discovery Spark (large, on white background) + "ZYMARG Community Board" title + version badge, arranged horizontally at the top of the app shell.
+- **Horizontal tab navigation** - Dashboard / All Requests / Settings as horizontal tab buttons with an active underline indicator. Replaces the old vertical sidebar nav.
+- **Full-width content** - with no sidebar consuming 232px of space, all views (Dashboard, All Requests, Settings) now use the full available width.
+- **CPT list table redirect** - navigating to `edit.php?post_type=zcrb_request` now automatically redirects to `admin.php?page=zcrb-hub&section=requests`. The raw WordPress list table is never shown.
+- **Search field fix** - with the sidebar removed, the search field and status tabs now have enough space and no longer appear cramped.
+- **Status tabs scroll fix** - status filter tabs now use `flex-wrap: nowrap` with `overflow-x: auto` so they scroll horizontally on narrow viewports instead of getting cut off.
 
 Full-featured **All Requests** management surface — total parity with the WordPress CPT list table, built into the SPA hub. Admins never need to leave the branded view.
 
@@ -29,7 +38,8 @@ Full-featured **All Requests** management surface — total parity with the Word
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
-| v2.3.0  | 2025-07-06 | `main`    | Full-featured All Requests view — status tabs with counts, bulk actions, sortable table, Trash tab, per-page selector, mobile-responsive down to 320px |
+| v2.3.1  | 2025-07-06 | `main`    | Horizontal top-nav layout - remove sidebar, full-width content, redirect CPT list |
+| v2.3.0  | 2025-07-06 | `main`    | Full-featured All Requests view - status tabs with counts, bulk actions, sortable table, Trash tab, per-page selector, mobile-responsive down to 320px |
 | v2.2.1  | 2025-07-06 | `main`    | WP sidebar clicks use SPA view switching, All Requests link fixed |
 | v2.2.0  | 2025-07-06 | `main`    | Full SPA admin: sidebar + main-panel layout, client-side view switching (no AJAX/reloads), custom All Requests list inside the hub |
 | v2.1.2  | 2025-07-06 | `main`    | Submenu order fix (Dashboard first) + per-section header titles (Dashboard/All Requests/Settings) instead of the same "ZYMARG Community Board" on every page |

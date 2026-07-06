@@ -47,6 +47,9 @@ class ZCRB_Admin_Hub {
         add_action( 'admin_head', array( $this, 'sidebar_branding_css' ) );
         add_action( 'all_admin_notices', array( $this, 'inject_cpt_header' ) );
 
+        // Redirect the raw CPT list table to the SPA hub.
+        add_action( 'current_screen', array( $this, 'redirect_cpt_list' ) );
+
         // Bulk-action endpoint — POST target for the "All Requests" bulk form.
         // Registered here (constructor) so it fires on every admin request,
         // not just when the SPA page is being rendered.
@@ -70,6 +73,22 @@ class ZCRB_Admin_Hub {
             }
         </style>
         <?php
+    }
+
+    /**
+     * Redirect the raw CPT list table (edit.php?post_type=zcrb_request) to
+     * the SPA hub All Requests view. This ensures users always land in the
+     * branded interface, never the plain WordPress list table.
+     */
+    public function redirect_cpt_list(): void {
+        $screen = get_current_screen();
+        if ( ! $screen ) {
+            return;
+        }
+        if ( 'edit-zcrb_request' === $screen->id ) {
+            wp_safe_redirect( admin_url( 'admin.php?page=' . self::MENU_SLUG . '&section=requests' ) );
+            exit;
+        }
     }
 
     /**
@@ -333,7 +352,9 @@ class ZCRB_Admin_Hub {
     /**
      * Render the SPA hub page. All three views (Dashboard, All Requests,
      * Settings) are rendered server-side inside a single shell; JS just
-     * toggles `.is-active` on the target view when a nav item is clicked.
+     * toggles `.is-active` on the target view when a tab is clicked.
+     *
+     * Layout: horizontal header bar + horizontal tab nav + full-width views.
      */
     public function render_page(): void {
         if ( ! current_user_can( 'edit_posts' ) ) {
@@ -345,99 +366,72 @@ class ZCRB_Admin_Hub {
         $can_admin = current_user_can( 'manage_options' );
 
         $nav = array(
-            'dashboard' => array(
-                'label' => __( 'Dashboard', 'zymarg-community-board' ),
-                'icon'  => 'dashicons-chart-area',
-            ),
-            'requests'  => array(
-                'label' => __( 'All Requests', 'zymarg-community-board' ),
-                'icon'  => 'dashicons-list-view',
-            ),
-            'settings'  => array(
-                'label' => __( 'Settings', 'zymarg-community-board' ),
-                'icon'  => 'dashicons-admin-generic',
-            ),
+            'dashboard' => __( 'Dashboard', 'zymarg-community-board' ),
+            'requests'  => __( 'All Requests', 'zymarg-community-board' ),
+            'settings'  => __( 'Settings', 'zymarg-community-board' ),
         );
         ?>
         <div class="wrap zcrb-wrap">
             <div class="zcrb-app" id="zcrb-app" data-initial-view="<?php echo esc_attr( $initial ); ?>">
 
-                <!-- Sidebar -->
-                <aside class="zcrb-sidebar">
-                    <div class="zcrb-brand">
+                <!-- Top header bar -->
+                <header class="zcrb-header">
+                    <div class="zcrb-header__brand">
                         <span class="zymarg-spark zymarg-spark--lg" role="img" aria-label="ZYMARG Discovery Spark">
                             <?php echo self::spark_svg(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                         </span>
-                        <div class="zcrb-brand-text">
-                            <span class="zcrb-brand-name"><?php esc_html_e( 'ZYMARG', 'zymarg-community-board' ); ?></span>
-                            <span class="zcrb-brand-sub"><?php esc_html_e( 'Community Board', 'zymarg-community-board' ); ?></span>
-                        </div>
+                        <span class="zcrb-header__title"><?php esc_html_e( 'ZYMARG Community Board', 'zymarg-community-board' ); ?></span>
                     </div>
+                    <span class="zcrb-ver-badge">v<?php echo esc_html( $version ); ?></span>
+                </header>
 
-                    <nav class="zcrb-nav" role="tablist">
-                        <?php foreach ( $nav as $key => $item ) : ?>
-                            <?php
-                            // Hide the Settings tab from users without manage_options,
-                            // since the view body will render an access-denied stub anyway.
-                            if ( 'settings' === $key && ! $can_admin ) {
-                                continue;
-                            }
-                            $is_active = ( $key === $initial );
-                            ?>
-                            <button
-                                type="button"
-                                class="zcrb-nav-item<?php echo $is_active ? ' is-active' : ''; ?>"
-                                data-view="<?php echo esc_attr( $key ); ?>"
-                                role="tab"
-                                aria-selected="<?php echo $is_active ? 'true' : 'false'; ?>">
-                                <span class="dashicons <?php echo esc_attr( $item['icon'] ); ?>"></span>
-                                <span class="zcrb-nav-label"><?php echo esc_html( $item['label'] ); ?></span>
-                            </button>
-                        <?php endforeach; ?>
-                    </nav>
+                <!-- Horizontal section tabs -->
+                <nav class="zcrb-tabs" role="tablist">
+                    <?php foreach ( $nav as $key => $label ) : ?>
+                        <?php
+                        // Hide the Settings tab from users without manage_options.
+                        if ( 'settings' === $key && ! $can_admin ) {
+                            continue;
+                        }
+                        $is_active = ( $key === $initial );
+                        ?>
+                        <button
+                            type="button"
+                            class="zcrb-tab<?php echo $is_active ? ' is-active' : ''; ?>"
+                            data-view="<?php echo esc_attr( $key ); ?>"
+                            role="tab"
+                            aria-selected="<?php echo $is_active ? 'true' : 'false'; ?>">
+                            <?php echo esc_html( $label ); ?>
+                        </button>
+                    <?php endforeach; ?>
+                </nav>
 
-                    <div class="zcrb-sidebar-foot"></div>
-                </aside>
+                <!-- Views (full width) -->
+                <div class="zcrb-views">
 
-                <!-- Main panel -->
-                <main class="zcrb-main">
+                    <!-- Dashboard view -->
+                    <section class="zcrb-view<?php echo 'dashboard' === $initial ? ' is-active' : ''; ?>" data-view="dashboard">
+                        <?php $this->render_dashboard_content(); ?>
+                    </section>
 
-                    <header class="zcrb-topbar">
-                        <div class="zcrb-topbar-title">
-                            <h1 id="zcrb-view-title"><?php echo esc_html( $nav[ $initial ]['label'] ); ?></h1>
-                            <p class="zcrb-topbar-sub"><?php esc_html_e( 'Community Request Board — moderate, respond, and configure everything from one place.', 'zymarg-community-board' ); ?></p>
-                        </div>
-                        <div class="zcrb-topbar-badge">
-                            <span class="zcrb-ver-badge">v<?php echo esc_html( $version ); ?></span>
-                        </div>
-                    </header>
+                    <!-- All Requests view -->
+                    <section class="zcrb-view<?php echo 'requests' === $initial ? ' is-active' : ''; ?>" data-view="requests">
+                        <?php $this->render_requests_content(); ?>
+                    </section>
 
-                    <div class="zcrb-views">
+                    <!-- Settings view -->
+                    <section class="zcrb-view<?php echo 'settings' === $initial ? ' is-active' : ''; ?>" data-view="settings">
+                        <?php if ( $can_admin ) : ?>
+                            <?php ZCRB_Settings::instance()->render_settings_body(); ?>
+                        <?php else : ?>
+                            <div class="zcrb-notice zcrb-notice--warn">
+                                <strong><?php esc_html_e( 'Not enough permission.', 'zymarg-community-board' ); ?></strong>
+                                <?php esc_html_e( 'You need the Manage Options capability to edit the plugin settings.', 'zymarg-community-board' ); ?>
+                            </div>
+                        <?php endif; ?>
+                    </section>
 
-                        <!-- Dashboard view -->
-                        <section class="zcrb-view<?php echo 'dashboard' === $initial ? ' is-active' : ''; ?>" data-view="dashboard">
-                            <?php $this->render_dashboard_content(); ?>
-                        </section>
-
-                        <!-- All Requests view -->
-                        <section class="zcrb-view<?php echo 'requests' === $initial ? ' is-active' : ''; ?>" data-view="requests">
-                            <?php $this->render_requests_content(); ?>
-                        </section>
-
-                        <!-- Settings view -->
-                        <section class="zcrb-view<?php echo 'settings' === $initial ? ' is-active' : ''; ?>" data-view="settings">
-                            <?php if ( $can_admin ) : ?>
-                                <?php ZCRB_Settings::instance()->render_settings_body(); ?>
-                            <?php else : ?>
-                                <div class="zcrb-notice zcrb-notice--warn">
-                                    <strong><?php esc_html_e( 'Not enough permission.', 'zymarg-community-board' ); ?></strong>
-                                    <?php esc_html_e( 'You need the Manage Options capability to edit the plugin settings.', 'zymarg-community-board' ); ?>
-                                </div>
-                            <?php endif; ?>
-                        </section>
-
-                    </div>
-                </main>
+                </div>
             </div>
         </div>
         <?php

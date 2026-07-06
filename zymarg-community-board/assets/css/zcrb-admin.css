@@ -40,13 +40,12 @@
 }
 
 /* ==========================================================================
-   App shell (sidebar + main)
+   App shell (horizontal header + tabs + full-width content)
    ========================================================================== */
 
 .zcrb-app {
     display: flex;
-    gap: 20px;
-    align-items: flex-start;
+    flex-direction: column;
     background: #fff;
     border-radius: var( --zcrb-radius );
     box-shadow: var( --zcrb-shadow );
@@ -66,133 +65,64 @@
     z-index: 2;
 }
 
-/* ---------- Sidebar ---------- */
-.zcrb-sidebar {
-    flex: 0 0 232px;
-    background: #fff;
-    border-right: 1px solid var( --zcrb-border );
-    padding: 28px 16px 16px;
+/* ---------- Header bar ---------- */
+.zcrb-header {
     display: flex;
-    flex-direction: column;
-    min-height: 560px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 28px;
+    border-bottom: 1px solid var( --zcrb-border );
+    margin-top: 5px; /* account for gradient strip */
 }
 
-.zcrb-brand {
+.zcrb-header__brand {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 4px 8px 20px;
 }
 
-.zcrb-brand-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.05;
+.zcrb-header__brand .zymarg-spark {
+    background: #fff;
 }
 
-.zcrb-brand-name {
+.zcrb-header__title {
+    font-size: 20px;
     font-weight: 800;
-    letter-spacing: .04em;
     color: var( --zcrb-primary );
-    font-size: 16px;
 }
 
-.zcrb-brand-sub {
-    font-size: 12px;
-    color: var( --zcrb-primary );
-    font-weight: 600;
-}
-
-.zcrb-nav {
+/* ---------- Horizontal tabs ---------- */
+.zcrb-tabs {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: 6px;
+    gap: 0;
+    border-bottom: 1px solid var( --zcrb-surface-container );
+    padding: 0 28px;
 }
 
-.zcrb-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
+.zcrb-tab {
+    padding: 14px 20px;
     border: 0;
     background: transparent;
     cursor: pointer;
-    padding: 11px 14px;
-    border-radius: 12px;
-    color: var( --zcrb-text-secondary );
-    font-size: 13.5px;
     font-weight: 600;
-    text-align: left;
-    transition: background .15s ease, color .15s ease, box-shadow .15s ease;
-}
-
-.zcrb-nav-item .dashicons {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-}
-
-.zcrb-nav-item:hover {
-    background: var( --zcrb-surface-container );
-    color: var( --zcrb-on-primary-fixed );
-}
-
-.zcrb-nav-item.is-active {
-    background: var( --zcrb-grad );
-    color: #fff;
-    box-shadow: 0 6px 16px rgba( 149, 0, 165, .28 );
-}
-
-.zcrb-nav-item:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba( 149, 0, 165, .18 );
-}
-
-.zcrb-nav-item.is-active:focus {
-    box-shadow: 0 6px 16px rgba( 149, 0, 165, .28 ), 0 0 0 3px rgba( 149, 0, 165, .28 );
-}
-
-.zcrb-sidebar-foot {
-    margin-top: auto;
-    padding: 12px 8px 0;
-}
-
-/* ---------- Main ---------- */
-.zcrb-main {
-    flex: 1 1 auto;
-    padding: 26px 28px 30px;
-    min-width: 0;
-}
-
-.zcrb-topbar {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 22px;
-}
-
-.zcrb-topbar-title h1,
-.zcrb-topbar h1 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 800;
-    color: var( --zcrb-on-primary-fixed );
-    padding: 0;
-}
-
-.zcrb-topbar-sub {
-    margin: 4px 0 0;
+    font-size: 14px;
     color: var( --zcrb-text-secondary );
-    font-size: 13px;
+    border-bottom: 3px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
 }
 
-.zcrb-topbar-badge {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 0 0 auto;
+.zcrb-tab:hover {
+    color: var( --zcrb-primary );
+}
+
+.zcrb-tab.is-active {
+    color: var( --zcrb-primary );
+    border-bottom-color: var( --zcrb-primary );
+}
+
+.zcrb-tab:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba( 149, 0, 165, .12 ) inset;
 }
 
 .zcrb-ver-badge {
@@ -211,6 +141,10 @@
 /* ==========================================================================
    Views
    ========================================================================== */
+
+.zcrb-views {
+    padding: 28px;
+}
 
 .zcrb-view {
     display: none;
@@ -499,6 +433,7 @@
     gap: 2px;
     overflow-x: auto;
     overflow-y: hidden;
+    flex-wrap: nowrap;
     scrollbar-width: thin;
     -webkit-overflow-scrolling: touch;
     min-width: 0;
@@ -582,7 +517,7 @@
 
 .zcrb-search-icon {
     position: absolute;
-    left: 10px;
+    left: 12px;
     top: 50%;
     transform: translateY( -50% );
     font-size: 16px;
@@ -594,7 +529,7 @@
 
 .zcrb-requests-search {
     width: 100%;
-    padding: 8px 12px 8px 32px;
+    padding: 8px 12px 8px 36px;
     border: 1px solid var( --zcrb-border );
     border-radius: 10px;
     font-size: 13.5px;
@@ -1262,41 +1197,34 @@
    Responsive — full fluid down to 320px
    ========================================================================== */
 
-/* Tablet + phone: collapse the SPA shell + swap table for cards. */
+/* Tablet + phone: tighter spacing. */
 @media screen and ( max-width: 782px ) {
     .zcrb-wrap {
         margin: 10px 10px 0 0;
     }
 
-    .zcrb-app {
-        flex-direction: column;
+    .zcrb-header {
+        padding: 16px 18px;
     }
 
-    .zcrb-sidebar {
-        flex-basis: auto;
-        width: 100%;
-        min-height: 0;
-        border-right: 0;
-        border-bottom: 1px solid var( --zcrb-border );
-        padding: 20px 16px 12px;
+    .zcrb-header__title {
+        font-size: 17px;
     }
 
-    .zcrb-nav {
-        flex-direction: row;
-        flex-wrap: wrap;
+    .zcrb-tabs {
+        padding: 0 18px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
-    .zcrb-nav-item {
-        width: auto;
+    .zcrb-tab {
+        padding: 12px 14px;
+        font-size: 13px;
+        white-space: nowrap;
     }
 
-    .zcrb-main {
-        padding: 20px 18px 24px;
-    }
-
-    .zcrb-topbar {
-        flex-direction: column;
-        align-items: flex-start;
+    .zcrb-views {
+        padding: 20px 18px;
     }
 
     .zcrb-hub-header {
@@ -1377,6 +1305,10 @@
     .zcrb-request-actions .zcrb-btn {
         opacity: 1;
     }
+
+    .zcrb-views {
+        padding: 18px 14px;
+    }
 }
 
 /* Very small phones (<=480px): tighter spacing, smaller fonts. */
@@ -1385,8 +1317,25 @@
         margin: 8px 6px 0 0;
     }
 
-    .zcrb-main {
-        padding: 14px 12px 20px;
+    .zcrb-header {
+        padding: 14px 14px;
+    }
+
+    .zcrb-header__title {
+        font-size: 15px;
+    }
+
+    .zcrb-tabs {
+        padding: 0 14px;
+    }
+
+    .zcrb-tab {
+        padding: 10px 12px;
+        font-size: 12.5px;
+    }
+
+    .zcrb-views {
+        padding: 14px 12px;
     }
 
     .zcrb-requests-panel {
@@ -1464,9 +1413,8 @@
 
 /* Extreme tiny width (<=360px): safety net so nothing overflows the body. */
 @media screen and ( max-width: 360px ) {
-    .zcrb-topbar-title h1,
-    .zcrb-topbar h1 {
-        font-size: 18px;
+    .zcrb-header__title {
+        font-size: 14px;
     }
 
     .zcrb-requests-title {
