@@ -1,33 +1,32 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.2.0`
+**Latest version:** `v2.2.1`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.2.0.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.2.0.zip)
+[**zymarg-community-board-v2.2.1.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.2.1.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.2.0
+## What's new in v2.2.1
 
-Full SPA admin — no page reloads between sections, matching the canonical ZYMARG admin design language.
+Fixes the WP admin sidebar reload issue and the "All Requests" link pointing to the wrong page.
 
-- **Sidebar + main-panel layout** — the horizontal tab strip is replaced by a proper sidebar navigation (Discovery Spark brand mark + three nav buttons: Dashboard, All Requests, Settings) and a topbar that shows the current section name and plugin version badge. Design mirrors ZYMARG Backups and the Theme Builder admin so all three plugins now share one visual language.
-- **Client-side view switching** — all three sections are rendered server-side in a single page load. Clicking a nav button just toggles which panel is visible. No AJAX fetch, no re-render, no re-init. The URL updates via `pushState` so refresh, bookmark, and browser back/forward all work.
-- **Custom "All Requests" list inside the hub** — previously clicking All Requests navigated out to the WordPress CPT list table (full reload, different UI). Requests now render inline as branded cards with Ref number, colored status badge, submitter name, upvote count, date, message excerpt, and inline action buttons (View, Edit, Approve, Reject, Delete). Live keyword + status filtering happens entirely client-side. A link to the classic WP list view is still there for power-user workflows.
-- **Settings hosted in the SPA** — `admin.php?page=zcrb-settings` still works for existing bookmarks and renders the same shell with the Settings view active. The AJAX save from v2.1.0 is preserved (toast confirmation, no page reload).
-- **Fixes the "every click reloads" bug** — the old tabs were plain `<a>` hrefs to `admin.php?page=...`, so every click was a full page load. Nav is now `<button>` elements handled entirely client-side.
+- **Sidebar clicks use SPA view switching** - clicking Dashboard, All Requests, or Settings in the WordPress admin sidebar no longer causes a full page reload. JavaScript intercepts sidebar submenu clicks and performs the same instant view switch as the in-app navigation buttons.
+- **All Requests sidebar link fixed** - the sidebar "All Requests" item previously pointed to `edit.php?post_type=zcrb_request` (the standard WordPress CPT list table, a completely different page). It now points to the branded SPA hub with the Requests view active.
+- **CPT hidden from admin menu** - the custom post type registration no longer auto-adds its own submenu item. An explicit submenu slug (`zcrb-hub-requests`) renders the SPA page, keeping all three sidebar links consistent.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.2.1  | 2025-07-06 | `main`    | WP sidebar clicks use SPA view switching, All Requests link fixed |
 | v2.2.0  | 2025-07-06 | `main`    | Full SPA admin: sidebar + main-panel layout, client-side view switching (no AJAX/reloads), custom All Requests list inside the hub |
 | v2.1.2  | 2025-07-06 | `main`    | Submenu order fix (Dashboard first) + per-section header titles (Dashboard/All Requests/Settings) instead of the same "ZYMARG Community Board" on every page |
 | v2.1.1  | 2025-07-06 | `main`    | Settings page fixes: white Spark backdrop, no duplicate heading, fixed redirects, inline toast, unified container width |
-| v2.1.0  | 2025-07-06 | `main`    | Full AJAX save on the Settings page — no page reload, toast notification |
+| v2.1.0  | 2025-07-06 | `main`    | Full AJAX save on the Settings page - no page reload, toast notification |
 | v2.0.7  | 2025-07-06 | `main`    | Remove duplicate "All Requests" submenu entry |
 | v2.0.6  | 2025-07-06 | `main`    | Remove duplicate admin menu - CPT nested under hub |
 | v2.0.5  | 2025-07-06 | `main`    | Discovery Spark CSS copied verbatim from canonical Theme Builder source, SVG fill attributes removed |

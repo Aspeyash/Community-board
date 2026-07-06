@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,11 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.2.1 =
+* **WP sidebar clicks now use SPA view switching** - clicking Dashboard, All Requests, or Settings in the WordPress admin sidebar no longer causes a full page reload. All sidebar submenu links are intercepted client-side and perform the same instant view switch as the in-app navigation buttons.
+* **All Requests sidebar link fixed** - previously the "All Requests" sidebar item pointed to `edit.php?post_type=zcrb_request` (a completely different WordPress CPT list table page). It now points to the SPA hub with the Requests view active, matching the custom branded list inside the app.
+* **CPT hidden from menu** - the custom post type no longer auto-registers its own submenu item under the hub. An explicit submenu slug (`zcrb-hub-requests`) is used instead, ensuring all sidebar items render the same SPA page.
 
 = 2.2.0 =
 * **Full SPA admin navigation — zero page reloads between sections.** Adopts the canonical ZYMARG admin design language (sidebar + main panel, matching ZYMARG Backups and Theme Builder). All three sections — Dashboard, All Requests, Settings — now render server-side into a single page, and switching between them is instant: JS just toggles which view is visible. No AJAX fetches, no re-renders, no re-inits. The URL updates via `pushState` so refresh / bookmark / share / browser back+forward all work exactly as expected.

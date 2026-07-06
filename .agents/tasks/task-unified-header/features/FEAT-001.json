@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Unified branded gradient header with integrated Discovery Spark across all admin pages (Dashboard, All Requests CPT, Settings). Version bump 2.0.2 to 2.0.3.",
-  "status": "completed",
+  "status": "in_progress",
   "steps": [
     "Create shared helper function zcrb_admin_branded_header() that outputs gradient header with Discovery Spark integrated inside (to left of title text)",
     "Update class-zcrb-admin-hub.php to use the shared helper, remove separate .zcrb-hub-spark section",

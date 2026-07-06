@@ -48,7 +48,7 @@ class ZCRB_CPT {
             'public'              => true,
             'publicly_queryable'  => true,
             'show_ui'             => true,
-            'show_in_menu'        => 'zcrb-hub',
+            'show_in_menu'        => false,
             'show_in_rest'        => false, // We expose only sanitized public data ourselves.
             'has_archive'         => ZCRB_ARCHIVE_SLUG,
             'capability_type'     => 'post',

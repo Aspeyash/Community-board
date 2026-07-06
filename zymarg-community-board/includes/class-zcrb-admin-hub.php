@@ -27,6 +27,9 @@ class ZCRB_Admin_Hub {
     /** @var string The page hook returned by add_menu_page(). */
     private $hook = '';
 
+    /** @var string The page hook for the "All Requests" submenu. */
+    private $requests_hook = '';
+
     public static function instance(): self {
         if ( null === self::$instance ) {
             self::$instance = new self();
@@ -87,6 +90,16 @@ class ZCRB_Admin_Hub {
             self::MENU_SLUG,
             array( $this, 'render_page' )
         );
+
+        // Explicit "All Requests" submenu pointing at the SPA hub (not the WP CPT list table).
+        $this->requests_hook = add_submenu_page(
+            self::MENU_SLUG,
+            __( 'All Requests', 'zymarg-community-board' ),
+            __( 'All Requests', 'zymarg-community-board' ),
+            'edit_posts',
+            'zcrb-hub-requests',
+            array( $this, 'render_page' )
+        );
     }
 
     /**
@@ -108,7 +121,8 @@ class ZCRB_Admin_Hub {
         // Desired priority by slug fragment. Lower = earlier.
         $priority_map = array(
             self::MENU_SLUG                        => 10, // Dashboard (parent slug = self)
-            'edit.php?post_type=' . ZCRB_POST_TYPE => 20, // All Requests (CPT auto-added)
+            'zcrb-hub-requests'                    => 20, // All Requests (explicit SPA submenu)
+            'edit.php?post_type=' . ZCRB_POST_TYPE => 25, // All Requests (CPT auto-added, if present)
             ZCRB_Settings::SETTINGS_SLUG           => 30, // Settings ("zcrb-settings")
         );
 
@@ -145,6 +159,7 @@ class ZCRB_Admin_Hub {
      */
     public function enqueue_assets( string $hook ): void {
         $is_hub_page      = ( $hook === $this->hook )
+                            || ( $hook === $this->requests_hook )
                             || ( 'toplevel_page_' . self::MENU_SLUG === $hook );
         $is_settings_page = ( false !== strpos( $hook, ZCRB_Settings::SETTINGS_SLUG ) );
         $is_cpt_screen    = $this->is_cpt_screen();
@@ -200,6 +215,9 @@ class ZCRB_Admin_Hub {
             return $section;
         }
         $page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+        if ( $page === 'zcrb-hub-requests' ) {
+            return 'requests';
+        }
         if ( $page === ZCRB_Settings::SETTINGS_SLUG ) {
             return 'settings';
         }

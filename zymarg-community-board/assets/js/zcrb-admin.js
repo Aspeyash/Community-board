@@ -36,6 +36,9 @@
             if ( page === 'zcrb-settings' ) {
                 return 'settings';
             }
+            if ( page === 'zcrb-hub-requests' ) {
+                return 'requests';
+            }
         } catch ( e ) {
             /* URLSearchParams unavailable — fall through. */
         }
@@ -227,12 +230,72 @@
     }
 
     // ------------------------------------------------------------------
+    // Sidebar intercept — when already on a hub page, intercept WP
+    // sidebar submenu clicks and do SPA view switching instead of nav.
+    // ------------------------------------------------------------------
+    function initSidebarIntercept() {
+        var $app = $( '#zcrb-app' );
+        if ( ! $app.length ) {
+            return;
+        }
+
+        var sidebarLinks = document.querySelectorAll( '#adminmenu .toplevel_page_zcrb-hub .wp-submenu a' );
+        sidebarLinks.forEach( function ( link ) {
+            link.addEventListener( 'click', function ( e ) {
+                var href = link.getAttribute( 'href' ) || '';
+                var view = null;
+
+                if ( href.indexOf( 'page=zcrb-hub-requests' ) !== -1 ) {
+                    view = 'requests';
+                } else if ( href.indexOf( 'page=zcrb-settings' ) !== -1 ) {
+                    view = 'settings';
+                } else if ( href.indexOf( 'page=zcrb-hub' ) !== -1 && href.indexOf( 'page=zcrb-hub-requests' ) === -1 ) {
+                    view = 'dashboard';
+                }
+
+                if ( view !== null ) {
+                    e.preventDefault();
+
+                    // Trigger the existing SPA view switch logic.
+                    var $navItems = $app.find( '.zcrb-nav-item' );
+                    var $views    = $app.find( '.zcrb-view' );
+                    var $title    = $( '#zcrb-view-title' );
+
+                    $navItems
+                        .removeClass( 'is-active' )
+                        .attr( 'aria-selected', 'false' )
+                        .filter( '[data-view="' + view + '"]' )
+                        .addClass( 'is-active' )
+                        .attr( 'aria-selected', 'true' );
+
+                    $views.removeClass( 'is-active' ).filter( '[data-view="' + view + '"]' ).addClass( 'is-active' );
+
+                    var lbl = $navItems.filter( '.is-active' ).find( '.zcrb-nav-label' ).text();
+                    if ( $title.length && lbl ) {
+                        $title.text( lbl );
+                    }
+
+                    var url = ( ZCRBHub && ZCRBHub.hubUrl ) || 'admin.php?page=zcrb-hub';
+                    history.pushState( { zcrbView: view }, '', url + '&section=' + view );
+
+                    // Update sidebar active states.
+                    $( '#adminmenu .toplevel_page_zcrb-hub .wp-submenu li' ).removeClass( 'current' );
+                    $( link ).parent( 'li' ).addClass( 'current' );
+
+                    $( document ).trigger( 'zcrb-hub:view-shown', [ view ] );
+                }
+            } );
+        } );
+    }
+
+    // ------------------------------------------------------------------
     // Boot.
     // ------------------------------------------------------------------
     $( function () {
         initSpaNav();
         initSettingsForm();
         initRequestsFilter();
+        initSidebarIntercept();
     } );
 
 } )( jQuery );
