@@ -1,24 +1,26 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.0.4`
+**Latest version:** `v2.0.5`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.0.4.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.4.zip)
+[**zymarg-community-board-v2.0.5.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.5.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.0.4
+## What's new in v2.0.5
 
-- **Discovery Spark animation fix** - replaced broken ultra-fast flicker (0.20s/0.40s) with canonical sequential visible pulse. Shapes stay visible (opacity 0.85 baseline) and pulse brighter in sequence (accent, then companion, then hero) over a 2.4s cycle with purple glow. Gold paths remain static.
-- **Discovery Spark background** - spark panel and empty-state containers now use solid white (#ffffff) for proper contrast with purple paths.
+- **Discovery Spark CSS verbatim from canonical** - replaced the Community Board's modified Discovery Spark CSS with the exact canonical copy from Theme Builder. Three separate per-group keyframes (zymarg-spark-lens--accent, zymarg-spark-lens--companion, zymarg-spark-lens--hero), fill via CSS custom properties, vertical-align: middle on the wrapper.
+- **SVG inline fill attributes removed** - path elements no longer carry fill="#6833ea" or fill="#ffd166"; the CSS classes handle fill via custom properties, matching the canonical implementation.
+- **SVG accessibility** - added aria-hidden="true" focusable="false" to all Discovery Spark SVG elements.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.0.5  | 2025-07-06 | `main`    | Discovery Spark CSS copied verbatim from canonical Theme Builder source, SVG fill attributes removed |
 | v2.0.4  | 2025-07-06 | `main`    | Discovery Spark animation - sequential visible pulse matching canonical, white background |
 | v2.0.3  | 2025-07-06 | `main`    | Unified branded header across all admin sections, integrated Discovery Spark in header |
 | v2.0.2  | 2025-07-06 | `main`    | Canonical Discovery Spark, admin branding, pre_get_posts fix, vendor response permissions |
