@@ -36,6 +36,7 @@ class ZCRB_Admin {
 
         add_filter( 'bulk_actions-edit-' . ZCRB_POST_TYPE, array( $this, 'register_bulk_approve' ) );
         add_filter( 'handle_bulk_actions-edit-' . ZCRB_POST_TYPE, array( $this, 'handle_bulk_approve' ), 10, 3 );
+        add_filter( 'handle_bulk_actions-edit-' . ZCRB_POST_TYPE, array( $this, 'handle_bulk_delete' ), 10, 3 );
     }
 
     public function register_meta_boxes(): void {
@@ -186,6 +187,19 @@ class ZCRB_Admin {
             );
             $actions['zcrb_reject'] = '<a href="' . esc_url( $url ) . '" style="color:#a00;">' . esc_html__( 'Reject', 'zymarg-community-board' ) . '</a>';
         }
+
+        $delete_url = wp_nonce_url(
+            add_query_arg(
+                array(
+                    'zcrb_action' => 'delete',
+                    'post'        => $post->ID,
+                ),
+                admin_url( 'edit.php?post_type=' . ZCRB_POST_TYPE )
+            ),
+            'zcrb_quick_action_' . $post->ID
+        );
+        $actions['zcrb_delete'] = '<a href="' . esc_url( $delete_url ) . '" style="color:#a00;">' . esc_html__( 'Delete Permanently', 'zymarg-community-board' ) . '</a>';
+
         return $actions;
     }
 
@@ -195,7 +209,7 @@ class ZCRB_Admin {
         }
         $post_id = absint( $_GET['post'] );
         $action  = sanitize_key( wp_unslash( $_GET['zcrb_action'] ) );
-        if ( ! $post_id || ! in_array( $action, array( 'approve', 'reject' ), true ) ) {
+        if ( ! $post_id || ! in_array( $action, array( 'approve', 'reject', 'delete' ), true ) ) {
             return;
         }
         check_admin_referer( 'zcrb_quick_action_' . $post_id );
@@ -209,6 +223,9 @@ class ZCRB_Admin {
                 'post_status' => 'publish',
             ) );
             $msg = 'approved';
+        } elseif ( 'delete' === $action ) {
+            ZCRB_Retention::delete_request( $post_id );
+            $msg = 'deleted';
         } else {
             wp_update_post( array(
                 'ID'          => $post_id,
@@ -238,6 +255,14 @@ class ZCRB_Admin {
             if ( $count > 0 ) {
                 echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sprintf( ZCRB_I18n::t( 'bulk_approved_notice' ), $count ) ) . '</p></div>';
             }
+        } elseif ( 'deleted' === $notice ) {
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Request permanently deleted.', 'zymarg-community-board' ) . '</p></div>';
+        } elseif ( 'bulk_deleted' === $notice ) {
+            $count = isset( $_GET['zcrb_count'] ) ? absint( $_GET['zcrb_count'] ) : 0;
+            if ( $count > 0 ) {
+                /* translators: %d: number of deleted requests */
+                echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sprintf( __( '%d request(s) permanently deleted.', 'zymarg-community-board' ), $count ) ) . '</p></div>';
+            }
         }
     }
 
@@ -246,6 +271,7 @@ class ZCRB_Admin {
      */
     public function register_bulk_approve( array $actions ): array {
         $actions['zcrb_bulk_approve'] = __( 'Approve', 'zymarg-community-board' );
+        $actions['zcrb_bulk_delete']  = __( 'Delete Permanently', 'zymarg-community-board' );
         return $actions;
     }
 
@@ -275,6 +301,27 @@ class ZCRB_Admin {
 
         return add_query_arg( array(
             'zcrb_notice' => 'bulk_approved',
+            'zcrb_count'  => $count,
+        ), $redirect_url );
+    }
+
+    /**
+     * Handle bulk delete action — permanently removes selected requests.
+     */
+    public function handle_bulk_delete( string $redirect_url, string $action, array $post_ids ): string {
+        if ( 'zcrb_bulk_delete' !== $action ) {
+            return $redirect_url;
+        }
+
+        $count = 0;
+        foreach ( $post_ids as $post_id ) {
+            if ( ZCRB_Retention::delete_request( (int) $post_id ) ) {
+                $count++;
+            }
+        }
+
+        return add_query_arg( array(
+            'zcrb_notice' => 'bulk_deleted',
             'zcrb_count'  => $count,
         ), $redirect_url );
     }
