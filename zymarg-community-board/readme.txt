@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,19 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.0.1 =
+* **ZYMARG unified brand design alignment** - CSS updated to match the ZYMARG ecosystem design language used across Vendor Dashboard, Connection Engine, and WC Product Grid.
+* Card radius updated from 12px to 18px (unified card radius).
+* Card shadow switched to two-layer ZYMARG standard shadow.
+* Card hover now includes translateY(-2px) lift, purple border, and purple-tinted elevated shadow.
+* Section headings (feed title, form title) now use deep purple (#36003D) at font-weight 800.
+* Primary button default is now #9500A5 (hover: #BD00D1) matching the ZYMARG button pattern.
+* Status badge "In Progress" changed from orange to purple tint for brand consistency.
+* Hero title line 2 now uses deep purple for contrast.
+* Search bar elevated with card-like container shadow.
+* Empty state SVG replaced with the canonical ZYMARG Discovery Spark mark.
+* Shadow-md updated to purple-tinted elevated shadow.
 
 = 2.0.0 =
 * **Non-destructive uninstall** - uninstall.php now only deletes data when ZCRB_REMOVE_ALL_DATA constant is defined. Safe by default.

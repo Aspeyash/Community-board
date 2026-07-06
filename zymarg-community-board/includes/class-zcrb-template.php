@@ -277,14 +277,10 @@ class ZCRB_Template {
                         } else {
                             ?>
                             <div class="zcrb-empty-state">
-                                <svg class="zcrb-empty-state__illustration" width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                    <circle cx="60" cy="60" r="50" stroke="#9500A5" stroke-width="2" stroke-dasharray="6 4" opacity="0.3"/>
-                                    <circle cx="60" cy="60" r="30" fill="#FEA9FF" opacity="0.2"/>
-                                    <circle cx="60" cy="60" r="12" fill="#9500A5" opacity="0.5"/>
-                                    <line x1="20" y1="90" x2="40" y2="70" stroke="#BD00D1" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
-                                    <line x1="80" y1="30" x2="100" y2="50" stroke="#BD00D1" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
-                                    <circle cx="25" cy="35" r="5" fill="#FEA9FF" opacity="0.4"/>
-                                    <circle cx="95" cy="85" r="7" fill="#FEA9FF" opacity="0.3"/>
+                                <svg class="zcrb-empty-state__spark" viewBox="0 0 24 24" width="64" height="64" aria-hidden="true">
+                                    <g class="zcrb-spark-group--accent"><path d="M10.4 5.4c0 1.32-0.24 2.4-1.44 2.4 1.2 0 1.44 1.08 1.44 2.4 0-1.32 0.24-2.4 1.44-2.4-1.2 0-1.44-1.08-1.44-2.4z" fill="#6833ea"/><path d="M10.4 6.0c0 0.96-0.18 1.8-1.08 1.8 0.9 0 1.08 0.84 1.08 1.8 0-0.9 0.18-1.8 1.08-1.8-0.9 0-1.08-0.84-1.08-1.8z" fill="#ffd166"/></g>
+                                    <g class="zcrb-spark-group--companion"><path d="M9.5 10.92c0 2.25-0.45 4.12-2.4 4.12 1.95 0 2.4 1.87 2.4 4.12 0-2.25 0.45-4.12 2.4-4.12-1.95 0-2.4-1.87-2.4-4.12z" fill="#6833ea"/><path d="M9.5 11.5c0 1.9-0.38 3.54-2.0 3.54 1.62 0 2.0 1.64 2.0 3.54 0-1.9 0.38-3.54 2.0-3.54-1.62 0-2.0-1.64-2.0-3.54z" fill="#ffd166"/></g>
+                                    <g class="zcrb-spark-group--hero"><path d="M15.2 5.6c0 3.45-0.69 6.3-4.08 6.3 3.39 0 4.08 2.85 4.08 6.3 0-3.45 0.69-6.3 4.08-6.3-3.39 0-4.08-2.85-4.08-6.3z" fill="#6833ea"/><path d="M15.2 6.5c0 2.9-0.58 5.4-3.39 5.4 2.81 0 3.39 2.5 3.39 5.4 0-2.9 0.58-5.4 3.39-5.4-2.81 0-3.39-2.5-3.39-5.4z" fill="#ffd166"/></g>
                                 </svg>
                                 <h3 class="zcrb-empty-state__title"><?php echo esc_html( ZCRB_I18n::t( 'empty_state_title' ) ); ?></h3>
                                 <p class="zcrb-empty-state__subtitle"><?php echo esc_html( ZCRB_I18n::t( 'empty_state_subtitle' ) ); ?></p>

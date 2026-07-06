@@ -1,37 +1,34 @@
 # ZYMARG Community Request Board — Latest Release
 
-**Latest version:** `v2.0.0`
+**Latest version:** `v2.0.1`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.0.0.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.0.zip)
+[**zymarg-community-board-v2.0.1.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.1.zip)
 
 > Install in WordPress: **Plugins → Add New → Upload Plugin** → choose the zip above → **Install Now** → **Activate**.
 
-## What's new in v2.0.0
+## What's new in v2.0.1
 
-- **Non-destructive uninstall.** uninstall.php now only deletes data when `ZCRB_REMOVE_ALL_DATA` constant is defined. Safe by default.
-- **function_exists() guard** on `zcrb_get_setting()` to prevent fatal errors.
-- **Fixed github_repo default** to the correct repository name `Community-board`.
-- **SEO optimization.** Eliminated duplicate WP_Query in JSON-LD generation; reuses the main query.
-- **Status lifecycle.** New statuses: In Progress and Fulfilled. Requests follow Pending > Approved > In Progress > Fulfilled.
-- **Vendor response system.** Vendors can respond to community requests directly from the single request page.
-- **Upvote/priority system.** Logged-in users can upvote requests. Upvote count displayed on cards and single view.
-- **Submitter notifications.** Email notifications sent to the submitter when their request is approved or when a vendor responds.
-- **Search and filter** on the public board - search by keyword, filter by status.
-- **Duplicate detection.** Live search-as-you-type in the submission form shows similar existing requests.
-- **Bulk approve.** New bulk action in the admin list table to approve multiple pending requests at once.
-- **Branded admin hub.** New top-level admin page with Discovery Spark animation, gradient header, version badge, and dashboard stats.
-- **Purple admin sidebar.** Community Board menu text styled with ZYMARG brand purple (#9500A5).
-- **Branded empty states.** Decorative SVG illustrations and personality copy when no requests exist.
-- **Image upload count setting.** Admin can configure max images per submission (1-4).
+- **ZYMARG unified brand design alignment.** CSS updated to match the design language used across the ZYMARG ecosystem (Vendor Dashboard, Connection Engine, WC Product Grid).
+- **Card radius** updated from 12px to 18px (unified card radius).
+- **Card shadow** switched to two-layer ZYMARG standard shadow.
+- **Card hover** now includes translateY(-2px) lift, purple border-color, and purple-tinted elevated shadow with smooth transition.
+- **Section headings** (feed title, form title) use deep purple (#36003D) at font-weight 800.
+- **Primary button** default is now #9500A5 (hover: #BD00D1) matching the ZYMARG button pattern.
+- **Status badge "In Progress"** changed from orange to purple tint for brand consistency.
+- **Hero title line 2** uses deep purple for contrast with line 1.
+- **Search bar** elevated with card-like container shadow and border.
+- **Empty state** SVG replaced with the canonical ZYMARG Discovery Spark mark.
+- **Shadow-md** updated to purple-tinted elevated shadow for brand alignment.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.0.1  | 2025-07-06 | `main`    | ZYMARG unified brand design alignment: 18px radius, two-layer shadow, purple hover states, Discovery Spark empty state, deep purple headings |
 | v2.0.0  | 2025-07-06 | `main`    | Major release: status lifecycle, vendor responses, upvotes, notifications, search/filter, duplicate detection, bulk approve, branded admin hub, empty states, image count setting |
 | v1.4.4  | 2026-06-27 | `main`    | Settings defaults to brand palette + version constant from header |
 | v1.4.3  | 2026-06-27 | `95c4e9b` | First brand-alignment pass (CSS + admin link) |
