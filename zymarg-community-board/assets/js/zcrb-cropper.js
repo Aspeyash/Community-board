@@ -189,6 +189,8 @@
         }
 
         function onMouseDown(e) {
+            // Only preventDefault when actually starting a drag on the crop canvas.
+            // The event is bound to cropCanvas, so this is safe here.
             e.preventDefault();
             var pos = getPos(e);
             var handle = hitTest(pos);
@@ -217,14 +219,18 @@
         }
 
         function onMouseMove(e) {
-            e.preventDefault();
-            var pos = getPos(e);
-
+            // Only preventDefault while actively dragging/resizing.
+            // Otherwise, mobile touchend won't dispatch a click on buttons.
             if (!dragging && !resizing) {
-                var handle = hitTest(pos);
-                setCursor(handle);
+                if (e.type === 'mousemove') {
+                    var pos0 = getPos(e);
+                    var handle0 = hitTest(pos0);
+                    setCursor(handle0);
+                }
                 return;
             }
+            e.preventDefault();
+            var pos = getPos(e);
 
             var dx = pos.x - dragStart.x;
             var dy = pos.y - dragStart.y;
@@ -269,7 +275,11 @@
         }
 
         function onMouseUp(e) {
-            e.preventDefault();
+            // Only preventDefault if we were actually dragging/resizing.
+            // Otherwise this cancels click events on buttons.
+            if (dragging || resizing) {
+                e.preventDefault();
+            }
             dragging = false;
             resizing = false;
             resizeHandle = null;
