@@ -1,52 +1,54 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.3.2`
+**Latest version:** `v2.5.0`
 **Released:** 2025-07-06
-**Branch:** `main`
+**Branch:** `v2.5.0`
 
 ## Download
 
-[**zymarg-community-board-v2.3.2.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.3.2.zip)
+[**zymarg-community-board-v2.5.0.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/v2.5.0/zymarg-community-board-v2.5.0.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.3.2
+## What's new in v2.5.0
 
-**Rounded form fields on Settings page** - all text inputs, selects, and textareas on the Settings page now use `border-radius: 10px` to match the ZYMARG brand rounded style instead of plain square WordPress defaults.
+**Freeform image cropper + auto-compression on upload** - a new client-side crop tool and server-side image optimization for the community board image upload.
 
-- **Input fields** - `input[type="text"]`, `input[type="email"]`, `input[type="password"]`, `input[type="number"]`, `input[type="url"]`, and `input[type="tel"]` all receive 10px border-radius with consistent padding, font-size, and a smooth transition on focus.
-- **Selects** - `<select>` elements get 10px radius with slightly tighter padding and native appearance preserved.
-- **Textareas** - `<textarea>` fields get 10px radius with a 60px minimum height and vertical resize.
-- **Checkboxes** - `input[type="checkbox"]` receives a subtle 4px radius.
-- **Color picker buttons** - `.wp-color-result` inside the Settings panel gets 10px radius to match.
+### Client-side freeform cropper
+
+- After selecting an image file, a crop UI modal appears showing the full image preview
+- Users can drag a freeform box (any width/height, no forced aspect ratio) over the image
+- Draggable and resizable crop rectangle with corner and edge handles
+- Rule-of-thirds grid overlay for composition guidance
+- "Crop & Use" button applies the crop and creates a new blob that replaces the file input
+- "Skip Crop" button keeps the original image unchanged
+- ZYMARG brand styling: purple border, 18px rounded corners, white background
+- Touch-friendly for mobile devices
+- Lightweight, dependency-free implementation using HTML5 Canvas API
+
+### Server-side auto-compression
+
+- After upload, images are automatically compressed using WordPress WP_Image_Editor (GD/Imagick)
+- JPEG and WebP images are saved at 80% quality
+- Images wider than 1920px are resized to 1920px width (maintaining aspect ratio)
+- Original file is replaced with the compressed version (saves storage)
+- Attachment metadata and thumbnails are regenerated from the optimized source
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
-| v2.3.2  | 2025-07-06 | `main`    | Rounded form fields on Settings page - brand-aligned 10px radius |
-| v2.3.1  | 2025-07-06 | `main`    | Horizontal top-nav layout - remove sidebar, full-width content, redirect CPT list |
-| v2.3.0  | 2025-07-06 | `main`    | Full-featured All Requests view - status tabs with counts, bulk actions, sortable table, Trash tab, per-page selector, mobile-responsive down to 320px |
-| v2.2.1  | 2025-07-06 | `main`    | WP sidebar clicks use SPA view switching, All Requests link fixed |
-| v2.2.0  | 2025-07-06 | `main`    | Full SPA admin: sidebar + main-panel layout, client-side view switching (no AJAX/reloads), custom All Requests list inside the hub |
-| v2.1.2  | 2025-07-06 | `main`    | Submenu order fix (Dashboard first) + per-section header titles (Dashboard/All Requests/Settings) instead of the same "ZYMARG Community Board" on every page |
-| v2.1.1  | 2025-07-06 | `main`    | Settings page fixes: white Spark backdrop, no duplicate heading, fixed redirects, inline toast, unified container width |
-| v2.1.0  | 2025-07-06 | `main`    | Full AJAX save on the Settings page - no page reload, toast notification |
-| v2.0.7  | 2025-07-06 | `main`    | Remove duplicate "All Requests" submenu entry |
-| v2.0.6  | 2025-07-06 | `main`    | Remove duplicate admin menu - CPT nested under hub |
-| v2.0.5  | 2025-07-06 | `main`    | Discovery Spark CSS copied verbatim from canonical Theme Builder source, SVG fill attributes removed |
-| v2.0.4  | 2025-07-06 | `main`    | Discovery Spark animation - sequential visible pulse matching canonical, white background |
-| v2.0.3  | 2025-07-06 | `main`    | Unified branded header across all admin sections, integrated Discovery Spark in header |
-| v2.0.2  | 2025-07-06 | `main`    | Canonical Discovery Spark, admin branding, pre_get_posts fix, vendor response permissions |
-| v2.0.1  | 2025-07-06 | `main`    | ZYMARG unified brand design alignment: 18px radius, two-layer shadow, purple hover states, Discovery Spark empty state, deep purple headings |
-| v2.0.0  | 2025-07-06 | `main`    | Major release: status lifecycle, vendor responses, upvotes, notifications, search/filter, duplicate detection, bulk approve, branded admin hub, empty states, image count setting |
-| v1.4.4  | 2026-06-27 | `main`    | Settings defaults to brand palette + version constant from header |
-| v1.4.3  | 2026-06-27 | `95c4e9b` | First brand-alignment pass (CSS + admin link) |
-| v1.4.2  | 2026-06-26 | `d2043af` | Local Cabinet Grotesk + Inter, Google Fonts CDN disabled |
-| v1.4.1  | 2026-06-26 | `950efe0` | Removed dead "All Requests" badge |
-| v1.4.0  | 2026-06-26 | `56b2789` | Material 3 redesign + customizable typography |
-| v1.3.0  | -          | `2816b33` | Configurable data retention + visible privacy notice |
-| v1.2.0  | -          | `dd350ee` | Customizable Settings page + GitHub Releases auto-updater |
+| v2.5.0  | 2025-07-06 | `v2.5.0`  | Freeform image cropper + auto-compression on upload |
+| v2.4.2  | 2025-07-06 | `main`    | Mobile px inline fix |
+| v2.4.1  | 2025-07-06 | `main`    | Remove settings form-table border on mobile |
+| v2.4.0  | 2025-07-06 | `main`    | Mobile-only full-width inputs + stacked labels |
+| v2.3.6  | 2025-07-06 | `main`    | Settings defaults fix |
+| v2.3.2  | 2025-07-06 | `main`    | Rounded form fields on Settings page |
+| v2.3.1  | 2025-07-06 | `main`    | Horizontal top-nav layout |
+| v2.3.0  | 2025-07-06 | `main`    | Full-featured All Requests view |
+| v2.2.1  | 2025-07-06 | `main`    | WP sidebar clicks use SPA view switching |
+| v2.2.0  | 2025-07-06 | `main`    | Full SPA admin hub |
+| v2.0.0  | 2025-07-06 | `main`    | Major release: status lifecycle, vendor responses, upvotes, notifications |
 
 ## How to find the latest version (4 independent pointers)
 

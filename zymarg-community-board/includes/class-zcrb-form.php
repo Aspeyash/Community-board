@@ -291,7 +291,78 @@ class ZCRB_Form {
         if ( is_wp_error( $attachment_id ) ) {
             return $attachment_id;
         }
+
+        // Compress the uploaded image (resize if > 1920px, quality 80%).
+        $this->compress_uploaded_image( (int) $attachment_id );
+
         return (int) $attachment_id;
+    }
+
+    /**
+     * Compress and optionally resize an uploaded image attachment.
+     *
+     * Uses WordPress WP_Image_Editor (GD or Imagick, whichever is available)
+     * to resize images wider than 1920px and set JPEG quality to 80%.
+     * The original file is replaced with the compressed version.
+     *
+     * @since 2.5.0
+     * @param int $attachment_id
+     */
+    private function compress_uploaded_image( int $attachment_id ): void {
+        $file_path = get_attached_file( $attachment_id );
+        if ( ! $file_path || ! file_exists( $file_path ) ) {
+            return;
+        }
+
+        $editor = wp_get_image_editor( $file_path );
+        if ( is_wp_error( $editor ) ) {
+            return;
+        }
+
+        $size = $editor->get_size();
+        $max_width = 1920;
+        $resized = false;
+
+        // Resize if width exceeds max.
+        if ( ! empty( $size['width'] ) && $size['width'] > $max_width ) {
+            $ratio = $max_width / $size['width'];
+            $new_height = (int) round( $size['height'] * $ratio );
+            $result = $editor->resize( $max_width, $new_height, false );
+            if ( ! is_wp_error( $result ) ) {
+                $resized = true;
+            }
+        }
+
+        // Set quality for JPEG (and WebP which also supports quality).
+        $mime_type = get_post_mime_type( $attachment_id );
+        if ( in_array( $mime_type, array( 'image/jpeg', 'image/webp' ), true ) ) {
+            $editor->set_quality( 80 );
+        }
+
+        // Save back to the same path (replaces original).
+        $saved = $editor->save( $file_path );
+        if ( is_wp_error( $saved ) ) {
+            return;
+        }
+
+        // Update attachment metadata with new dimensions.
+        if ( $resized ) {
+            $metadata = wp_get_attachment_metadata( $attachment_id );
+            if ( is_array( $metadata ) ) {
+                $metadata['width'] = $saved['width'] ?? $metadata['width'];
+                $metadata['height'] = $saved['height'] ?? $metadata['height'];
+                wp_update_attachment_metadata( $attachment_id, $metadata );
+            }
+        }
+
+        // Regenerate thumbnails with the newly compressed source.
+        if ( function_exists( 'wp_update_attachment_metadata' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/image.php';
+            $new_metadata = wp_generate_attachment_metadata( $attachment_id, $file_path );
+            if ( ! empty( $new_metadata ) ) {
+                wp_update_attachment_metadata( $attachment_id, $new_metadata );
+            }
+        }
     }
 
     private function notify_admin( int $post_id, string $full_name ): void {

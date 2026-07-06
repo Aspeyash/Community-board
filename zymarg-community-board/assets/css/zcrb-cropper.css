@@ -1,0 +1,177 @@
+/**
+ * ZYMARG Community Request Board - Freeform Image Cropper Styles
+ *
+ * ZYMARG brand: purple border, 18px radius, white background.
+ *
+ * @package ZymargCommunityBoard
+ * @since 2.5.0
+ */
+
+/* Overlay */
+.zcrb-cropper-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.zcrb-cropper-overlay.is-visible {
+    opacity: 1;
+}
+
+/* Modal */
+.zcrb-cropper-modal {
+    background: #ffffff;
+    border: 2px solid #9500a5;
+    border-radius: 18px;
+    box-shadow: 0 8px 40px rgba(149, 0, 165, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 860px;
+    max-height: 90vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: zcrbCropperSlideIn 0.25s ease;
+}
+
+@keyframes zcrbCropperSlideIn {
+    from {
+        transform: translateY(20px) scale(0.96);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Header */
+.zcrb-cropper-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0e6f2;
+    display: flex;
+    align-items: center;
+}
+
+.zcrb-cropper-title {
+    font-family: "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #36003d;
+}
+
+/* Canvas container */
+.zcrb-cropper-canvas-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    overflow: hidden;
+    padding: 16px;
+    min-height: 200px;
+    background: #fafafa;
+}
+
+.zcrb-cropper-canvas {
+    display: block;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.zcrb-cropper-selection {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: crosshair;
+    /* Match dimensions of the image canvas via JS */
+}
+
+/* Footer */
+.zcrb-cropper-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #f0e6f2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Buttons */
+.zcrb-cropper-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 9999px;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+    line-height: 1;
+}
+
+.zcrb-cropper-btn:active {
+    transform: scale(0.97);
+}
+
+.zcrb-cropper-btn--skip {
+    background: #f5f0f6;
+    color: #534152;
+    border: 1px solid #d8bfd3;
+}
+
+.zcrb-cropper-btn--skip:hover {
+    background: #ebe3ec;
+}
+
+.zcrb-cropper-btn--crop {
+    background: #9500a5;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(149, 0, 165, 0.3);
+}
+
+.zcrb-cropper-btn--crop:hover {
+    background: #bd00d1;
+    box-shadow: 0 4px 12px rgba(149, 0, 165, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .zcrb-cropper-modal {
+        max-height: 95vh;
+        border-radius: 14px;
+    }
+
+    .zcrb-cropper-header {
+        padding: 12px 16px;
+    }
+
+    .zcrb-cropper-footer {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .zcrb-cropper-btn {
+        width: 100%;
+        padding: 12px 20px;
+    }
+
+    .zcrb-cropper-canvas-wrap {
+        padding: 8px;
+    }
+}
