@@ -1015,17 +1015,17 @@
 }
 
 .zcrb-settings .form-table th {
-    padding: 14px 16px 6px 8px;
+    padding: 16px 16px 16px 8px;
     color: var( --zcrb-on-primary-fixed );
     font-weight: 600;
     font-size: 13.5px;
     vertical-align: top;
     line-height: 1.5;
-    white-space: normal;
+    white-space: nowrap;
 }
 
 .zcrb-settings .form-table td {
-    padding: 4px 8px 14px 0;
+    padding: 16px 8px 16px 0;
     color: var( --zcrb-text );
     font-size: 13.5px;
     line-height: 1.5;
@@ -1089,31 +1089,21 @@
 .zcrb-settings textarea {
     border-radius: 10px;
     border: 1px solid var(--zcrb-border);
-    padding: 10px 14px;
-    font-size: 14px;
+    padding: 8px 14px;
+    font-size: 13.5px;
     color: var(--zcrb-text);
     background: #fff;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-.zcrb-settings input[type="number"] {
-    width: 100%;
-    max-width: 100%;
 }
 
 .zcrb-settings select {
-    padding: 10px 14px;
+    padding: 8px 12px;
     appearance: auto;
-    width: 100%;
 }
 
 .zcrb-settings textarea {
     min-height: 60px;
     resize: vertical;
-    width: 100%;
 }
 
 .zcrb-settings input[type="checkbox"] {
@@ -1443,6 +1433,49 @@
 
     .zcrb-views {
         padding: 18px 14px;
+    }
+
+    /* Settings form: stack labels above inputs, full-width fields */
+    .zcrb-settings .form-table {
+        padding: 10px 14px;
+    }
+
+    .zcrb-settings .form-table th {
+        display: block;
+        width: 100%;
+        padding: 12px 0 4px 0;
+        white-space: normal;
+    }
+
+    .zcrb-settings .form-table td {
+        display: block;
+        width: 100%;
+        padding: 4px 0 12px 0;
+    }
+
+    .zcrb-settings .form-table tr + tr th,
+    .zcrb-settings .form-table tr + tr td {
+        border-top: none;
+    }
+
+    .zcrb-settings .form-table tr + tr th {
+        border-top: 1px solid var( --zcrb-surface-container );
+        padding-top: 14px;
+    }
+
+    .zcrb-settings input[type="text"],
+    .zcrb-settings input[type="email"],
+    .zcrb-settings input[type="password"],
+    .zcrb-settings input[type="number"],
+    .zcrb-settings input[type="url"],
+    .zcrb-settings input[type="tel"],
+    .zcrb-settings select,
+    .zcrb-settings textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+        padding: 10px 14px;
+        font-size: 14px;
     }
 }
 
