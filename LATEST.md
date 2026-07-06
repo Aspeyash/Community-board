@@ -1,27 +1,26 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.0.2`
+**Latest version:** `v2.0.3`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.0.2.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.2.zip)
+[**zymarg-community-board-v2.0.3.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.0.3.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.0.2
+## What's new in v2.0.3
 
-- **Canonical Discovery Spark** - replaced wrong generic 8-point star SVG with the exact ZYMARG Discovery Spark at large (--xl 48px) size in both admin hub and public empty state.
-- **Discovery Spark animation fixed** - fast sequential in-place pulse via keyframes with correct per-group delays (accent 0.20s, companion 0.40s, hero 0.40s), purple drop-shadow glow, gold paths static. Replaces the old slow 1.5s whole-group pulse.
-- **Admin sidebar branding** - "Community Board" menu item styled with ZYMARG brand purple (#9500A5), font-weight 600, turns white on hover/active/current.
-- **pre_get_posts status conflict resolved** - main archive query now includes 'publish', 'zcrb_in_progress', and 'zcrb_fulfilled' statuses so the template's custom status filters work correctly.
-- **Vendor response permissions expanded** - Dokan vendors (seller), MultiVendorX vendors (dc_vendor), and generic vendor roles can now respond to community requests.
+- **Unified branded header** - the gradient header with Discovery Spark now appears on ALL admin pages (Dashboard, All Requests CPT list table, and Settings), not just the Dashboard page.
+- **Integrated Discovery Spark** - the spark SVG is now embedded inside the gradient header (to the left of the title text) instead of being a separate panel below it. Layout: [Spark] ZYMARG Community Board [v2.0.3 badge].
+- **Admin CSS on CPT screens** - `zcrb-admin.css` now loads on the CPT list table (`edit.php?post_type=zcrb_request`) and single post edit screens for consistent branding.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.0.3  | 2025-07-06 | `main`    | Unified branded header across all admin sections, integrated Discovery Spark in header |
 | v2.0.2  | 2025-07-06 | `main`    | Canonical Discovery Spark, admin branding, pre_get_posts fix, vendor response permissions |
 | v2.0.1  | 2025-07-06 | `main`    | ZYMARG unified brand design alignment: 18px radius, two-layer shadow, purple hover states, Discovery Spark empty state, deep purple headings |
 | v2.0.0  | 2025-07-06 | `main`    | Major release: status lifecycle, vendor responses, upvotes, notifications, search/filter, duplicate detection, bulk approve, branded admin hub, empty states, image count setting |

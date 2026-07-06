@@ -31,6 +31,7 @@ class ZCRB_Admin_Hub {
         add_action( 'admin_menu', array( $this, 'register_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
         add_action( 'admin_head', array( $this, 'sidebar_branding_css' ) );
+        add_action( 'all_admin_notices', array( $this, 'inject_cpt_header' ) );
     }
 
     /**
@@ -87,14 +88,17 @@ class ZCRB_Admin_Hub {
     }
 
     /**
-     * Enqueue admin CSS only on hub pages.
+     * Enqueue admin CSS on hub pages AND CPT screens.
      */
     public function enqueue_assets( string $hook ): void {
-        if ( false === strpos( $hook, self::MENU_SLUG ) && false === strpos( $hook, 'zcrb' ) ) {
-            // Also check the toplevel_page_ prefix.
-            if ( 'toplevel_page_' . self::MENU_SLUG !== $hook ) {
-                return;
-            }
+        $is_hub = ( false !== strpos( $hook, self::MENU_SLUG ) )
+                || ( false !== strpos( $hook, 'zcrb' ) )
+                || ( 'toplevel_page_' . self::MENU_SLUG === $hook );
+
+        $is_cpt = $this->is_cpt_screen();
+
+        if ( ! $is_hub && ! $is_cpt ) {
+            return;
         }
 
         wp_enqueue_style(
@@ -106,11 +110,69 @@ class ZCRB_Admin_Hub {
     }
 
     /**
+     * Inject the branded header above the CPT list table and edit screens.
+     */
+    public function inject_cpt_header(): void {
+        if ( ! $this->is_cpt_screen() ) {
+            return;
+        }
+        self::render_branded_header();
+    }
+
+    /**
+     * Check if we are on a CPT list/edit screen for zcrb_request.
+     */
+    private function is_cpt_screen(): bool {
+        $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+        if ( null === $screen ) {
+            return false;
+        }
+        // edit.php?post_type=zcrb_request (list table)
+        if ( 'edit-zcrb_request' === $screen->id ) {
+            return true;
+        }
+        // post.php editing a single zcrb_request
+        if ( 'zcrb_request' === $screen->id && 'post' === $screen->base ) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Render the unified branded gradient header with integrated Discovery Spark.
+     *
+     * Layout: [Spark] ZYMARG Community Board [v2.0.x badge]
+     */
+    public static function render_branded_header(): void {
+        $version = defined( 'ZCRB_VERSION' ) ? ZCRB_VERSION : '0.0.0';
+        ?>
+        <div class="zcrb-hub-header">
+            <span class="zymarg-spark zymarg-spark--xl" role="img" aria-label="ZYMARG Discovery Spark">
+              <svg class="zymarg-spark__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <g class="zymarg-spark-group--accent">
+                  <path class="zymarg-spark-item--purple" d="M10.4 5.4c0 1.32-0.24 2.4-1.44 2.4 1.2 0 1.44 1.08 1.44 2.4 0-1.32 0.24-2.4 1.44-2.4-1.2 0-1.44-1.08-1.44-2.4z" fill="#6833ea"/>
+                  <path class="zymarg-spark-item--gold" d="M10.4 6.0c0 0.96-0.18 1.8-1.08 1.8 0.9 0 1.08 0.84 1.08 1.8 0-0.9 0.18-1.8 1.08-1.8-0.9 0-1.08-0.84-1.08-1.8z" fill="#ffd166"/>
+                </g>
+                <g class="zymarg-spark-group--companion">
+                  <path class="zymarg-spark-item--purple" d="M9.5 10.92c0 2.25-0.45 4.12-2.4 4.12 1.95 0 2.4 1.87 2.4 4.12 0-2.25 0.45-4.12 2.4-4.12-1.95 0-2.4-1.87-2.4-4.12z" fill="#6833ea"/>
+                  <path class="zymarg-spark-item--gold" d="M9.5 11.5c0 1.9-0.38 3.54-2.0 3.54 1.62 0 2.0 1.64 2.0 3.54 0-1.9 0.38-3.54 2.0-3.54-1.62 0-2.0-1.64-2.0-3.54z" fill="#ffd166"/>
+                </g>
+                <g class="zymarg-spark-group--hero">
+                  <path class="zymarg-spark-item--purple" d="M15.2 5.6c0 3.45-0.69 6.3-4.08 6.3 3.39 0 4.08 2.85 4.08 6.3 0-3.45 0.69-6.3 4.08-6.3-3.39 0-4.08-2.85-4.08-6.3z" fill="#6833ea"/>
+                  <path class="zymarg-spark-item--gold" d="M15.2 6.5c0 2.9-0.58 5.4-3.39 5.4 2.81 0 3.39 2.5 3.39 5.4 0-2.9 0.58-5.4 3.39-5.4-2.81 0-3.39-2.5-3.39-5.4z" fill="#ffd166"/>
+                </g>
+              </svg>
+            </span>
+            <span class="zcrb-hub-header__title">ZYMARG Community Board</span>
+            <span class="zcrb-hub-header__version">v<?php echo esc_html( $version ); ?></span>
+        </div>
+        <?php
+    }
+
+    /**
      * Render the hub dashboard page.
      */
     public function render_page(): void {
-        $version = defined( 'ZCRB_VERSION' ) ? ZCRB_VERSION : '0.0.0';
-
         // Gather stats.
         $total       = $this->count_posts( array( 'publish', 'pending', 'draft', 'zcrb_in_progress', 'zcrb_fulfilled' ) );
         $pending     = $this->count_posts( array( 'pending', 'draft' ) );
@@ -122,31 +184,8 @@ class ZCRB_Admin_Hub {
         ?>
         <div class="wrap zcrb-hub-wrap">
 
-            <!-- Gradient Header -->
-            <div class="zcrb-hub-header">
-                <span class="zcrb-hub-header__title">ZYMARG Community Board</span>
-                <span class="zcrb-hub-header__version">v<?php echo esc_html( $version ); ?></span>
-            </div>
-
-            <!-- Discovery Spark -->
-            <div class="zcrb-hub-spark">
-                <span class="zymarg-spark zymarg-spark--xl" role="img" aria-label="ZYMARG Discovery Spark">
-                  <svg class="zymarg-spark__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <g class="zymarg-spark-group--accent">
-                      <path class="zymarg-spark-item--purple" d="M10.4 5.4c0 1.32-0.24 2.4-1.44 2.4 1.2 0 1.44 1.08 1.44 2.4 0-1.32 0.24-2.4 1.44-2.4-1.2 0-1.44-1.08-1.44-2.4z" fill="#6833ea"/>
-                      <path class="zymarg-spark-item--gold" d="M10.4 6.0c0 0.96-0.18 1.8-1.08 1.8 0.9 0 1.08 0.84 1.08 1.8 0-0.9 0.18-1.8 1.08-1.8-0.9 0-1.08-0.84-1.08-1.8z" fill="#ffd166"/>
-                    </g>
-                    <g class="zymarg-spark-group--companion">
-                      <path class="zymarg-spark-item--purple" d="M9.5 10.92c0 2.25-0.45 4.12-2.4 4.12 1.95 0 2.4 1.87 2.4 4.12 0-2.25 0.45-4.12 2.4-4.12-1.95 0-2.4-1.87-2.4-4.12z" fill="#6833ea"/>
-                      <path class="zymarg-spark-item--gold" d="M9.5 11.5c0 1.9-0.38 3.54-2.0 3.54 1.62 0 2.0 1.64 2.0 3.54 0-1.9 0.38-3.54 2.0-3.54-1.62 0-2.0-1.64-2.0-3.54z" fill="#ffd166"/>
-                    </g>
-                    <g class="zymarg-spark-group--hero">
-                      <path class="zymarg-spark-item--purple" d="M15.2 5.6c0 3.45-0.69 6.3-4.08 6.3 3.39 0 4.08 2.85 4.08 6.3 0-3.45 0.69-6.3 4.08-6.3-3.39 0-4.08-2.85-4.08-6.3z" fill="#6833ea"/>
-                      <path class="zymarg-spark-item--gold" d="M15.2 6.5c0 2.9-0.58 5.4-3.39 5.4 2.81 0 3.39 2.5 3.39 5.4 0-2.9 0.58-5.4 3.39-5.4-2.81 0-3.39-2.5-3.39-5.4z" fill="#ffd166"/>
-                    </g>
-                  </svg>
-                </span>
-            </div>
+            <!-- Branded Header with integrated Discovery Spark -->
+            <?php self::render_branded_header(); ?>
 
             <!-- Tab Navigation -->
             <nav class="zcrb-hub-tabs">

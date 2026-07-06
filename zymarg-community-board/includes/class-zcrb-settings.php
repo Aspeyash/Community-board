@@ -252,6 +252,12 @@ class ZCRB_Settings {
         if ( false === strpos( $hook, self::SETTINGS_SLUG ) ) {
             return;
         }
+        wp_enqueue_style(
+            'zcrb-admin',
+            ZCRB_PLUGIN_URL . 'assets/css/zcrb-admin.css',
+            array(),
+            ZCRB_VERSION
+        );
         wp_enqueue_style( 'wp-color-picker' );
         wp_enqueue_script( 'wp-color-picker' );
         wp_add_inline_script(
@@ -268,6 +274,8 @@ class ZCRB_Settings {
         $opt = self::OPTION_KEY;
         ?>
         <div class="wrap zcrb-settings">
+            <?php ZCRB_Admin_Hub::render_branded_header(); ?>
+
             <h1><?php esc_html_e( 'ZYMARG Community Board — Settings', 'zymarg-community-board' ); ?></h1>
             <p class="description">
                 <?php esc_html_e( 'Configure every aspect of the Community Request Board. Defaults are sensible — leave a field blank to keep the built-in value.', 'zymarg-community-board' ); ?>

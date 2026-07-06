@@ -24,15 +24,20 @@
     border-radius: 12px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 16px;
     color: #fff;
     margin-bottom: 24px;
+}
+
+.zcrb-hub-header .zymarg-spark {
+    flex-shrink: 0;
 }
 
 .zcrb-hub-header__title {
     font-size: 24px;
     font-weight: 700;
     color: #fff;
+    flex: 1;
 }
 
 .zcrb-hub-header__version {
@@ -41,6 +46,7 @@
     padding: 4px 12px;
     font-size: 12px;
     color: #fff;
+    flex-shrink: 0;
 }
 
 /* ─── Tab Navigation ─── */
@@ -178,10 +184,23 @@
 /* ─── Responsive ─── */
 @media (max-width: 782px) {
     .zcrb-hub-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        flex-wrap: wrap;
         padding: 20px 24px;
+        gap: 12px;
+    }
+
+    .zcrb-hub-header__title {
+        flex: unset;
+        order: 1;
+    }
+
+    .zcrb-hub-header .zymarg-spark {
+        order: 0;
+    }
+
+    .zcrb-hub-header__version {
+        order: 2;
+        margin-left: auto;
     }
 
     .zcrb-hub-stats {

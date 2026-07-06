@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,11 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.0.3 =
+* **Unified branded header** - the gradient header with Discovery Spark now appears on ALL admin pages (Dashboard, All Requests CPT list, and Settings), not just the Dashboard.
+* **Integrated Discovery Spark** - the spark SVG is now embedded inside the gradient header (to the left of the title text) instead of being a separate panel below it.
+* **Admin CSS on CPT screens** - zcrb-admin.css now loads on the CPT list table and single edit screens for consistent branding.
 
 = 2.0.2 =
 * **Canonical Discovery Spark** - replaced wrong generic 8-point star SVG with the exact ZYMARG Discovery Spark at large (--xl 48px) size in both admin hub and public empty state.
