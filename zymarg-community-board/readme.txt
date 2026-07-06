@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.1.2 =
+* **Submenu order fixed — Dashboard is now the first item** — under Community Board the sidebar showed "All Requests" first, then "Dashboard", then "Settings". The root cause was WordPress' `_add_post_type_submenus()` running on `admin_menu` priority 9 (BEFORE our hub's `register_menu()` at the default priority 10), which put the CPT's auto-added "All Requests" entry at the top. Added a new `reorder_submenu()` pass hooked at `admin_menu` priority 999 — it runs after every module is done registering menu items and sorts `$submenu['zcrb-hub']` into the canonical order: **Dashboard → All Requests → Settings**.
+* **Per-section header titles** — the branded gradient header used to show "ZYMARG Community Board" as the big title on every admin screen (Dashboard, All Requests, Settings), which gave three different pages the exact same heading. The header now follows the canonical ZYMARG Theme Builder pattern: the section name (Dashboard / All Requests / Edit Request / Settings) is the big bold title, and "ZYMARG Community Board" becomes a small uppercase kicker/eyebrow above it. `render_branded_header()` now accepts an optional `$section_title` argument; call sites pass "Dashboard" and "Settings" explicitly, and the CPT list/edit auto-injector auto-detects the title from the current admin screen.
 
 = 2.1.1 =
 * **Discovery Spark visibility fix (CRITICAL brand rule)** — the Discovery Spark's purple paths were invisible on the ZYMARG purple gradient header. The spark now sits inside a small white rounded "chip" (12px radius, 8px padding, subtle shadow) so the purple paths are always visible while the header keeps its gradient look. This enforces the permanent ZYMARG brand rule: **never** put a purple background behind the Discovery Spark.

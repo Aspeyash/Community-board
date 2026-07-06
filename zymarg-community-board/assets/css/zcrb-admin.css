@@ -38,20 +38,39 @@
     box-sizing: content-box;
 }
 
-.zcrb-hub-header__title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #fff;
+.zcrb-hub-header__text {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.zcrb-hub-header__kicker {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+}
+
+.zcrb-hub-header__title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
 }
 
 .zcrb-hub-header__version {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.22);
     border-radius: 999px;
-    padding: 4px 12px;
-    font-size: 12px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 700;
     color: #fff;
     flex-shrink: 0;
+    white-space: nowrap;
 }
 
 /* ─── Tab Navigation ─── */
@@ -197,18 +216,17 @@
         gap: 12px;
     }
 
-    .zcrb-hub-header__title {
-        flex: unset;
-        order: 1;
-    }
-
-    .zcrb-hub-header .zymarg-spark {
-        order: 0;
+    .zcrb-hub-header__text {
+        flex: 1 1 auto;
+        min-width: 0;
     }
 
     .zcrb-hub-header__version {
-        order: 2;
-        margin-left: auto;
+        flex-shrink: 0;
+    }
+
+    .zcrb-hub-header__title {
+        font-size: 22px;
     }
 
     .zcrb-hub-stats {

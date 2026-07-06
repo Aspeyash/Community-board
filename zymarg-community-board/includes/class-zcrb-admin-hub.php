@@ -29,6 +29,10 @@ class ZCRB_Admin_Hub {
 
     private function __construct() {
         add_action( 'admin_menu', array( $this, 'register_menu' ) );
+        // Priority 999 runs AFTER WordPress' _add_post_type_submenus() (priority 9)
+        // and any other module's admin_menu callbacks, so we can safely reshuffle
+        // the fully-populated $submenu['zcrb-hub'] array into the desired order.
+        add_action( 'admin_menu', array( $this, 'reorder_submenu' ), 999 );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
         add_action( 'admin_head', array( $this, 'sidebar_branding_css' ) );
         add_action( 'all_admin_notices', array( $this, 'inject_cpt_header' ) );
@@ -76,6 +80,51 @@ class ZCRB_Admin_Hub {
             self::MENU_SLUG,
             array( $this, 'render_page' )
         );
+    }
+
+    /**
+     * Reorder the "Community Board" submenu items so they always render as:
+     *   1. Dashboard        (this hub — parent slug points at itself)
+     *   2. All Requests     (auto-added by WP for the zcrb_request CPT)
+     *   3. Settings         (ZCRB_Settings::SETTINGS_SLUG)
+     *
+     * Without this, WordPress' _add_post_type_submenus() runs on admin_menu
+     * priority 9 (BEFORE our register_menu() at priority 10), which pushes
+     * "All Requests" to the top of the list.
+     */
+    public function reorder_submenu(): void {
+        global $submenu;
+        if ( ! isset( $submenu[ self::MENU_SLUG ] ) || ! is_array( $submenu[ self::MENU_SLUG ] ) ) {
+            return;
+        }
+
+        // Desired priority by slug fragment. Lower = earlier.
+        $priority_map = array(
+            self::MENU_SLUG                        => 10, // Dashboard (parent slug = self)
+            'edit.php?post_type=' . ZCRB_POST_TYPE => 20, // All Requests (CPT auto-added)
+            ZCRB_Settings::SETTINGS_SLUG           => 30, // Settings ("zcrb-settings")
+        );
+
+        $items = $submenu[ self::MENU_SLUG ];
+
+        usort( $items, static function ( $a, $b ) use ( $priority_map ) {
+            $a_slug = isset( $a[2] ) ? (string) $a[2] : '';
+            $b_slug = isset( $b[2] ) ? (string) $b[2] : '';
+            $a_prio = 999;
+            $b_prio = 999;
+            foreach ( $priority_map as $needle => $prio ) {
+                if ( $a_slug === $needle || false !== strpos( $a_slug, $needle ) ) {
+                    $a_prio = $prio;
+                }
+                if ( $b_slug === $needle || false !== strpos( $b_slug, $needle ) ) {
+                    $b_prio = $prio;
+                }
+            }
+            return $a_prio <=> $b_prio;
+        } );
+
+        // WP submenu arrays are numerically keyed — re-index after sorting.
+        $submenu[ self::MENU_SLUG ] = array_values( $items );
     }
 
     /**
@@ -132,10 +181,22 @@ class ZCRB_Admin_Hub {
     /**
      * Render the unified branded gradient header with integrated Discovery Spark.
      *
-     * Layout: [Spark] ZYMARG Community Board [v2.0.x badge]
+     * Layout: [Spark(white chip)]  ZYMARG COMMUNITY BOARD (kicker)   [v2.1.x badge]
+     *                              {Section title}          (big)
+     *
+     * The big title is the SECTION name (Dashboard / All Requests / Settings),
+     * so every admin screen gets a header that reflects the current context.
+     * "ZYMARG Community Board" becomes a small uppercase eyebrow above it.
+     *
+     * @param string $section_title The current section name. Leave blank to
+     *                              auto-detect from the current admin screen.
      */
-    public static function render_branded_header(): void {
+    public static function render_branded_header( string $section_title = '' ): void {
         $version = defined( 'ZCRB_VERSION' ) ? ZCRB_VERSION : '0.0.0';
+
+        if ( '' === $section_title ) {
+            $section_title = self::detect_section_title();
+        }
         ?>
         <div class="zcrb-hub-header">
             <span class="zymarg-spark zymarg-spark--xl" role="img" aria-label="ZYMARG Discovery Spark">
@@ -154,10 +215,39 @@ class ZCRB_Admin_Hub {
                 </g>
               </svg>
             </span>
-            <span class="zcrb-hub-header__title">ZYMARG Community Board</span>
+            <div class="zcrb-hub-header__text">
+                <span class="zcrb-hub-header__kicker"><?php esc_html_e( 'ZYMARG Community Board', 'zymarg-community-board' ); ?></span>
+                <span class="zcrb-hub-header__title"><?php echo esc_html( $section_title ); ?></span>
+            </div>
             <span class="zcrb-hub-header__version">v<?php echo esc_html( $version ); ?></span>
         </div>
         <?php
+    }
+
+    /**
+     * Auto-detect the current section title from the WP admin screen.
+     * Used when render_branded_header() is called without an explicit title
+     * (e.g., inject_cpt_header() on the CPT list and edit screens).
+     */
+    private static function detect_section_title(): string {
+        $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+        if ( ! $screen ) {
+            return __( 'Dashboard', 'zymarg-community-board' );
+        }
+        // CPT list table: edit.php?post_type=zcrb_request
+        if ( 'edit-' . ZCRB_POST_TYPE === $screen->id ) {
+            return __( 'All Requests', 'zymarg-community-board' );
+        }
+        // Single request edit screen: post.php?post=…
+        if ( ZCRB_POST_TYPE === $screen->id ) {
+            return __( 'Edit Request', 'zymarg-community-board' );
+        }
+        // Settings page: toplevel_page_zcrb-hub_page_zcrb-settings etc.
+        if ( false !== strpos( (string) $screen->id, ZCRB_Settings::SETTINGS_SLUG ) ) {
+            return __( 'Settings', 'zymarg-community-board' );
+        }
+        // Hub landing page fallback.
+        return __( 'Dashboard', 'zymarg-community-board' );
     }
 
     /**
@@ -176,7 +266,7 @@ class ZCRB_Admin_Hub {
         <div class="wrap zcrb-hub-wrap">
 
             <!-- Branded Header with integrated Discovery Spark -->
-            <?php self::render_branded_header(); ?>
+            <?php self::render_branded_header( __( 'Dashboard', 'zymarg-community-board' ) ); ?>
 
             <!-- Tab Navigation -->
             <nav class="zcrb-hub-tabs">

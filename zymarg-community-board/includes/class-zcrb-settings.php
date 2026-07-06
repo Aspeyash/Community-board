@@ -331,7 +331,7 @@ class ZCRB_Settings {
         $opt = self::OPTION_KEY;
         ?>
         <div class="wrap zcrb-hub-wrap zcrb-settings">
-            <?php ZCRB_Admin_Hub::render_branded_header(); ?>
+            <?php ZCRB_Admin_Hub::render_branded_header( __( 'Settings', 'zymarg-community-board' ) ); ?>
 
             <p class="description">
                 <?php esc_html_e( 'Settings — Configure every aspect of the Community Request Board. Defaults are sensible — leave a field blank to keep the built-in value.', 'zymarg-community-board' ); ?>

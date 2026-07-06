@@ -1,30 +1,27 @@
 # ZYMARG Community Request Board -- Latest Release
 
-**Latest version:** `v2.1.1`
+**Latest version:** `v2.1.2`
 **Released:** 2025-07-06
 **Branch:** `main`
 
 ## Download
 
-[**zymarg-community-board-v2.1.1.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.1.1.zip)
+[**zymarg-community-board-v2.1.2.zip**](https://github.com/Aspeyash/Community-board/raw/refs/heads/main/zymarg-community-board-v2.1.2.zip)
 
 > Install in WordPress: **Plugins > Add New > Upload Plugin** > choose the zip above > **Install Now** > **Activate**.
 
-## What's new in v2.1.1
+## What's new in v2.1.2
 
-Settings page polish + a CRITICAL Discovery Spark visibility fix:
+Sidebar submenu order fix + branded header now shows the current section name:
 
-- **Discovery Spark visibility (brand-critical)** — the spark's purple paths (`#6833ea`) were invisible against the header's purple gradient. The spark now sits inside a small white rounded chip (12px radius, 8px padding, subtle shadow) so it's always visible. Permanent ZYMARG brand rule: **never** put a purple background behind the Discovery Spark.
-- **Duplicate Settings-page heading removed** — the branded gradient header already shows "ZYMARG Community Board", so the extra `<h1>` beneath it was redundant. Description text refined.
-- **Broken redirects fixed** — "Run cleanup now" and "Force re-check for updates" no longer send you to a 404. Both now redirect to `admin.php?page=zcrb-settings` (matches the new admin-menu location under the hub).
-- **Save-Settings toast alignment** — toast now renders inline next to the Save Changes button instead of dropping to a new line.
-- **Container width unified** — Settings page now shares the same 1200px centered container (`.zcrb-hub-wrap`) as the Dashboard hub.
-- **Dead color-picker no-op removed** from the settings JS.
+- **Submenu order corrected** — under Community Board the sidebar was rendering **All Requests → Dashboard → Settings**. WordPress' `_add_post_type_submenus()` runs on `admin_menu` priority 9 (before the hub's own `register_menu()` at priority 10), so the CPT's auto-added "All Requests" entry ended up first. A new `reorder_submenu()` pass hooked at priority 999 now runs last and sorts the submenu into the canonical **Dashboard → All Requests → Settings** order.
+- **Per-section header titles** — every admin screen used to show the exact same "ZYMARG Community Board" title in the branded gradient header (Dashboard, All Requests, Settings — all identical). The header now follows the canonical ZYMARG Theme Builder pattern: the big bold title is the SECTION NAME (Dashboard / All Requests / Edit Request / Settings), and "ZYMARG Community Board" becomes a small uppercase kicker/eyebrow above it. `render_branded_header()` takes an optional `$section_title` argument; the CPT-screen auto-injector auto-detects the title from the current screen id.
 
 ## Recent versions
 
 | Version | Date       | Commit    | Highlights |
 |---------|------------|-----------|------------|
+| v2.1.2  | 2025-07-06 | `main`    | Submenu order fix (Dashboard first) + per-section header titles (Dashboard/All Requests/Settings) instead of the same "ZYMARG Community Board" on every page |
 | v2.1.1  | 2025-07-06 | `main`    | Settings page fixes: white Spark backdrop, no duplicate heading, fixed redirects, inline toast, unified container width |
 | v2.1.0  | 2025-07-06 | `main`    | Full AJAX save on the Settings page — no page reload, toast notification |
 | v2.0.7  | 2025-07-06 | `main`    | Remove duplicate "All Requests" submenu entry |
