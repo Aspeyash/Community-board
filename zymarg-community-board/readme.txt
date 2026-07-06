@@ -4,7 +4,7 @@ Tags: community, requests, marketplace, dokan, woocommerce, bengali, bangla, seo
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.4.4
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,23 @@ To ship a new version:
 Phone numbers and email addresses are stored as private post meta. They are visible only to users with `edit_posts` capability and are never echoed in the public feed or REST responses.
 
 == Changelog ==
+
+= 2.0.0 =
+* **Non-destructive uninstall** - uninstall.php now only deletes data when ZCRB_REMOVE_ALL_DATA constant is defined. Safe by default.
+* **function_exists() guard** on zcrb_get_setting() to prevent fatal errors.
+* **Fixed github_repo default** from 'Community-page' to 'Community-board'.
+* **SEO optimization** - eliminated duplicate WP_Query in JSON-LD generation; reuses the main query.
+* **Status lifecycle** - new statuses: In Progress and Fulfilled. Requests now follow Pending > Approved > In Progress > Fulfilled flow.
+* **Vendor response system** - vendors can respond to community requests directly from the single request page.
+* **Upvote/priority system** - logged-in users can upvote requests. Upvote count displayed on cards and single view.
+* **Submitter notifications** - email notifications sent to the submitter when their request is approved or when a vendor responds.
+* **Search and filter** on the public board - search by keyword, filter by status.
+* **Duplicate detection** - live search-as-you-type in the submission form shows similar existing requests.
+* **Bulk approve** - new bulk action in the admin list table to approve multiple pending requests at once.
+* **Branded admin hub** - new top-level admin page with Discovery Spark animation, gradient header, version badge, and dashboard stats.
+* **Purple admin sidebar** - Community Board menu text styled with ZYMARG brand purple (#9500A5).
+* **Branded empty states** - decorative SVG illustrations and personality copy when no requests exist.
+* **Image upload count setting** - admin can configure max images per submission (1-4).
 
 = 1.4.4 =
 * **Brand-alignment follow-up** — the Settings page in `class-zcrb-settings.php` was still
